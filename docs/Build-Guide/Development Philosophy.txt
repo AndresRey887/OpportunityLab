@@ -1,0 +1,19 @@
+# Development Philosophy
+
+OpportunityLab should always evolve through small, stable, testable packages.
+
+The application should remain approachable for non-technical users while maintaining a clean and extensible internal architecture.
+
+Developer-facing concepts (package codenames, prospecting themes, internal project identity) should remain largely behind the scenes.
+
+The user interface should always favour clear, professional language.
+
+The project should continue to prioritise:
+
+• Stability over speed.
+• Maintainability over cleverness.
+• Readability over complexity.
+• Modular design over tightly coupled code.
+• Incremental improvements over large rewrites.
+
+Every completed package should leave the application in a stronger position than before.
