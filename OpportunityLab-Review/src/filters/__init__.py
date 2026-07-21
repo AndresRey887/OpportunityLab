@@ -1,3 +1,0 @@
-"""
-OpportunityLab Filters Package
-"""
