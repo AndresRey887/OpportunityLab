@@ -34,7 +34,7 @@ Codename: Trailblazer
 
 ## Current Package
 
-Package-020A-02
+Package-020A-03
 
 ### Status
 
@@ -42,45 +42,43 @@ Ready for user test.
 
 ### Purpose
 
-Add discovery-source registration and source enable/disable control behind the existing search workflow.
+Run all enabled discovery sources through one execution pipeline while preserving the existing search, scoring, and filtering behaviour.
 
 ### New files
 
-- src/discovery/source_registry.py
-- scripts/test_phase2_source_registry.py
-- scripts/test_phase2_discovery_sources.py
+- `src/discovery/execution_result.py`
+- `src/discovery/discovery_pipeline.py`
+- `scripts/test_phase2_multi_source_pipeline.py`
 
 ### Replaced files
 
-- src/discovery/__init__.py
-- src/core/search_service.py
-- src/version.py
-- docs/AI_HANDOVER.md
-- docs/BUILD_GUIDE.md
+- `src/discovery/__init__.py`
+- `src/core/search_service.py`
+- `src/version.py`
+- `docs/AI_HANDOVER.md`
+- `docs/BUILD_GUIDE.md`
 
 ### Behaviour
 
-- Existing Serper search remains the default live source.
-- SearchService now searches only enabled registered sources.
-- Sources can be registered, enabled, disabled, or removed without changing the search pipeline.
-- Existing injected-source tests remain supported.
+- Enabled sources execute in registry order.
+- One failed source does not stop the remaining sources.
+- Search results continue through the existing opportunity scoring and filtering pipeline.
+- Per-source success, result count, and error statistics are available after each search.
+- Serper remains the only default live source.
 - No UI changes.
-- No additional live discovery source added.
 
 ### Test
 
 ```bat
-python scripts\test_phase2_source_registry.py
+python scripts\test_phase2_multi_source_pipeline.py
 ```
 
 Expected result:
 
 ```text
-Phase 2 source registry test passed.
+Phase 2 multi-source pipeline test passed.
 ```
 
 ## Next Package
 
-Do not begin until Package-020A-02 passes.
-
-Package-020A-03 will build on the tested discovery registry without adding unrelated features.
+Do not begin until Package-020A-03 passes.

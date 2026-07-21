@@ -1,9 +1,7 @@
 """
 Search Service
-Version: 0.6
-
-Purpose:
-Coordinates OpportunityLab discovery sources, scoring, and filtering.
+Version: 0.7
+Purpose: Coordinates OpportunityLab discovery sources, scoring, and filtering.
 """
 
 from __future__ import annotations
@@ -11,6 +9,7 @@ from __future__ import annotations
 from collections.abc import Iterable
 
 from src.core.service import Service
+from src.discovery.discovery_pipeline import DiscoveryPipeline
 from src.discovery.search_source import SearchSource
 from src.discovery.source_registry import SourceRegistry
 from src.engine.opportunity_engine import OpportunityEngine
@@ -40,9 +39,13 @@ class SearchService(Service):
 
             self.registry = SourceRegistry([SerperSearchSource()])
 
+        self.pipeline = DiscoveryPipeline(self.registry)
         self.engine = OpportunityEngine()
         self.filter_engine = FilterEngine()
         self.statistics = self.filter_engine.statistics
+        self.source_statistics: dict[
+            str, dict[str, int | str | bool | None]
+        ] = {}
 
     @property
     def sources(self) -> list[SearchSource]:
@@ -67,20 +70,19 @@ class SearchService(Service):
     def search(self, query: str) -> list[Opportunity]:
         opportunities: list[Opportunity] = []
 
-        for source in self.registry.enabled_sources():
-            for item in source.search(query):
+        for execution in self.pipeline.execute(query):
+            for item in execution.items:
                 opportunity = Opportunity(
                     title=item.get("title", ""),
                     url=item.get("link", item.get("url", "")),
                     snippet=item.get("snippet", ""),
-                    source=source.name,
+                    source=execution.source_name,
                 )
-
                 opportunities.append(self.engine.score(opportunity))
 
+        self.source_statistics = self.pipeline.statistics()
         opportunities = self.filter_engine.process(opportunities)
         self.statistics = self.filter_engine.statistics
-
         return opportunities
 
     def start(self) -> None:
