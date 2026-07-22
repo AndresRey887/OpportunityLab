@@ -11,21 +11,22 @@ Focus: Expand discovery sources without destabilising Phase 1.
 - Package-020A-01 through Package-020A-12 — Discovery pipeline foundation.
 - Package-020A-13 — Reddit discovery source.
 - Package-020A-14 — YouTube discovery source.
+- Package-020A-15 — Company-website discovery source.
 
-## Package-020A-15
+## Package-020A-16
 
 ### Goal
 
-Add company-website discovery using the existing Serper connection.
+Add source-based filtering without changing current default behaviour.
 
 ### New files
 
-- `src/discovery/company_website_search_source.py`
-- `scripts/test_phase2_company_website_source.py`
+- `src/filters/source_filter.py`
+- `scripts/test_phase2_source_filter.py`
 
 ### Complete replacements
 
-- `src/core/search_service.py`
+- `src/filters/filter_engine.py`
 - `src/version.py`
 - `docs/AI_HANDOVER.md`
 - `docs/BUILD_GUIDE.md`
@@ -33,13 +34,13 @@ Add company-website discovery using the existing Serper connection.
 ### Test command
 
 ```text
-python scripts\test_phase2_company_website_source.py
+python scripts\test_phase2_source_filter.py
 ```
 
 ### Expected result
 
 ```text
-Phase 2 company-website source test passed.
+Phase 2 source filter test passed.
 ```
 
 Stop after this test and report `passed` or paste the error.

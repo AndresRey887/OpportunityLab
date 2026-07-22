@@ -10,12 +10,23 @@ class VersionInfo:
     codename: str
     status: str
 
+    @property
+    def window_title(self) -> str:
+        return f"{self.app_name} {self.version}"
+
+    @property
+    def full_label(self) -> str:
+        return (
+            f"{self.app_name} {self.version} | {self.package} | "
+            f"Build {self.build} | {self.codename} | {self.status}"
+        )
+
 
 VERSION_INFO = VersionInfo(
     app_name="OpportunityLab",
     version="0.20.0",
-    package="Package-020A-15",
-    build=15,
+    package="Package-020A-16",
+    build=16,
     codename="Trailblazer",
     status="Development",
 )

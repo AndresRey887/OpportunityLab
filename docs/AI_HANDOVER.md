@@ -12,35 +12,36 @@ Codename: Trailblazer
 
 ## Current Package
 
-Package-020A-15
+Package-020A-16
 
 ### Purpose
 
-Add company-website discovery using the existing Serper connection.
+Add discovery-source filtering to the filter engine.
 
 ### New files
 
-- `src/discovery/company_website_search_source.py`
-- `scripts/test_phase2_company_website_source.py`
+- `src/filters/source_filter.py`
+- `scripts/test_phase2_source_filter.py`
 
 ### Replaced files
 
-- `src/core/search_service.py`
+- `src/filters/filter_engine.py`
 - `src/version.py`
 - `docs/AI_HANDOVER.md`
 - `docs/BUILD_GUIDE.md`
 
 ### Behaviour
 
-- Default searches now include general web, Reddit, YouTube, and company websites.
-- The new source excludes Reddit and YouTube from its own results.
-- It reuses the existing Serper API key and client.
-- The package test is offline and does not use an API key.
+- An empty allowed-source list continues to show every source.
+- Selected source names can restrict the accepted opportunities.
+- Filter statistics record excluded sources as `Source not selected`.
+- Version display properties required by the main window are retained.
+- No UI changes in this package.
 
 ### Test
 
 ```text
-python scripts\test_phase2_company_website_source.py
+python scripts\test_phase2_source_filter.py
 ```
 
-Expected: `Phase 2 company-website source test passed.`
+Expected: `Phase 2 source filter test passed.`
