@@ -8,21 +8,20 @@ Codename: Trailblazer
 ## Completed Packages
 
 - Package-020A-01 through Package-020A-22 — Discovery, filtering, and reporting.
-- Package-020A-23 through Package-020A-30 — Scheduled-search execution, UI, and history.
+- Package-020A-23 through Package-020A-31 — Scheduled-search execution, UI, and history.
 
-## Package-020A-31
+## Package-020A-32
 
 ### Goal
 
-Run a saved schedule immediately from the UI.
+Open saved scheduled-search opportunities from the history display.
 
 ### New files
 
-- `scripts/test_phase2_schedule_run_now.py`
+- `scripts/test_phase2_scheduled_result_links.py`
 
 ### Complete replacements
 
-- `src/scheduling/scheduled_search_runner.py`
 - `src/ui/scheduled_search_window.py`
 - `src/version.py`
 - `docs/AI_HANDOVER.md`
@@ -30,10 +29,10 @@ Run a saved schedule immediately from the UI.
 
 ### Test command
 
-`python scripts\test_phase2_schedule_run_now.py`
+`python scripts\test_phase2_scheduled_result_links.py`
 
 ### Expected result
 
-`Phase 2 schedule Run Now test passed.`
+`Phase 2 scheduled result-link test passed.`
 
 Stop after this test and report `passed` or paste the error.

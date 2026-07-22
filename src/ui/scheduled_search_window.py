@@ -2,6 +2,8 @@
 
 from __future__ import annotations
 
+import webbrowser
+
 import customtkinter as ctk
 
 from src.scheduling.search_schedule import SearchSchedule
@@ -268,19 +270,11 @@ class ScheduledSearchWindow(ctk.CTkToplevel):
             else:
                 status = f"Failed — {result.error}"
 
-            titles = [
-                str(item.get("title", "")).strip()
-                for item in result.opportunities[:3]
-                if str(item.get("title", "")).strip()
-            ]
-            title_text = "\n".join(f"• {title}" for title in titles)
             details = (
                 f"{result.query}\n"
                 f"{status}\n"
                 f"{result.completed_at}"
             )
-            if title_text:
-                details = f"{details}\n{title_text}"
 
             ctk.CTkLabel(
                 row,
@@ -288,4 +282,27 @@ class ScheduledSearchWindow(ctk.CTkToplevel):
                 justify="left",
                 anchor="w",
                 wraplength=650,
-            ).pack(fill="x", padx=10, pady=9)
+            ).pack(fill="x", padx=10, pady=(9, 5))
+
+            for opportunity in result.opportunities[:3]:
+                title = str(opportunity.get("title", "")).strip()
+                url = str(opportunity.get("url", "")).strip()
+
+                if not title:
+                    continue
+
+                button = ctk.CTkButton(
+                    row,
+                    text=f"Open: {title}",
+                    anchor="w",
+                    height=30,
+                    command=lambda link=url: self.open_result(link),
+                )
+                button.pack(fill="x", padx=10, pady=(0, 5))
+                if not url:
+                    button.configure(state="disabled")
+
+    @staticmethod
+    def open_result(url):
+        if url:
+            webbrowser.open(url)

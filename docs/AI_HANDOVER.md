@@ -8,15 +8,14 @@ Codename: Trailblazer
 
 ## Current Package
 
-Package-020A-31
+Package-020A-32
 
 ### Purpose
 
-Allow any saved schedule to be run immediately.
+Make saved scheduled-search results directly actionable.
 
 ### Replaced files
 
-- `src/scheduling/scheduled_search_runner.py`
 - `src/ui/scheduled_search_window.py`
 - `src/version.py`
 - `docs/AI_HANDOVER.md`
@@ -24,17 +23,17 @@ Allow any saved schedule to be run immediately.
 
 ### New files
 
-- `scripts/test_phase2_schedule_run_now.py`
+- `scripts/test_phase2_scheduled_result_links.py`
 
 ### Behaviour
 
-- Every saved schedule has a `Run Now` button.
-- Manual scheduled searches run through the background task manager.
-- Results save to scheduled history and appear after completion.
-- Successful manual runs reset the schedule's next-run time.
+- Up to three opportunity links appear under each scheduled run.
+- Clicking an `Open:` button launches the opportunity URL.
+- Results without a URL display a disabled button.
+- Schedule creation, Run Now, and history behaviour remain unchanged.
 
 ### Test
 
-`python scripts\test_phase2_schedule_run_now.py`
+`python scripts\test_phase2_scheduled_result_links.py`
 
-Expected: `Phase 2 schedule Run Now test passed.`
+Expected: `Phase 2 scheduled result-link test passed.`
