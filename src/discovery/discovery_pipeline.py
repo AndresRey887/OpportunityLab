@@ -2,6 +2,8 @@
 
 from __future__ import annotations
 
+from collections.abc import Iterable
+
 from src.discovery.discovery_run import DiscoveryRun
 from src.discovery.execution_result import SourceExecutionResult
 from src.discovery.opportunity_deduplicator import OpportunityDeduplicator
@@ -25,10 +27,14 @@ class DiscoveryPipeline:
         self.last_results: list[SourceExecutionResult] = []
         self.last_run: DiscoveryRun | None = None
 
-    def execute(self, query: str) -> list[SourceExecutionResult]:
+    def execute(
+        self,
+        query: str,
+        source_names: Iterable[str] | None = None,
+    ) -> list[SourceExecutionResult]:
         results: list[SourceExecutionResult] = []
 
-        for source in self.registry.enabled_sources():
+        for source in self.registry.selected_sources(source_names):
             try:
                 raw_items = source.search(query)
                 items = [item for item in raw_items if isinstance(item, dict)]
@@ -69,10 +75,14 @@ class DiscoveryPipeline:
         opportunities = self.aggregate(execution_results)
         return self.deduplicator.deduplicate(opportunities)
 
-    def run(self, query: str) -> DiscoveryRun:
+    def run(
+        self,
+        query: str,
+        source_names: Iterable[str] | None = None,
+    ) -> DiscoveryRun:
         """Execute, normalize, and deduplicate one complete discovery query."""
 
-        source_results = self.execute(query)
+        source_results = self.execute(query, source_names=source_names)
         opportunities = self.aggregate_unique(source_results)
 
         discovery_run = DiscoveryRun(

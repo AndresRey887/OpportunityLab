@@ -1,6 +1,6 @@
 """
 Search Service
-Version: 0.8
+Version: 0.9
 Purpose: Coordinates OpportunityLab discovery sources, scoring, and filtering.
 """
 
@@ -74,10 +74,17 @@ class SearchService(Service):
     def initialize(self) -> None:
         print("[SEARCH] initialize() called")
 
-    def search(self, query: str) -> list[Opportunity]:
-        """Run discovery, score unique results, then apply filters."""
+    def search(
+        self,
+        query: str,
+        source_names: Iterable[str] | None = None,
+    ) -> list[Opportunity]:
+        """Run selected discovery sources, score unique results, and filter."""
 
-        discovery_run = self.pipeline.run(query)
+        discovery_run = self.pipeline.run(
+            query,
+            source_names=source_names,
+        )
         self.last_discovery_run = discovery_run
 
         scored_opportunities = [

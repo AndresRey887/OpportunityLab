@@ -17,12 +17,13 @@ Focus: Expand discovery sources without destabilising Phase 1.
 - Package-020A-07 — Opportunity deduplication.
 - Package-020A-08 — Source registry management.
 - Package-020A-09 — Structured discovery run.
+- Package-020A-10 — SearchService integration.
 
-## Package-020A-10
+## Package-020A-11
 
 ### Goal
 
-Connect the complete Phase 2 discovery run to SearchService.
+Allow individual searches to choose which enabled discovery sources run.
 
 ### Files to copy
 
@@ -31,11 +32,12 @@ OpportunityLab project. Replace existing files when prompted.
 
 ### New file
 
-- `scripts/test_phase2_search_service_integration.py`
+- `scripts/test_phase2_source_selection.py`
 
 ### Complete replacements
 
 - `src/core/search_service.py`
+- `src/discovery/discovery_pipeline.py`
 - `src/discovery/source_registry.py`
 - `src/version.py`
 - `docs/AI_HANDOVER.md`
@@ -44,13 +46,13 @@ OpportunityLab project. Replace existing files when prompted.
 ### Test command
 
 ```text
-python scripts\test_phase2_search_service_integration.py
+python scripts\test_phase2_source_selection.py
 ```
 
 ### Expected result
 
 ```text
-Phase 2 SearchService integration test passed.
+Phase 2 source selection test passed.
 ```
 
 ### Stop condition

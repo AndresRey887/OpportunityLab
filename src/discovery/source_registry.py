@@ -71,6 +71,31 @@ class SourceRegistry:
             if name not in self._enabled
         ]
 
+    def selected_sources(
+        self,
+        names: Iterable[str] | None = None,
+    ) -> list[SearchSource]:
+        """Return enabled sources, optionally restricted to named sources."""
+
+        if names is None:
+            return self.enabled_sources()
+
+        requested = list(dict.fromkeys(names))
+        unknown = [
+            name
+            for name in requested
+            if name not in self._sources
+        ]
+
+        if unknown:
+            raise KeyError(", ".join(unknown))
+
+        return [
+            self._sources[name]
+            for name in requested
+            if name in self._enabled
+        ]
+
     def is_enabled(self, name: str) -> bool:
         if name not in self._sources:
             raise KeyError(name)

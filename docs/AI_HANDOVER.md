@@ -15,19 +15,20 @@ Codename: Trailblazer
 
 ## Current Package
 
-Package-020A-10
+Package-020A-11
 
 ### Purpose
 
-Connect the Phase 2 discovery pipeline to the existing SearchService.
+Allow each search to use a selected subset of enabled discovery sources.
 
 ### New file
 
-- `scripts/test_phase2_search_service_integration.py`
+- `scripts/test_phase2_source_selection.py`
 
 ### Replaced files
 
 - `src/core/search_service.py`
+- `src/discovery/discovery_pipeline.py`
 - `src/discovery/source_registry.py`
 - `src/version.py`
 - `docs/AI_HANDOVER.md`
@@ -35,23 +36,23 @@ Connect the Phase 2 discovery pipeline to the existing SearchService.
 
 ### Behaviour
 
-- SearchService now uses `DiscoveryPipeline.run()`.
-- Duplicate results are removed before scoring.
-- Normalized Opportunity objects are scored and filtered.
-- The most recent `DiscoveryRun` is available as
-  `SearchService.last_discovery_run`.
-- SourceRegistry again exposes all registered sources for compatibility.
+- `SearchService.search()` accepts optional `source_names`.
+- `DiscoveryPipeline.run()` and `execute()` accept optional source names.
+- Only enabled sources in the requested subset are executed.
+- Duplicate source names are ignored while preserving requested order.
+- Unknown source names raise `KeyError`.
+- Existing searches without `source_names` continue using all enabled sources.
 - No UI changes.
 - No live API test required.
 
 ### Test
 
 ```text
-python scripts\test_phase2_search_service_integration.py
+python scripts\test_phase2_source_selection.py
 ```
 
 Expected:
 
 ```text
-Phase 2 SearchService integration test passed.
+Phase 2 source selection test passed.
 ```
