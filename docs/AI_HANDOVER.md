@@ -8,33 +8,35 @@ Codename: Trailblazer
 
 ## Current Package
 
-Package-020A-34
+Package-020A-35
 
 ### Purpose
 
-Report completed background schedules in the main status bar.
+Add the foundation for grouping opportunities by source or website.
+
+### New files
+
+- `src/grouping/__init__.py`
+- `src/grouping/opportunity_group.py`
+- `src/grouping/opportunity_grouper.py`
+- `scripts/test_phase2_opportunity_grouping.py`
 
 ### Replaced files
 
-- `src/scheduling/scheduled_search_monitor.py`
-- `src/ui/main_window.py`
 - `src/version.py`
 - `docs/AI_HANDOVER.md`
 - `docs/BUILD_GUIDE.md`
 
-### New files
-
-- `scripts/test_phase2_scheduled_result_notice.py`
-
 ### Behaviour
 
-- The monitor forwards completed scheduled runs through a thread-safe queue.
-- The main window reports new-opportunity and failure counts.
-- Tkinter UI updates remain on the main application thread.
-- Scheduled result history remains available in the Schedules window.
+- Opportunities can be grouped by discovery source.
+- Opportunities can be grouped by normalized website domain.
+- Groups expose their label, contents, and result count.
+- Groups are ordered by count and then label.
+- No UI changes in this package.
 
 ### Test
 
-`python scripts\test_phase2_scheduled_result_notice.py`
+`python scripts\test_phase2_opportunity_grouping.py`
 
-Expected: `Phase 2 scheduled result notice test passed.`
+Expected: `Phase 2 opportunity grouping test passed.`
