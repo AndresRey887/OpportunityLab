@@ -16,27 +16,27 @@ Focus: Expand discovery sources without destabilising Phase 1.
 - Package-020A-06 — Opportunity normalization.
 - Package-020A-07 — Opportunity deduplication.
 - Package-020A-08 — Source registry management.
+- Package-020A-09 — Structured discovery run.
 
-## Package-020A-09
+## Package-020A-10
 
 ### Goal
 
-Return one structured object from a complete discovery pipeline run.
+Connect the complete Phase 2 discovery run to SearchService.
 
 ### Files to copy
 
 Copy every file from this package into the matching location in the
 OpportunityLab project. Replace existing files when prompted.
 
-### New files
+### New file
 
-- `src/discovery/discovery_run.py`
-- `scripts/test_phase2_discovery_run.py`
+- `scripts/test_phase2_search_service_integration.py`
 
 ### Complete replacements
 
-- `src/discovery/discovery_pipeline.py`
-- `src/discovery/__init__.py`
+- `src/core/search_service.py`
+- `src/discovery/source_registry.py`
 - `src/version.py`
 - `docs/AI_HANDOVER.md`
 - `docs/BUILD_GUIDE.md`
@@ -44,13 +44,13 @@ OpportunityLab project. Replace existing files when prompted.
 ### Test command
 
 ```text
-python scripts\test_phase2_discovery_run.py
+python scripts\test_phase2_search_service_integration.py
 ```
 
 ### Expected result
 
 ```text
-Phase 2 discovery run test passed.
+Phase 2 SearchService integration test passed.
 ```
 
 ### Stop condition

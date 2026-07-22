@@ -15,43 +15,43 @@ Codename: Trailblazer
 
 ## Current Package
 
-Package-020A-09
+Package-020A-10
 
 ### Purpose
 
-Add one structured result object for a complete discovery query.
+Connect the Phase 2 discovery pipeline to the existing SearchService.
 
-### New files
+### New file
 
-- `src/discovery/discovery_run.py`
-- `scripts/test_phase2_discovery_run.py`
+- `scripts/test_phase2_search_service_integration.py`
 
 ### Replaced files
 
-- `src/discovery/discovery_pipeline.py`
-- `src/discovery/__init__.py`
+- `src/core/search_service.py`
+- `src/discovery/source_registry.py`
 - `src/version.py`
 - `docs/AI_HANDOVER.md`
 - `docs/BUILD_GUIDE.md`
 
 ### Behaviour
 
-- Runs all enabled discovery sources.
-- Preserves source failures without stopping the run.
-- Normalizes and deduplicates opportunities.
-- Returns one `DiscoveryRun` object containing the query, source results,
-  unique opportunities, counts, and source errors.
+- SearchService now uses `DiscoveryPipeline.run()`.
+- Duplicate results are removed before scoring.
+- Normalized Opportunity objects are scored and filtered.
+- The most recent `DiscoveryRun` is available as
+  `SearchService.last_discovery_run`.
+- SourceRegistry again exposes all registered sources for compatibility.
 - No UI changes.
 - No live API test required.
 
 ### Test
 
 ```text
-python scripts\test_phase2_discovery_run.py
+python scripts\test_phase2_search_service_integration.py
 ```
 
 Expected:
 
 ```text
-Phase 2 discovery run test passed.
+Phase 2 SearchService integration test passed.
 ```

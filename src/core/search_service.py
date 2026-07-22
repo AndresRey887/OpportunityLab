@@ -1,6 +1,6 @@
 """
 Search Service
-Version: 0.7
+Version: 0.8
 Purpose: Coordinates OpportunityLab discovery sources, scoring, and filtering.
 """
 
@@ -10,6 +10,7 @@ from collections.abc import Iterable
 
 from src.core.service import Service
 from src.discovery.discovery_pipeline import DiscoveryPipeline
+from src.discovery.discovery_run import DiscoveryRun
 from src.discovery.search_source import SearchSource
 from src.discovery.source_registry import SourceRegistry
 from src.engine.opportunity_engine import OpportunityEngine
@@ -46,13 +47,19 @@ class SearchService(Service):
         self.source_statistics: dict[
             str, dict[str, int | str | bool | None]
         ] = {}
+        self.last_discovery_run: DiscoveryRun | None = None
 
     @property
     def sources(self) -> list[SearchSource]:
         """Return all registered sources for backward compatibility."""
         return self.registry.all_sources()
 
-    def register_source(self, source: SearchSource, *, enabled: bool = True) -> None:
+    def register_source(
+        self,
+        source: SearchSource,
+        *,
+        enabled: bool = True,
+    ) -> None:
         """Register a discovery source with this search service."""
         self.registry.register(source, enabled=enabled)
 
@@ -68,22 +75,23 @@ class SearchService(Service):
         print("[SEARCH] initialize() called")
 
     def search(self, query: str) -> list[Opportunity]:
-        opportunities: list[Opportunity] = []
+        """Run discovery, score unique results, then apply filters."""
 
-        for execution in self.pipeline.execute(query):
-            for item in execution.items:
-                opportunity = Opportunity(
-                    title=item.get("title", ""),
-                    url=item.get("link", item.get("url", "")),
-                    snippet=item.get("snippet", ""),
-                    source=execution.source_name,
-                )
-                opportunities.append(self.engine.score(opportunity))
+        discovery_run = self.pipeline.run(query)
+        self.last_discovery_run = discovery_run
+
+        scored_opportunities = [
+            self.engine.score(opportunity)
+            for opportunity in discovery_run.opportunities
+        ]
 
         self.source_statistics = self.pipeline.statistics()
-        opportunities = self.filter_engine.process(opportunities)
+
+        filtered_opportunities = self.filter_engine.process(
+            scored_opportunities
+        )
         self.statistics = self.filter_engine.statistics
-        return opportunities
+        return filtered_opportunities
 
     def start(self) -> None:
         super().start()
