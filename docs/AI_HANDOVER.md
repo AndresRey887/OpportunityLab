@@ -8,17 +8,16 @@ Codename: Trailblazer
 
 ## Current Package
 
-Package-020A-25
+Package-020A-26
 
 ### Purpose
 
-Execute searches that the scheduler reports as due.
+Add a background monitor for due scheduled searches.
 
 ### New files
 
-- `src/scheduling/scheduled_search_result.py`
-- `src/scheduling/scheduled_search_runner.py`
-- `scripts/test_phase2_scheduled_search_runner.py`
+- `src/scheduling/scheduled_search_monitor.py`
+- `scripts/test_phase2_scheduled_search_monitor.py`
 
 ### Replaced files
 
@@ -29,14 +28,13 @@ Execute searches that the scheduler reports as due.
 
 ### Behaviour
 
-- Due schedules run through the existing SearchService interface.
-- A schedule can restrict execution to named discovery sources.
-- Successful runs store counts and advance the next-run time.
-- One failed schedule does not stop other scheduled searches.
-- No background timer or UI changes in this package.
+- The monitor checks due schedules at a configurable interval.
+- It runs on one daemon thread and supports clean start and stop.
+- A failed check is logged without terminating the monitor.
+- The monitor is not connected to the main window in this package.
 
 ### Test
 
-`python scripts\test_phase2_scheduled_search_runner.py`
+`python scripts\test_phase2_scheduled_search_monitor.py`
 
-Expected: `Phase 2 scheduled search runner test passed.`
+Expected: `Phase 2 scheduled search monitor test passed.`

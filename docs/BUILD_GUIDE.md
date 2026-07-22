@@ -10,18 +10,18 @@ Codename: Trailblazer
 - Package-020A-01 through Package-020A-22 — Discovery, filtering, and reporting.
 - Package-020A-23 — Search schedule model and storage.
 - Package-020A-24 — Persistent schedule management.
+- Package-020A-25 — Scheduled search execution.
 
-## Package-020A-25
+## Package-020A-26
 
 ### Goal
 
-Safely execute due schedules through SearchService.
+Check for due scheduled searches in the background.
 
 ### New files
 
-- `src/scheduling/scheduled_search_result.py`
-- `src/scheduling/scheduled_search_runner.py`
-- `scripts/test_phase2_scheduled_search_runner.py`
+- `src/scheduling/scheduled_search_monitor.py`
+- `scripts/test_phase2_scheduled_search_monitor.py`
 
 ### Complete replacements
 
@@ -32,10 +32,10 @@ Safely execute due schedules through SearchService.
 
 ### Test command
 
-`python scripts\test_phase2_scheduled_search_runner.py`
+`python scripts\test_phase2_scheduled_search_monitor.py`
 
 ### Expected result
 
-`Phase 2 scheduled search runner test passed.`
+`Phase 2 scheduled search monitor test passed.`
 
 Stop after this test and report `passed` or paste the error.
