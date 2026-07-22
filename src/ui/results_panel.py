@@ -2,12 +2,17 @@
 
 import customtkinter as ctk
 
+from src.grouping.opportunity_grouper import OpportunityGrouper
+
 
 class ResultsPanel(ctk.CTkFrame):
     def __init__(self, master, on_selected=None):
         super().__init__(master)
         self.on_selected = on_selected
         self.cards = []
+        self.opportunities = []
+        self.grouper = OpportunityGrouper()
+        self.group_mode = ctk.StringVar(value="Source")
         self.group_frames = {}
         self.group_labels = {}
         self.group_counts = {}
@@ -15,12 +20,24 @@ class ResultsPanel(ctk.CTkFrame):
         self.build_ui()
 
     def build_ui(self):
+        header = ctk.CTkFrame(self, fg_color="transparent")
+        header.pack(fill="x", padx=10, pady=(10, 5))
+
         title = ctk.CTkLabel(
-            self,
+            header,
             text="Search Results",
             font=("Segoe UI", 18, "bold")
         )
-        title.pack(anchor="w", padx=10, pady=(10, 5))
+        title.pack(side="left", anchor="w")
+
+        self.group_menu = ctk.CTkOptionMenu(
+            header,
+            values=["Source", "Website"],
+            variable=self.group_mode,
+            command=self.change_grouping,
+            width=110,
+        )
+        self.group_menu.pack(side="right")
 
         self.results_list = ctk.CTkScrollableFrame(self)
         self.results_list.pack(
@@ -31,6 +48,10 @@ class ResultsPanel(ctk.CTkFrame):
         )
 
     def clear(self):
+        self.opportunities.clear()
+        self._clear_rendered()
+
+    def _clear_rendered(self):
         for widget in self.results_list.winfo_children():
             widget.destroy()
         self.cards.clear()
@@ -48,8 +69,13 @@ class ResultsPanel(ctk.CTkFrame):
             return "#F1C40F"
         return "#E74C3C"
 
-    def _group_for(self, source):
-        label = str(source).strip() or "Unknown Source"
+    def _group_label(self, opportunity):
+        if self.group_mode.get() == "Website":
+            return self.grouper.group_by_domain([opportunity])[0].label
+
+        return str(getattr(opportunity, "source", "")).strip() or "Unknown Source"
+
+    def _group_for(self, label):
         key = label.casefold()
 
         if key not in self.group_frames:
@@ -98,7 +124,16 @@ class ResultsPanel(ctk.CTkFrame):
         )
 
     def add_opportunity(self, opportunity):
-        group = self._group_for(getattr(opportunity, "source", ""))
+        self.opportunities.append(opportunity)
+        self._render_opportunity(opportunity)
+
+    def change_grouping(self, selected_mode=None):
+        self._clear_rendered()
+        for opportunity in self.opportunities:
+            self._render_opportunity(opportunity)
+
+    def _render_opportunity(self, opportunity):
+        group = self._group_for(self._group_label(opportunity))
 
         card = ctk.CTkFrame(group, cursor="hand2")
         card.pack(fill="x", padx=5, pady=5)

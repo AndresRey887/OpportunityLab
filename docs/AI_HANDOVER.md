@@ -8,11 +8,11 @@ Codename: Trailblazer
 
 ## Current Package
 
-Package-020A-37
+Package-020A-38
 
 ### Purpose
 
-Make source groups collapsible in the main results list.
+Allow result grouping to switch between source and website.
 
 ### Replaced files
 
@@ -23,17 +23,18 @@ Make source groups collapsible in the main results list.
 
 ### New files
 
-- `scripts/test_phase2_collapsible_result_groups.py`
+- `scripts/test_phase2_grouping_selector.py`
 
 ### Behaviour
 
-- Source headings act as expand and collapse buttons.
-- Arrow markers show each group's current state.
-- Counts remain visible while a group is collapsed.
-- Every new search begins with all groups expanded.
+- A selector appears beside the Search Results heading.
+- `Source` groups results by discovery source.
+- `Website` groups results by normalized domain.
+- Switching modes redraws existing results without another search.
+- Groups remain collapsible in either mode.
 
 ### Test
 
-`python scripts\test_phase2_collapsible_result_groups.py`
+`python scripts\test_phase2_grouping_selector.py`
 
-Expected: `Phase 2 collapsible result-group test passed.`
+Expected: `Phase 2 grouping selector test passed.`
