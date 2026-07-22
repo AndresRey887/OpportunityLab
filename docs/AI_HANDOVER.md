@@ -15,16 +15,16 @@ Codename: Trailblazer
 
 ## Current Package
 
-Package-020A-12
+Package-020A-13
 
 ### Purpose
 
-Add one structured result object for the full SearchService workflow.
+Add Reddit as the first additional live discovery source.
 
 ### New files
 
-- `src/core/search_run.py`
-- `scripts/test_phase2_search_run.py`
+- `src/discovery/reddit_search_source.py`
+- `scripts/test_phase2_reddit_source.py`
 
 ### Replaced files
 
@@ -35,21 +35,20 @@ Add one structured result object for the full SearchService workflow.
 
 ### Behaviour
 
-- SearchService still returns the same opportunity list used by the UI.
-- The complete result is also stored as `SearchService.last_search_run`.
-- `SearchRun` includes discovery counts, accepted results, filtered count,
-  filter reasons, source count, and failed-source count.
-- No UI changes.
-- No live API test required.
+- Default searches now run the existing general Serper search and a Reddit-specific search.
+- Reddit discovery reuses the existing Serper API key and client.
+- Injected sources and registries keep their previous behaviour.
+- Failed sources remain isolated by the discovery pipeline.
+- The package test is offline and does not use an API key.
 
 ### Test
 
 ```text
-python scripts\test_phase2_search_run.py
+python scripts\test_phase2_reddit_source.py
 ```
 
 Expected:
 
 ```text
-Phase 2 SearchRun test passed.
+Phase 2 Reddit source test passed.
 ```

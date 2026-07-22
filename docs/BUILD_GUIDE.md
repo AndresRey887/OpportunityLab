@@ -19,13 +19,13 @@ Focus: Expand discovery sources without destabilising Phase 1.
 - Package-020A-09 — Structured discovery run.
 - Package-020A-10 — SearchService integration.
 - Package-020A-11 — Per-search source selection.
+- Package-020A-12 — Structured SearchRun result.
 
-## Package-020A-12
+## Package-020A-13
 
 ### Goal
 
-Store one structured result for the complete SearchService workflow while
-keeping the existing UI-compatible list return value.
+Add Reddit discovery using the existing Serper connection.
 
 ### Files to copy
 
@@ -34,8 +34,8 @@ OpportunityLab project. Replace existing files when prompted.
 
 ### New files
 
-- `src/core/search_run.py`
-- `scripts/test_phase2_search_run.py`
+- `src/discovery/reddit_search_source.py`
+- `scripts/test_phase2_reddit_source.py`
 
 ### Complete replacements
 
@@ -47,13 +47,13 @@ OpportunityLab project. Replace existing files when prompted.
 ### Test command
 
 ```text
-python scripts\test_phase2_search_run.py
+python scripts\test_phase2_reddit_source.py
 ```
 
 ### Expected result
 
 ```text
-Phase 2 SearchRun test passed.
+Phase 2 Reddit source test passed.
 ```
 
 ### Stop condition
