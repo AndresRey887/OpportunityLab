@@ -1,6 +1,6 @@
 """
 Search Service
-Version: 0.9
+Version: 0.10
 Purpose: Coordinates OpportunityLab discovery sources, scoring, and filtering.
 """
 
@@ -8,6 +8,7 @@ from __future__ import annotations
 
 from collections.abc import Iterable
 
+from src.core.search_run import SearchRun
 from src.core.service import Service
 from src.discovery.discovery_pipeline import DiscoveryPipeline
 from src.discovery.discovery_run import DiscoveryRun
@@ -48,6 +49,7 @@ class SearchService(Service):
             str, dict[str, int | str | bool | None]
         ] = {}
         self.last_discovery_run: DiscoveryRun | None = None
+        self.last_search_run: SearchRun | None = None
 
     @property
     def sources(self) -> list[SearchSource]:
@@ -60,15 +62,12 @@ class SearchService(Service):
         *,
         enabled: bool = True,
     ) -> None:
-        """Register a discovery source with this search service."""
         self.registry.register(source, enabled=enabled)
 
     def enable_source(self, name: str) -> None:
-        """Enable a registered discovery source."""
         self.registry.enable(name)
 
     def disable_source(self, name: str) -> None:
-        """Disable a registered discovery source."""
         self.registry.disable(name)
 
     def initialize(self) -> None:
@@ -98,6 +97,14 @@ class SearchService(Service):
             scored_opportunities
         )
         self.statistics = self.filter_engine.statistics
+
+        self.last_search_run = SearchRun(
+            discovery=discovery_run,
+            opportunities=list(filtered_opportunities),
+            filtered_count=self.statistics.filtered,
+            filter_reasons=dict(self.statistics.reasons),
+        )
+
         return filtered_opportunities
 
     def start(self) -> None:
