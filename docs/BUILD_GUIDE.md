@@ -1,40 +1,41 @@
 # OpportunityLab Build Guide
 
-## Phase 2
+## Phase 2 — Complete
 
 Version: 0.20.0  
-Codename: Trailblazer
+Codename: Trailblazer  
+Final package: Package-020A-40
 
-## Completed Packages
+## Completed Work
 
-- Package-020A-01 through Package-020A-22 — Discovery, filtering, and reporting.
-- Package-020A-23 through Package-020A-34 — Scheduled searches and notifications.
-- Package-020A-35 through Package-020A-38 — Result grouping controls.
+- Package-020A-01 through Package-020A-12 — Discovery pipeline foundation.
+- Package-020A-13 through Package-020A-15 — Live discovery sources.
+- Package-020A-16 through Package-020A-22 — Filtering and search reporting.
+- Package-020A-23 through Package-020A-34 — Scheduled searches and notices.
+- Package-020A-35 through Package-020A-39 — Grouping and sorting.
 
-## Package-020A-39
+## Package-020A-40
 
 ### Goal
 
-Sort grouped results by score or title.
+Verify Phase 2 systems together and mark Version 0.20.0 complete.
 
 ### New files
 
-- `scripts/test_phase2_result_sorting.py`
+- `scripts/test_phase2_completion.py`
 
 ### Complete replacements
 
-- `src/ui/main_window.py`
-- `src/ui/results_panel.py`
 - `src/version.py`
 - `docs/AI_HANDOVER.md`
 - `docs/BUILD_GUIDE.md`
 
 ### Test command
 
-`python scripts\test_phase2_result_sorting.py`
+`python scripts\test_phase2_completion.py`
 
 ### Expected result
 
-`Phase 2 result sorting test passed.`
+`OpportunityLab Phase 2 completion test passed.`
 
 Stop after this test and report `passed` or paste the error.

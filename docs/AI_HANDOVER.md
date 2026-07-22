@@ -1,40 +1,44 @@
 # OpportunityLab AI Handover
 
-## Current Phase
+## Current Status
 
-Phase 2 — Discovery Expansion  
+Phase 1 is complete.  
+Phase 2 is complete.
+
+## Current Version
+
 Version: 0.20.0  
-Codename: Trailblazer
+Codename: Trailblazer  
+Package: Package-020A-40
 
-## Current Package
+## Phase 2 Delivered
 
-Package-020A-39
+- Multi-source discovery pipeline.
+- Serper, Reddit, YouTube, and company-website discovery.
+- Source selection, filtering, persistence, reporting, and result labels.
+- Persistent scheduled searches with background monitoring.
+- Scheduled result history, Run Now, links, and new-result detection.
+- Main-window scheduled-search notices.
+- Source and website grouping, collapsible groups, and result sorting.
+
+## Package-020A-40
 
 ### Purpose
 
-Add sorting controls to the grouped main results list.
+Run one offline completion test across the main Phase 2 systems.
+
+### New files
+
+- `scripts/test_phase2_completion.py`
 
 ### Replaced files
 
-- `src/ui/main_window.py`
-- `src/ui/results_panel.py`
 - `src/version.py`
 - `docs/AI_HANDOVER.md`
 - `docs/BUILD_GUIDE.md`
 
-### New files
-
-- `scripts/test_phase2_result_sorting.py`
-
-### Behaviour
-
-- Results can sort by highest score, lowest score, or title.
-- Sorting redraws current results without running another search.
-- Source and website grouping remain available.
-- MainWindow now sends the complete result list to ResultsPanel at once.
-
 ### Test
 
-`python scripts\test_phase2_result_sorting.py`
+`python scripts\test_phase2_completion.py`
 
-Expected: `Phase 2 result sorting test passed.`
+Expected: `OpportunityLab Phase 2 completion test passed.`
