@@ -1,4 +1,4 @@
-"""Execute OpportunityLab searches that are due."""
+"""Execute OpportunityLab scheduled searches."""
 
 from __future__ import annotations
 
@@ -34,35 +34,44 @@ class ScheduledSearchRunner:
             "score": int(getattr(opportunity, "score", 0) or 0),
         }
 
+    def run_schedule(
+        self,
+        schedule_id: str,
+        now: datetime | None = None,
+    ) -> ScheduledSearchResult:
+        schedule = self.scheduler.get(schedule_id)
+
+        try:
+            opportunities = self.search_service.search(
+                schedule.query,
+                source_names=(schedule.source_names or None),
+            )
+            summaries = [
+                self._opportunity_summary(opportunity)
+                for opportunity in opportunities
+            ]
+            result = ScheduledSearchResult(
+                schedule_id=schedule.schedule_id,
+                query=schedule.query,
+                opportunity_count=len(opportunities),
+                opportunities=summaries,
+            )
+            self.scheduler.mark_ran(schedule.schedule_id, now)
+        except Exception as error:
+            result = ScheduledSearchResult(
+                schedule_id=schedule.schedule_id,
+                query=schedule.query,
+                error=str(error),
+            )
+
+        self.history_store.append(result)
+        self.last_results = [result]
+        return result
+
     def run_due(self, now: datetime | None = None) -> list[ScheduledSearchResult]:
-        results = []
-
-        for schedule in self.scheduler.due(now):
-            try:
-                opportunities = self.search_service.search(
-                    schedule.query,
-                    source_names=(schedule.source_names or None),
-                )
-                summaries = [
-                    self._opportunity_summary(opportunity)
-                    for opportunity in opportunities
-                ]
-                result = ScheduledSearchResult(
-                    schedule_id=schedule.schedule_id,
-                    query=schedule.query,
-                    opportunity_count=len(opportunities),
-                    opportunities=summaries,
-                )
-                self.scheduler.mark_ran(schedule.schedule_id, now)
-            except Exception as error:
-                result = ScheduledSearchResult(
-                    schedule_id=schedule.schedule_id,
-                    query=schedule.query,
-                    error=str(error),
-                )
-
-            self.history_store.append(result)
-            results.append(result)
-
+        results = [
+            self.run_schedule(schedule.schedule_id, now)
+            for schedule in self.scheduler.due(now)
+        ]
         self.last_results = results
         return list(results)

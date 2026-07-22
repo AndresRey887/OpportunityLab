@@ -8,14 +8,15 @@ Codename: Trailblazer
 
 ## Current Package
 
-Package-020A-30
+Package-020A-31
 
 ### Purpose
 
-Display saved scheduled-search results in the Scheduled Searches window.
+Allow any saved schedule to be run immediately.
 
 ### Replaced files
 
+- `src/scheduling/scheduled_search_runner.py`
 - `src/ui/scheduled_search_window.py`
 - `src/version.py`
 - `docs/AI_HANDOVER.md`
@@ -23,17 +24,17 @@ Display saved scheduled-search results in the Scheduled Searches window.
 
 ### New files
 
-- `scripts/test_phase2_scheduled_results_ui.py`
+- `scripts/test_phase2_schedule_run_now.py`
 
 ### Behaviour
 
-- The Scheduled Searches window includes recent scheduled results.
-- Each entry shows query, completion status, time, count, and up to three titles.
-- Failed scheduled searches display their error.
-- A Refresh button reloads results written by the background monitor.
+- Every saved schedule has a `Run Now` button.
+- Manual scheduled searches run through the background task manager.
+- Results save to scheduled history and appear after completion.
+- Successful manual runs reset the schedule's next-run time.
 
 ### Test
 
-`python scripts\test_phase2_scheduled_results_ui.py`
+`python scripts\test_phase2_schedule_run_now.py`
 
-Expected: `Phase 2 scheduled results UI test passed.`
+Expected: `Phase 2 schedule Run Now test passed.`

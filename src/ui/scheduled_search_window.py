@@ -24,6 +24,7 @@ class ScheduledSearchWindow(ctk.CTkToplevel):
         self.transient(master)
 
         self.scheduler = master.search_scheduler
+        self.runner = master.scheduled_search_runner
         self.history_store = master.scheduled_search_runner.history_store
         self.available_sources = master.search_service.registry.all_names()
         self.source_variables = {
@@ -198,12 +199,19 @@ class ScheduledSearchWindow(ctk.CTkToplevel):
 
             ctk.CTkButton(
                 row,
+                text="Run Now",
+                width=82,
+                command=lambda item=schedule: self.run_now(item.schedule_id),
+            ).grid(row=0, column=2, padx=4)
+
+            ctk.CTkButton(
+                row,
                 text="Delete",
                 width=75,
                 fg_color="#A33A3A",
                 hover_color="#7F2D2D",
                 command=lambda item=schedule: self.delete_schedule(item.schedule_id),
-            ).grid(row=0, column=2, padx=(4, 10))
+            ).grid(row=0, column=3, padx=(4, 10))
 
     def set_enabled(self, schedule_id, enabled):
         self.scheduler.set_enabled(schedule_id, enabled)
@@ -213,6 +221,30 @@ class ScheduledSearchWindow(ctk.CTkToplevel):
         self.scheduler.remove(schedule_id)
         self.message.configure(text="Schedule deleted.")
         self.refresh_schedules()
+
+    def run_now(self, schedule_id):
+        self.message.configure(text="Running scheduled search...")
+        self.master.task_manager.submit(
+            name="Run scheduled search now",
+            target=self.runner.run_schedule,
+            args=(schedule_id,),
+            on_success=self.finish_run_now,
+            on_error=self.fail_run_now,
+        )
+
+    def finish_run_now(self, result):
+        if result.succeeded:
+            self.message.configure(
+                text=f"Scheduled search finished: {result.opportunity_count} result(s)."
+            )
+        else:
+            self.message.configure(text=f"Scheduled search failed: {result.error}")
+
+        self.refresh_schedules()
+        self.refresh_history()
+
+    def fail_run_now(self, error):
+        self.message.configure(text=f"Scheduled search failed: {error}")
 
     def refresh_history(self):
         for widget in self.history_list.winfo_children():
