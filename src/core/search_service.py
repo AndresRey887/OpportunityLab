@@ -1,6 +1,6 @@
 """
 Search Service
-Version: 0.12
+Version: 0.13
 Purpose: Coordinates OpportunityLab discovery sources, scoring, and filtering.
 """
 
@@ -37,6 +37,9 @@ class SearchService(Service):
         elif sources is not None:
             self.registry = SourceRegistry(sources)
         else:
+            from src.discovery.company_website_search_source import (
+                CompanyWebsiteSearchSource,
+            )
             from src.discovery.reddit_search_source import RedditSearchSource
             from src.discovery.serper_search_source import SerperSearchSource
             from src.discovery.youtube_search_source import YouTubeSearchSource
@@ -47,6 +50,7 @@ class SearchService(Service):
                     serper_source,
                     RedditSearchSource(client=serper_source.client),
                     YouTubeSearchSource(client=serper_source.client),
+                    CompanyWebsiteSearchSource(client=serper_source.client),
                 ]
             )
 
@@ -89,22 +93,16 @@ class SearchService(Service):
     ) -> list[Opportunity]:
         """Run selected discovery sources, score unique results, and filter."""
 
-        discovery_run = self.pipeline.run(
-            query,
-            source_names=source_names,
-        )
+        discovery_run = self.pipeline.run(query, source_names=source_names)
         self.last_discovery_run = discovery_run
 
         scored_opportunities = [
             self.engine.score(opportunity)
             for opportunity in discovery_run.opportunities
         ]
-
         self.source_statistics = self.pipeline.statistics()
 
-        filtered_opportunities = self.filter_engine.process(
-            scored_opportunities
-        )
+        filtered_opportunities = self.filter_engine.process(scored_opportunities)
         self.statistics = self.filter_engine.statistics
 
         self.last_search_run = SearchRun(
@@ -113,7 +111,6 @@ class SearchService(Service):
             filtered_count=self.statistics.filtered,
             filter_reasons=dict(self.statistics.reasons),
         )
-
         return filtered_opportunities
 
     def start(self) -> None:

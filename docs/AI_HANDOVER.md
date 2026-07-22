@@ -4,27 +4,24 @@
 
 Phase 1 is complete.
 
-OpportunityLab is a Python desktop application using CustomTkinter.
-
 ## Current Phase
 
-Phase 2 — Discovery Expansion
-
+Phase 2 — Discovery Expansion  
 Version: 0.20.0  
 Codename: Trailblazer
 
 ## Current Package
 
-Package-020A-14
+Package-020A-15
 
 ### Purpose
 
-Add YouTube as an additional live discovery source.
+Add company-website discovery using the existing Serper connection.
 
 ### New files
 
-- `src/discovery/youtube_search_source.py`
-- `scripts/test_phase2_youtube_source.py`
+- `src/discovery/company_website_search_source.py`
+- `scripts/test_phase2_company_website_source.py`
 
 ### Replaced files
 
@@ -35,20 +32,15 @@ Add YouTube as an additional live discovery source.
 
 ### Behaviour
 
-- Default searches now run general Serper, Reddit, and YouTube discovery.
-- YouTube discovery reuses the existing Serper API key and client.
-- Injected sources and registries keep their previous behaviour.
-- Failed sources remain isolated by the discovery pipeline.
+- Default searches now include general web, Reddit, YouTube, and company websites.
+- The new source excludes Reddit and YouTube from its own results.
+- It reuses the existing Serper API key and client.
 - The package test is offline and does not use an API key.
 
 ### Test
 
 ```text
-python scripts\test_phase2_youtube_source.py
+python scripts\test_phase2_company_website_source.py
 ```
 
-Expected:
-
-```text
-Phase 2 YouTube source test passed.
-```
+Expected: `Phase 2 company-website source test passed.`
