@@ -8,14 +8,15 @@ Codename: Trailblazer
 
 ## Current Package
 
-Package-020A-38
+Package-020A-39
 
 ### Purpose
 
-Allow result grouping to switch between source and website.
+Add sorting controls to the grouped main results list.
 
 ### Replaced files
 
+- `src/ui/main_window.py`
 - `src/ui/results_panel.py`
 - `src/version.py`
 - `docs/AI_HANDOVER.md`
@@ -23,18 +24,17 @@ Allow result grouping to switch between source and website.
 
 ### New files
 
-- `scripts/test_phase2_grouping_selector.py`
+- `scripts/test_phase2_result_sorting.py`
 
 ### Behaviour
 
-- A selector appears beside the Search Results heading.
-- `Source` groups results by discovery source.
-- `Website` groups results by normalized domain.
-- Switching modes redraws existing results without another search.
-- Groups remain collapsible in either mode.
+- Results can sort by highest score, lowest score, or title.
+- Sorting redraws current results without running another search.
+- Source and website grouping remain available.
+- MainWindow now sends the complete result list to ResultsPanel at once.
 
 ### Test
 
-`python scripts\test_phase2_grouping_selector.py`
+`python scripts\test_phase2_result_sorting.py`
 
-Expected: `Phase 2 grouping selector test passed.`
+Expected: `Phase 2 result sorting test passed.`

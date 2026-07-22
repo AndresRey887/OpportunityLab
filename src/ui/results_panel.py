@@ -13,6 +13,7 @@ class ResultsPanel(ctk.CTkFrame):
         self.opportunities = []
         self.grouper = OpportunityGrouper()
         self.group_mode = ctk.StringVar(value="Source")
+        self.sort_mode = ctk.StringVar(value="Score: High")
         self.group_frames = {}
         self.group_labels = {}
         self.group_counts = {}
@@ -38,6 +39,15 @@ class ResultsPanel(ctk.CTkFrame):
             width=110,
         )
         self.group_menu.pack(side="right")
+
+        self.sort_menu = ctk.CTkOptionMenu(
+            header,
+            values=["Score: High", "Score: Low", "Title"],
+            variable=self.sort_mode,
+            command=self.change_sorting,
+            width=120,
+        )
+        self.sort_menu.pack(side="right", padx=(0, 6))
 
         self.results_list = ctk.CTkScrollableFrame(self)
         self.results_list.pack(
@@ -127,10 +137,38 @@ class ResultsPanel(ctk.CTkFrame):
         self.opportunities.append(opportunity)
         self._render_opportunity(opportunity)
 
+    def show_opportunities(self, opportunities):
+        self.opportunities = list(opportunities)
+        self.refresh_results()
+
     def change_grouping(self, selected_mode=None):
+        self.refresh_results()
+
+    def change_sorting(self, selected_mode=None):
+        self.refresh_results()
+
+    def refresh_results(self):
         self._clear_rendered()
-        for opportunity in self.opportunities:
+        for opportunity in self._ordered_opportunities():
             self._render_opportunity(opportunity)
+
+    def _ordered_opportunities(self):
+        if self.sort_mode.get() == "Score: Low":
+            return sorted(
+                self.opportunities,
+                key=lambda item: (item.score, item.title.casefold()),
+            )
+
+        if self.sort_mode.get() == "Title":
+            return sorted(
+                self.opportunities,
+                key=lambda item: item.title.casefold(),
+            )
+
+        return sorted(
+            self.opportunities,
+            key=lambda item: (-item.score, item.title.casefold()),
+        )
 
     def _render_opportunity(self, opportunity):
         group = self._group_for(self._group_label(opportunity))

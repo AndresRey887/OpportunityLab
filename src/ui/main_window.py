@@ -1210,11 +1210,7 @@ class MainWindow(ctk.CTk):
 
         self.reset_intelligence_panel()
 
-        for opportunity in opportunities:
-
-            self.results.add_opportunity(
-                opportunity
-            )
+        self.results.show_opportunities(opportunities)
 
         self.progress.set(1.00)
         self.search_button.configure(state="normal")
