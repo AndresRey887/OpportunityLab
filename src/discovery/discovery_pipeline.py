@@ -2,11 +2,10 @@
 
 from __future__ import annotations
 
-from typing import Any
-
 from src.discovery.execution_result import SourceExecutionResult
 from src.discovery.result_aggregator import ResultAggregator
 from src.discovery.source_registry import SourceRegistry
+from src.models.opportunity import Opportunity
 
 
 class DiscoveryPipeline:
@@ -35,7 +34,7 @@ class DiscoveryPipeline:
                         items=items,
                     )
                 )
-            except Exception as error:  # A source failure must not stop other sources.
+            except Exception as error:
                 results.append(
                     SourceExecutionResult(
                         source_name=source.name,
@@ -50,8 +49,8 @@ class DiscoveryPipeline:
     def aggregate(
         self,
         execution_results: list[SourceExecutionResult] | None = None,
-    ) -> list[dict[str, Any]]:
-        """Return one normalized collection from source execution results."""
+    ) -> list[Opportunity]:
+        """Return normalized Opportunity objects from source execution results."""
 
         results = self.last_results if execution_results is None else execution_results
         return self.aggregator.aggregate(results)
