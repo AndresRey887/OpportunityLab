@@ -8,32 +8,34 @@ Codename: Trailblazer
 
 ## Current Package
 
-Package-020A-22
+Package-020A-23
 
 ### Purpose
 
-Show the result count or failure state for every source after a search.
+Add the persistent model and storage foundation for scheduled searches.
+
+### New files
+
+- `src/scheduling/__init__.py`
+- `src/scheduling/search_schedule.py`
+- `src/scheduling/search_schedule_store.py`
+- `scripts/test_phase2_search_schedule.py`
 
 ### Replaced files
 
-- `src/ui/main_window.py`
 - `src/version.py`
 - `docs/AI_HANDOVER.md`
 - `docs/BUILD_GUIDE.md`
 
-### New files
-
-- `scripts/test_phase2_source_status_counts.py`
-
 ### Behaviour
 
-- The first status line shows found, unique, displayed, and hidden totals.
-- The second status line shows each source and its raw result count.
-- Failed sources are labelled `failed` without stopping other sources.
-- Startup version display properties are retained.
+- Schedules store a query, interval, enabled state, and selected sources.
+- Last-run and next-run times use UTC ISO timestamps.
+- Schedules persist in `data/search_schedules.json`.
+- No UI or automatic execution changes in this package.
 
 ### Test
 
-`python scripts\test_phase2_source_status_counts.py`
+`python scripts\test_phase2_search_schedule.py`
 
-Expected: `Phase 2 source status-count test passed.`
+Expected: `Phase 2 search schedule test passed.`

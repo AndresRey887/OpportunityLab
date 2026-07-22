@@ -25,8 +25,8 @@ class VersionInfo:
 VERSION_INFO = VersionInfo(
     app_name="OpportunityLab",
     version="0.20.0",
-    package="Package-020A-22",
-    build=22,
+    package="Package-020A-23",
+    build=23,
     codename="Trailblazer",
     status="Development",
 )
