@@ -12,30 +12,31 @@ Codename: Trailblazer
 - Package-020A-14 — YouTube discovery source.
 - Package-020A-15 — Company-website discovery source.
 - Package-020A-16 — Source filter engine.
+- Package-020A-17 — Source filter UI.
 
-## Package-020A-17
+## Package-020A-18
 
 ### Goal
 
-Add source-selection controls to the Filter Manager.
+Skip unchecked discovery sources during searches.
 
 ### New files
 
-- `scripts/test_phase2_source_filter_ui.py`
+- `scripts/test_phase2_selected_source_execution.py`
 
 ### Complete replacements
 
-- `src/ui/filter_window.py`
+- `src/core/search_service.py`
 - `src/version.py`
 - `docs/AI_HANDOVER.md`
 - `docs/BUILD_GUIDE.md`
 
 ### Test command
 
-`python scripts\test_phase2_source_filter_ui.py`
+`python scripts\test_phase2_selected_source_execution.py`
 
 ### Expected result
 
-`Phase 2 source filter UI test passed.`
+`Phase 2 selected-source execution test passed.`
 
 Stop after this test and report `passed` or paste the error.

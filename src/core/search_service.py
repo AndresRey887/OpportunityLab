@@ -1,6 +1,6 @@
 """
 Search Service
-Version: 0.13
+Version: 0.14
 Purpose: Coordinates OpportunityLab discovery sources, scoring, and filtering.
 """
 
@@ -93,7 +93,22 @@ class SearchService(Service):
     ) -> list[Opportunity]:
         """Run selected discovery sources, score unique results, and filter."""
 
-        discovery_run = self.pipeline.run(query, source_names=source_names)
+        selected_source_names = source_names
+
+        if selected_source_names is None:
+            allowed_sources = set(self.filter_engine.get_allowed_sources())
+
+            if allowed_sources:
+                selected_source_names = [
+                    name
+                    for name in self.registry.enabled_names()
+                    if name.casefold() in allowed_sources
+                ]
+
+        discovery_run = self.pipeline.run(
+            query,
+            source_names=selected_source_names,
+        )
         self.last_discovery_run = discovery_run
 
         scored_opportunities = [
