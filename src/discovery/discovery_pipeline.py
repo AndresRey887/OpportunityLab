@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 from src.discovery.execution_result import SourceExecutionResult
+from src.discovery.opportunity_deduplicator import OpportunityDeduplicator
 from src.discovery.result_aggregator import ResultAggregator
 from src.discovery.source_registry import SourceRegistry
 from src.models.opportunity import Opportunity
@@ -15,9 +16,11 @@ class DiscoveryPipeline:
         self,
         registry: SourceRegistry,
         aggregator: ResultAggregator | None = None,
+        deduplicator: OpportunityDeduplicator | None = None,
     ) -> None:
         self.registry = registry
         self.aggregator = aggregator or ResultAggregator()
+        self.deduplicator = deduplicator or OpportunityDeduplicator()
         self.last_results: list[SourceExecutionResult] = []
 
     def execute(self, query: str) -> list[SourceExecutionResult]:
@@ -54,6 +57,15 @@ class DiscoveryPipeline:
 
         results = self.last_results if execution_results is None else execution_results
         return self.aggregator.aggregate(results)
+
+    def aggregate_unique(
+        self,
+        execution_results: list[SourceExecutionResult] | None = None,
+    ) -> list[Opportunity]:
+        """Return normalized opportunities with duplicates removed."""
+
+        opportunities = self.aggregate(execution_results)
+        return self.deduplicator.deduplicate(opportunities)
 
     def statistics(self) -> dict[str, dict[str, int | str | bool | None]]:
         """Return lightweight statistics for the most recent execution."""
