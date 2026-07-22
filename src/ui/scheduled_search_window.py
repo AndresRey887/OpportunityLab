@@ -266,7 +266,10 @@ class ScheduledSearchWindow(ctk.CTkToplevel):
             row.pack(fill="x", padx=5, pady=5)
 
             if result.succeeded:
-                status = f"Completed — {result.opportunity_count} result(s)"
+                status = (
+                    f"Completed — {result.opportunity_count} result(s), "
+                    f"{result.new_opportunity_count} new"
+                )
             else:
                 status = f"Failed — {result.error}"
 
@@ -293,7 +296,10 @@ class ScheduledSearchWindow(ctk.CTkToplevel):
 
                 button = ctk.CTkButton(
                     row,
-                    text=f"Open: {title}",
+                    text=(
+                        f"{'NEW — ' if opportunity.get('is_new') else ''}"
+                        f"Open: {title}"
+                    ),
                     anchor="w",
                     height=30,
                     command=lambda link=url: self.open_result(link),

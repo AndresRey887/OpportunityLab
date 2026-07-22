@@ -25,14 +25,27 @@ class ScheduledSearchRunner:
         self.last_results: list[ScheduledSearchResult] = []
 
     @staticmethod
-    def _opportunity_summary(opportunity: Any) -> dict:
+    def _opportunity_summary(opportunity: Any, known_urls: set[str]) -> dict:
+        url = str(getattr(opportunity, "url", "")).strip()
         return {
             "title": str(getattr(opportunity, "title", "")),
-            "url": str(getattr(opportunity, "url", "")),
+            "url": url,
             "snippet": str(getattr(opportunity, "snippet", "")),
             "source": str(getattr(opportunity, "source", "")),
             "score": int(getattr(opportunity, "score", 0) or 0),
+            "is_new": bool(url and url.casefold() not in known_urls),
         }
+
+    def _known_urls(self, schedule_id: str) -> set[str]:
+        known_urls = set()
+        for result in self.history_store.load():
+            if result.schedule_id != schedule_id:
+                continue
+            for opportunity in result.opportunities:
+                url = str(opportunity.get("url", "")).strip()
+                if url:
+                    known_urls.add(url.casefold())
+        return known_urls
 
     def run_schedule(
         self,
@@ -42,18 +55,23 @@ class ScheduledSearchRunner:
         schedule = self.scheduler.get(schedule_id)
 
         try:
+            known_urls = self._known_urls(schedule.schedule_id)
             opportunities = self.search_service.search(
                 schedule.query,
                 source_names=(schedule.source_names or None),
             )
             summaries = [
-                self._opportunity_summary(opportunity)
+                self._opportunity_summary(opportunity, known_urls)
                 for opportunity in opportunities
             ]
             result = ScheduledSearchResult(
                 schedule_id=schedule.schedule_id,
                 query=schedule.query,
                 opportunity_count=len(opportunities),
+                new_opportunity_count=sum(
+                    bool(summary["is_new"])
+                    for summary in summaries
+                ),
                 opportunities=summaries,
             )
             self.scheduler.mark_ran(schedule.schedule_id, now)

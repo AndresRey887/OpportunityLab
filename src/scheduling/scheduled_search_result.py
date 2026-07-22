@@ -11,6 +11,7 @@ class ScheduledSearchResult:
     schedule_id: str
     query: str
     opportunity_count: int = 0
+    new_opportunity_count: int = 0
     opportunities: list[dict] = field(default_factory=list)
     error: str | None = None
     completed_at: str = field(
@@ -26,6 +27,7 @@ class ScheduledSearchResult:
             "schedule_id": self.schedule_id,
             "query": self.query,
             "opportunity_count": self.opportunity_count,
+            "new_opportunity_count": self.new_opportunity_count,
             "opportunities": list(self.opportunities),
             "error": self.error,
             "completed_at": self.completed_at,
@@ -33,10 +35,14 @@ class ScheduledSearchResult:
 
     @classmethod
     def from_dict(cls, data: dict) -> "ScheduledSearchResult":
+        opportunity_count = int(data.get("opportunity_count", 0))
         return cls(
             schedule_id=str(data.get("schedule_id", "")),
             query=str(data.get("query", "")),
-            opportunity_count=int(data.get("opportunity_count", 0)),
+            opportunity_count=opportunity_count,
+            new_opportunity_count=int(
+                data.get("new_opportunity_count", opportunity_count)
+            ),
             opportunities=list(data.get("opportunities", [])),
             error=data.get("error"),
             completed_at=str(data.get("completed_at", "")),

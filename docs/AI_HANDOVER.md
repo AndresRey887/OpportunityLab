@@ -8,14 +8,16 @@ Codename: Trailblazer
 
 ## Current Package
 
-Package-020A-32
+Package-020A-33
 
 ### Purpose
 
-Make saved scheduled-search results directly actionable.
+Identify new opportunities in repeated scheduled searches.
 
 ### Replaced files
 
+- `src/scheduling/scheduled_search_result.py`
+- `src/scheduling/scheduled_search_runner.py`
 - `src/ui/scheduled_search_window.py`
 - `src/version.py`
 - `docs/AI_HANDOVER.md`
@@ -23,17 +25,17 @@ Make saved scheduled-search results directly actionable.
 
 ### New files
 
-- `scripts/test_phase2_scheduled_result_links.py`
+- `scripts/test_phase2_scheduled_new_results.py`
 
 ### Behaviour
 
-- Up to three opportunity links appear under each scheduled run.
-- Clicking an `Open:` button launches the opportunity URL.
-- Results without a URL display a disabled button.
-- Schedule creation, Run Now, and history behaviour remain unchanged.
+- Scheduled results compare opportunity URLs with earlier runs of that schedule.
+- Each run stores the total result count and new result count.
+- New opportunity buttons are marked `NEW` in scheduled history.
+- Repeated URLs are retained but are not counted as new.
 
 ### Test
 
-`python scripts\test_phase2_scheduled_result_links.py`
+`python scripts\test_phase2_scheduled_new_results.py`
 
-Expected: `Phase 2 scheduled result-link test passed.`
+Expected: `Phase 2 scheduled new-result test passed.`
