@@ -8,34 +8,35 @@ Codename: Trailblazer
 
 ## Current Package
 
-Package-020A-24
+Package-020A-25
 
 ### Purpose
 
-Manage saved schedules and identify searches that are due.
+Execute searches that the scheduler reports as due.
 
 ### New files
 
-- `src/scheduling/search_scheduler.py`
-- `scripts/test_phase2_search_scheduler.py`
+- `src/scheduling/scheduled_search_result.py`
+- `src/scheduling/scheduled_search_runner.py`
+- `scripts/test_phase2_scheduled_search_runner.py`
 
 ### Replaced files
 
 - `src/scheduling/__init__.py`
-- `src/scheduling/search_schedule.py`
 - `src/version.py`
 - `docs/AI_HANDOVER.md`
 - `docs/BUILD_GUIDE.md`
 
 ### Behaviour
 
-- Schedules can be added, loaded, enabled, disabled, and removed.
-- Due schedules are selected using UTC timestamps.
-- Completed schedules receive new last-run and next-run times.
-- No automatic execution or UI changes in this package.
+- Due schedules run through the existing SearchService interface.
+- A schedule can restrict execution to named discovery sources.
+- Successful runs store counts and advance the next-run time.
+- One failed schedule does not stop other scheduled searches.
+- No background timer or UI changes in this package.
 
 ### Test
 
-`python scripts\test_phase2_search_scheduler.py`
+`python scripts\test_phase2_scheduled_search_runner.py`
 
-Expected: `Phase 2 search scheduler test passed.`
+Expected: `Phase 2 scheduled search runner test passed.`
