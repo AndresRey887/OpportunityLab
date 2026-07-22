@@ -2,15 +2,23 @@
 
 from __future__ import annotations
 
+from typing import Any
+
 from src.discovery.execution_result import SourceExecutionResult
+from src.discovery.result_aggregator import ResultAggregator
 from src.discovery.source_registry import SourceRegistry
 
 
 class DiscoveryPipeline:
     """Execute every enabled source without allowing one failure to stop the rest."""
 
-    def __init__(self, registry: SourceRegistry) -> None:
+    def __init__(
+        self,
+        registry: SourceRegistry,
+        aggregator: ResultAggregator | None = None,
+    ) -> None:
         self.registry = registry
+        self.aggregator = aggregator or ResultAggregator()
         self.last_results: list[SourceExecutionResult] = []
 
     def execute(self, query: str) -> list[SourceExecutionResult]:
@@ -20,6 +28,7 @@ class DiscoveryPipeline:
             try:
                 raw_items = source.search(query)
                 items = [item for item in raw_items if isinstance(item, dict)]
+
                 results.append(
                     SourceExecutionResult(
                         source_name=source.name,
@@ -38,8 +47,18 @@ class DiscoveryPipeline:
         self.last_results = results
         return list(results)
 
+    def aggregate(
+        self,
+        execution_results: list[SourceExecutionResult] | None = None,
+    ) -> list[dict[str, Any]]:
+        """Return one normalized collection from source execution results."""
+
+        results = self.last_results if execution_results is None else execution_results
+        return self.aggregator.aggregate(results)
+
     def statistics(self) -> dict[str, dict[str, int | str | bool | None]]:
         """Return lightweight statistics for the most recent execution."""
+
         return {
             result.source_name: {
                 "succeeded": result.succeeded,
