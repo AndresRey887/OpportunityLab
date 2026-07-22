@@ -8,11 +8,11 @@ Codename: Trailblazer
 
 ## Current Package
 
-Package-020A-36
+Package-020A-37
 
 ### Purpose
 
-Group main search results by discovery source.
+Make source groups collapsible in the main results list.
 
 ### Replaced files
 
@@ -23,17 +23,17 @@ Group main search results by discovery source.
 
 ### New files
 
-- `scripts/test_phase2_grouped_results_ui.py`
+- `scripts/test_phase2_collapsible_result_groups.py`
 
 ### Behaviour
 
-- Result cards appear under source headings.
-- Each heading displays its current opportunity count.
-- Existing score colours, source labels, and click selection remain unchanged.
-- Groups reset before every new search.
+- Source headings act as expand and collapse buttons.
+- Arrow markers show each group's current state.
+- Counts remain visible while a group is collapsed.
+- Every new search begins with all groups expanded.
 
 ### Test
 
-`python scripts\test_phase2_grouped_results_ui.py`
+`python scripts\test_phase2_collapsible_result_groups.py`
 
-Expected: `Phase 2 grouped results UI test passed.`
+Expected: `Phase 2 collapsible result-group test passed.`

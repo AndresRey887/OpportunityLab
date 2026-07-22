@@ -10,16 +10,17 @@ Codename: Trailblazer
 - Package-020A-01 through Package-020A-22 — Discovery, filtering, and reporting.
 - Package-020A-23 through Package-020A-34 — Scheduled searches and notifications.
 - Package-020A-35 — Opportunity grouping foundation.
+- Package-020A-36 — Grouped results UI.
 
-## Package-020A-36
+## Package-020A-37
 
 ### Goal
 
-Display main results in source groups.
+Allow source result groups to collapse and expand.
 
 ### New files
 
-- `scripts/test_phase2_grouped_results_ui.py`
+- `scripts/test_phase2_collapsible_result_groups.py`
 
 ### Complete replacements
 
@@ -30,10 +31,10 @@ Display main results in source groups.
 
 ### Test command
 
-`python scripts\test_phase2_grouped_results_ui.py`
+`python scripts\test_phase2_collapsible_result_groups.py`
 
 ### Expected result
 
-`Phase 2 grouped results UI test passed.`
+`Phase 2 collapsible result-group test passed.`
 
 Stop after this test and report `passed` or paste the error.

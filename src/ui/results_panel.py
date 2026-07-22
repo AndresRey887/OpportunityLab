@@ -11,6 +11,7 @@ class ResultsPanel(ctk.CTkFrame):
         self.group_frames = {}
         self.group_labels = {}
         self.group_counts = {}
+        self.collapsed_groups = set()
         self.build_ui()
 
     def build_ui(self):
@@ -36,6 +37,7 @@ class ResultsPanel(ctk.CTkFrame):
         self.group_frames.clear()
         self.group_labels.clear()
         self.group_counts.clear()
+        self.collapsed_groups.clear()
 
     def score_colour(self, score):
         if score >= 90:
@@ -54,11 +56,14 @@ class ResultsPanel(ctk.CTkFrame):
             group = ctk.CTkFrame(self.results_list)
             group.pack(fill="x", padx=2, pady=(5, 10))
 
-            heading = ctk.CTkLabel(
+            heading = ctk.CTkButton(
                 group,
-                text=f"{label} (0)",
+                text=f"▼  {label} (0)",
                 anchor="w",
                 font=("Segoe UI", 14, "bold"),
+                fg_color="transparent",
+                hover_color=("gray80", "gray25"),
+                command=lambda group_key=key: self.toggle_group(group_key),
             )
             heading.pack(fill="x", padx=10, pady=(8, 3))
 
@@ -71,8 +76,26 @@ class ResultsPanel(ctk.CTkFrame):
 
         self.group_counts[key] += 1
         heading, label = self.group_labels[key]
-        heading.configure(text=f"{label} ({self.group_counts[key]})")
+        marker = "▶" if key in self.collapsed_groups else "▼"
+        heading.configure(text=f"{marker}  {label} ({self.group_counts[key]})")
         return self.group_frames[key]
+
+    def toggle_group(self, key):
+        card_area = self.group_frames[key]
+        heading, label = self.group_labels[key]
+
+        if key in self.collapsed_groups:
+            self.collapsed_groups.remove(key)
+            card_area.pack(fill="x", padx=5, pady=(0, 5))
+            marker = "▼"
+        else:
+            self.collapsed_groups.add(key)
+            card_area.pack_forget()
+            marker = "▶"
+
+        heading.configure(
+            text=f"{marker}  {label} ({self.group_counts[key]})"
+        )
 
     def add_opportunity(self, opportunity):
         group = self._group_for(getattr(opportunity, "source", ""))
