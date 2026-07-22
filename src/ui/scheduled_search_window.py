@@ -19,11 +19,12 @@ class ScheduledSearchWindow(ctk.CTkToplevel):
     def __init__(self, master=None):
         super().__init__(master)
         self.title("Scheduled Searches")
-        self.geometry("720x700")
-        self.minsize(620, 560)
+        self.geometry("780x820")
+        self.minsize(660, 680)
         self.transient(master)
 
         self.scheduler = master.search_scheduler
+        self.history_store = master.scheduled_search_runner.history_store
         self.available_sources = master.search_service.registry.all_names()
         self.source_variables = {
             source: ctk.BooleanVar(value=True)
@@ -32,10 +33,12 @@ class ScheduledSearchWindow(ctk.CTkToplevel):
 
         self.build_ui()
         self.refresh_schedules()
+        self.refresh_history()
 
     def build_ui(self):
         self.grid_columnconfigure(0, weight=1)
         self.grid_rowconfigure(1, weight=1)
+        self.grid_rowconfigure(2, weight=1)
 
         form = ctk.CTkFrame(self)
         form.grid(row=0, column=0, sticky="ew", padx=12, pady=12)
@@ -100,6 +103,31 @@ class ScheduledSearchWindow(ctk.CTkToplevel):
 
         self.schedule_list = ctk.CTkScrollableFrame(list_frame)
         self.schedule_list.grid(row=1, column=0, sticky="nsew", padx=10, pady=(0, 10))
+
+        history_frame = ctk.CTkFrame(self)
+        history_frame.grid(row=2, column=0, sticky="nsew", padx=12, pady=(0, 12))
+        history_frame.grid_columnconfigure(0, weight=1)
+        history_frame.grid_rowconfigure(1, weight=1)
+
+        history_header = ctk.CTkFrame(history_frame, fg_color="transparent")
+        history_header.grid(row=0, column=0, sticky="ew", padx=12, pady=(10, 4))
+        history_header.grid_columnconfigure(0, weight=1)
+
+        ctk.CTkLabel(
+            history_header,
+            text="Recent Scheduled Results",
+            font=("Segoe UI", 17, "bold"),
+        ).grid(row=0, column=0, sticky="w")
+
+        ctk.CTkButton(
+            history_header,
+            text="Refresh",
+            width=85,
+            command=self.refresh_history,
+        ).grid(row=0, column=1, sticky="e")
+
+        self.history_list = ctk.CTkScrollableFrame(history_frame)
+        self.history_list.grid(row=1, column=0, sticky="nsew", padx=10, pady=(0, 10))
 
     def add_schedule(self):
         query = self.query_entry.get().strip()
@@ -185,3 +213,47 @@ class ScheduledSearchWindow(ctk.CTkToplevel):
         self.scheduler.remove(schedule_id)
         self.message.configure(text="Schedule deleted.")
         self.refresh_schedules()
+
+    def refresh_history(self):
+        for widget in self.history_list.winfo_children():
+            widget.destroy()
+
+        results = self.history_store.load()
+        if not results:
+            ctk.CTkLabel(
+                self.history_list,
+                text="No scheduled search results yet.",
+                anchor="w",
+            ).pack(fill="x", padx=10, pady=12)
+            return
+
+        for result in reversed(results[-20:]):
+            row = ctk.CTkFrame(self.history_list)
+            row.pack(fill="x", padx=5, pady=5)
+
+            if result.succeeded:
+                status = f"Completed — {result.opportunity_count} result(s)"
+            else:
+                status = f"Failed — {result.error}"
+
+            titles = [
+                str(item.get("title", "")).strip()
+                for item in result.opportunities[:3]
+                if str(item.get("title", "")).strip()
+            ]
+            title_text = "\n".join(f"• {title}" for title in titles)
+            details = (
+                f"{result.query}\n"
+                f"{status}\n"
+                f"{result.completed_at}"
+            )
+            if title_text:
+                details = f"{details}\n{title_text}"
+
+            ctk.CTkLabel(
+                row,
+                text=details,
+                justify="left",
+                anchor="w",
+                wraplength=650,
+            ).pack(fill="x", padx=10, pady=9)

@@ -8,35 +8,32 @@ Codename: Trailblazer
 
 ## Current Package
 
-Package-020A-29
+Package-020A-30
 
 ### Purpose
 
-Persist the results produced by scheduled searches.
-
-### New files
-
-- `src/scheduling/scheduled_search_history_store.py`
-- `scripts/test_phase2_scheduled_result_history.py`
+Display saved scheduled-search results in the Scheduled Searches window.
 
 ### Replaced files
 
-- `src/scheduling/__init__.py`
-- `src/scheduling/scheduled_search_result.py`
-- `src/scheduling/scheduled_search_runner.py`
+- `src/ui/scheduled_search_window.py`
 - `src/version.py`
 - `docs/AI_HANDOVER.md`
 - `docs/BUILD_GUIDE.md`
 
+### New files
+
+- `scripts/test_phase2_scheduled_results_ui.py`
+
 ### Behaviour
 
-- Scheduled results save to `data/scheduled_search_results.json`.
-- Each run stores its query, completion time, count, error, and result summaries.
-- Result history retains the most recent 200 scheduled runs.
-- Existing main-window integration uses this storage automatically.
+- The Scheduled Searches window includes recent scheduled results.
+- Each entry shows query, completion status, time, count, and up to three titles.
+- Failed scheduled searches display their error.
+- A Refresh button reloads results written by the background monitor.
 
 ### Test
 
-`python scripts\test_phase2_scheduled_result_history.py`
+`python scripts\test_phase2_scheduled_results_ui.py`
 
-Expected: `Phase 2 scheduled result-history test passed.`
+Expected: `Phase 2 scheduled results UI test passed.`
