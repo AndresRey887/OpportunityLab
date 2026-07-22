@@ -20,12 +20,13 @@ Focus: Expand discovery sources without destabilising Phase 1.
 - Package-020A-10 — SearchService integration.
 - Package-020A-11 — Per-search source selection.
 - Package-020A-12 — Structured SearchRun result.
+- Package-020A-13 — Reddit discovery source.
 
-## Package-020A-13
+## Package-020A-14
 
 ### Goal
 
-Add Reddit discovery using the existing Serper connection.
+Add YouTube discovery using the existing Serper connection.
 
 ### Files to copy
 
@@ -34,8 +35,8 @@ OpportunityLab project. Replace existing files when prompted.
 
 ### New files
 
-- `src/discovery/reddit_search_source.py`
-- `scripts/test_phase2_reddit_source.py`
+- `src/discovery/youtube_search_source.py`
+- `scripts/test_phase2_youtube_source.py`
 
 ### Complete replacements
 
@@ -47,13 +48,13 @@ OpportunityLab project. Replace existing files when prompted.
 ### Test command
 
 ```text
-python scripts\test_phase2_reddit_source.py
+python scripts\test_phase2_youtube_source.py
 ```
 
 ### Expected result
 
 ```text
-Phase 2 Reddit source test passed.
+Phase 2 YouTube source test passed.
 ```
 
 ### Stop condition

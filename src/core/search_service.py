@@ -1,6 +1,6 @@
 """
 Search Service
-Version: 0.11
+Version: 0.12
 Purpose: Coordinates OpportunityLab discovery sources, scoring, and filtering.
 """
 
@@ -39,12 +39,14 @@ class SearchService(Service):
         else:
             from src.discovery.reddit_search_source import RedditSearchSource
             from src.discovery.serper_search_source import SerperSearchSource
+            from src.discovery.youtube_search_source import YouTubeSearchSource
 
             serper_source = SerperSearchSource()
             self.registry = SourceRegistry(
                 [
                     serper_source,
                     RedditSearchSource(client=serper_source.client),
+                    YouTubeSearchSource(client=serper_source.client),
                 ]
             )
 

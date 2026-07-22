@@ -15,16 +15,16 @@ Codename: Trailblazer
 
 ## Current Package
 
-Package-020A-13
+Package-020A-14
 
 ### Purpose
 
-Add Reddit as the first additional live discovery source.
+Add YouTube as an additional live discovery source.
 
 ### New files
 
-- `src/discovery/reddit_search_source.py`
-- `scripts/test_phase2_reddit_source.py`
+- `src/discovery/youtube_search_source.py`
+- `scripts/test_phase2_youtube_source.py`
 
 ### Replaced files
 
@@ -35,8 +35,8 @@ Add Reddit as the first additional live discovery source.
 
 ### Behaviour
 
-- Default searches now run the existing general Serper search and a Reddit-specific search.
-- Reddit discovery reuses the existing Serper API key and client.
+- Default searches now run general Serper, Reddit, and YouTube discovery.
+- YouTube discovery reuses the existing Serper API key and client.
 - Injected sources and registries keep their previous behaviour.
 - Failed sources remain isolated by the discovery pipeline.
 - The package test is offline and does not use an API key.
@@ -44,11 +44,11 @@ Add Reddit as the first additional live discovery source.
 ### Test
 
 ```text
-python scripts\test_phase2_reddit_source.py
+python scripts\test_phase2_youtube_source.py
 ```
 
 Expected:
 
 ```text
-Phase 2 Reddit source test passed.
+Phase 2 YouTube source test passed.
 ```
