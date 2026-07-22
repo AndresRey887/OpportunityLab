@@ -29,26 +29,38 @@ class SearchSchedule:
 
         self.source_names = list(dict.fromkeys(self.source_names))
 
+    @staticmethod
+    def _utc(datetime_value: datetime) -> datetime:
+        if datetime_value.tzinfo is None:
+            datetime_value = datetime_value.replace(tzinfo=timezone.utc)
+        return datetime_value.astimezone(timezone.utc)
+
     def schedule_next(self, now: datetime | None = None) -> str:
-        current = now or datetime.now(timezone.utc)
-
-        if current.tzinfo is None:
-            current = current.replace(tzinfo=timezone.utc)
-
-        next_run = current.astimezone(timezone.utc) + timedelta(
-            minutes=self.interval_minutes
-        )
+        current = self._utc(now or datetime.now(timezone.utc))
+        next_run = current + timedelta(minutes=self.interval_minutes)
         self.next_run_at = next_run.isoformat()
         return self.next_run_at
 
     def mark_ran(self, now: datetime | None = None) -> None:
-        current = now or datetime.now(timezone.utc)
-
-        if current.tzinfo is None:
-            current = current.replace(tzinfo=timezone.utc)
-
-        self.last_run_at = current.astimezone(timezone.utc).isoformat()
+        current = self._utc(now or datetime.now(timezone.utc))
+        self.last_run_at = current.isoformat()
         self.schedule_next(current)
+
+    def is_due(self, now: datetime | None = None) -> bool:
+        if not self.enabled:
+            return False
+
+        if self.next_run_at is None:
+            return True
+
+        try:
+            next_run = datetime.fromisoformat(self.next_run_at)
+        except ValueError:
+            return True
+
+        return self._utc(next_run) <= self._utc(
+            now or datetime.now(timezone.utc)
+        )
 
     def to_dict(self) -> dict:
         return {

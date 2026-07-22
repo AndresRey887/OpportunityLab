@@ -7,36 +7,34 @@ Codename: Trailblazer
 
 ## Completed Packages
 
-- Package-020A-01 through Package-020A-12 — Discovery pipeline foundation.
-- Package-020A-13 through Package-020A-15 — Live discovery sources.
-- Package-020A-16 through Package-020A-18 — Source filtering and execution.
-- Package-020A-19 through Package-020A-22 — Filter persistence and search reporting.
+- Package-020A-01 through Package-020A-22 — Discovery, filtering, and reporting.
+- Package-020A-23 — Search schedule model and storage.
 
-## Package-020A-23
+## Package-020A-24
 
 ### Goal
 
-Add the model and storage foundation for scheduled searches.
+Manage persistent schedules and identify due searches.
 
 ### New files
 
-- `src/scheduling/__init__.py`
-- `src/scheduling/search_schedule.py`
-- `src/scheduling/search_schedule_store.py`
-- `scripts/test_phase2_search_schedule.py`
+- `src/scheduling/search_scheduler.py`
+- `scripts/test_phase2_search_scheduler.py`
 
 ### Complete replacements
 
+- `src/scheduling/__init__.py`
+- `src/scheduling/search_schedule.py`
 - `src/version.py`
 - `docs/AI_HANDOVER.md`
 - `docs/BUILD_GUIDE.md`
 
 ### Test command
 
-`python scripts\test_phase2_search_schedule.py`
+`python scripts\test_phase2_search_scheduler.py`
 
 ### Expected result
 
-`Phase 2 search schedule test passed.`
+`Phase 2 search scheduler test passed.`
 
 Stop after this test and report `passed` or paste the error.

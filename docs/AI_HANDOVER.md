@@ -8,34 +8,34 @@ Codename: Trailblazer
 
 ## Current Package
 
-Package-020A-23
+Package-020A-24
 
 ### Purpose
 
-Add the persistent model and storage foundation for scheduled searches.
+Manage saved schedules and identify searches that are due.
 
 ### New files
 
-- `src/scheduling/__init__.py`
-- `src/scheduling/search_schedule.py`
-- `src/scheduling/search_schedule_store.py`
-- `scripts/test_phase2_search_schedule.py`
+- `src/scheduling/search_scheduler.py`
+- `scripts/test_phase2_search_scheduler.py`
 
 ### Replaced files
 
+- `src/scheduling/__init__.py`
+- `src/scheduling/search_schedule.py`
 - `src/version.py`
 - `docs/AI_HANDOVER.md`
 - `docs/BUILD_GUIDE.md`
 
 ### Behaviour
 
-- Schedules store a query, interval, enabled state, and selected sources.
-- Last-run and next-run times use UTC ISO timestamps.
-- Schedules persist in `data/search_schedules.json`.
-- No UI or automatic execution changes in this package.
+- Schedules can be added, loaded, enabled, disabled, and removed.
+- Due schedules are selected using UTC timestamps.
+- Completed schedules receive new last-run and next-run times.
+- No automatic execution or UI changes in this package.
 
 ### Test
 
-`python scripts\test_phase2_search_schedule.py`
+`python scripts\test_phase2_search_scheduler.py`
 
-Expected: `Phase 2 search schedule test passed.`
+Expected: `Phase 2 search scheduler test passed.`
