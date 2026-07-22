@@ -15,4 +15,5 @@ class SearchSource(ABC):
     @abstractmethod
     def search(self, query: str) -> list[dict[str, Any]]:
         """Return raw result dictionaries for a search query."""
+
         raise NotImplementedError

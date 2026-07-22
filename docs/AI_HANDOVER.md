@@ -6,24 +6,7 @@ Phase 1 is complete.
 
 OpportunityLab is a Python desktop application using CustomTkinter.
 
-Working features:
-
-- Serper search
-- SQLite database
-- Opportunity model
-- Rule engine
-- Opportunity scoring
-- Domain filters
-- Keyword filters
-- Filter Manager
-- Search history
-- Recent-search autocomplete
-- Gemini Opportunity Intelligence
-- Persistent AI cache
-- AI Router
-- Ollama provider foundation
-- Related Intelligence
-- AI Controller and stability foundations
+Working features include Serper search, SQLite storage, opportunity scoring, filters, search history, Gemini intelligence, Ollama foundations, AI routing, background tasks, logging, and the Phase 2 discovery-source registry and multi-source pipeline.
 
 ## Current Phase
 
@@ -34,7 +17,7 @@ Codename: Trailblazer
 
 ## Current Package
 
-Package-020A-03
+Package-020A-04
 
 ### Status
 
@@ -42,43 +25,42 @@ Ready for user test.
 
 ### Purpose
 
-Run all enabled discovery sources through one execution pipeline while preserving the existing search, scoring, and filtering behaviour.
+Add reusable result aggregation and source execution statistics for the Phase 2 multi-source discovery pipeline.
 
 ### New files
 
-- `src/discovery/execution_result.py`
-- `src/discovery/discovery_pipeline.py`
-- `scripts/test_phase2_multi_source_pipeline.py`
+- `src/discovery/discovery_result.py`
+- `src/discovery/result_aggregator.py`
+- `scripts/test_phase2_result_aggregation.py`
 
 ### Replaced files
 
 - `src/discovery/__init__.py`
-- `src/core/search_service.py`
 - `src/version.py`
 - `docs/AI_HANDOVER.md`
 - `docs/BUILD_GUIDE.md`
 
 ### Behaviour
 
-- Enabled sources execute in registry order.
-- One failed source does not stop the remaining sources.
-- Search results continue through the existing opportunity scoring and filtering pipeline.
-- Per-source success, result count, and error statistics are available after each search.
-- Serper remains the only default live source.
+- Combines result dictionaries from multiple discovery sources.
+- Removes duplicate links while preserving first-source order.
+- Records per-source result count, elapsed time, and errors.
+- Adds source attribution to aggregated results.
 - No UI changes.
+- No new live discovery source.
 
 ### Test
 
-```bat
-python scripts\test_phase2_multi_source_pipeline.py
+```text
+python scripts\test_phase2_result_aggregation.py
 ```
 
-Expected result:
+Expected:
 
 ```text
-Phase 2 multi-source pipeline test passed.
+Phase 2 result aggregation test passed.
 ```
 
 ## Next Package
 
-Do not begin until Package-020A-03 passes.
+Do not begin until Package-020A-04 passes.
