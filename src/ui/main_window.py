@@ -13,6 +13,9 @@ from src.ai.ai_controller import AIController
 from src.core.app_logger import get_logger
 from src.core.search_service import SearchService
 from src.core.task_manager import BackgroundTaskManager
+from src.scheduling.scheduled_search_monitor import ScheduledSearchMonitor
+from src.scheduling.scheduled_search_runner import ScheduledSearchRunner
+from src.scheduling.search_scheduler import SearchScheduler
 from src.services.search_history_service import SearchHistoryService
 from src.ui.details_panel import DetailsPanel
 from src.ui.filter_window import FilterWindow
@@ -42,6 +45,17 @@ class MainWindow(ctk.CTk):
         self.search_service = SearchService()
         self.search_history = SearchHistoryService()
 
+        self.scheduled_search_service = SearchService()
+        self.search_scheduler = SearchScheduler()
+        self.scheduled_search_runner = ScheduledSearchRunner(
+            self.search_scheduler,
+            self.scheduled_search_service,
+        )
+        self.scheduled_search_monitor = ScheduledSearchMonitor(
+            self.scheduled_search_runner,
+            check_interval_seconds=60.0,
+        )
+
         self.ai_controller = AIController()
         self.task_manager = BackgroundTaskManager(self)
         logger.info("Background task manager ready")
@@ -55,6 +69,8 @@ class MainWindow(ctk.CTk):
         self.suggestion_buttons = []
 
         self.build_ui()
+        self.scheduled_search_monitor.start()
+        logger.info("Scheduled search monitor started")
 
     def build_ui(self):
 
@@ -1753,6 +1769,7 @@ class MainWindow(ctk.CTk):
     def on_close(self):
         """Stop background workers before closing the application."""
         logger.info("Application closing")
+        self.scheduled_search_monitor.stop()
         self.task_manager.shutdown(wait=False)
         self.destroy()
 

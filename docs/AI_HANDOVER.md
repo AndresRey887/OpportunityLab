@@ -8,33 +8,33 @@ Codename: Trailblazer
 
 ## Current Package
 
-Package-020A-26
+Package-020A-27
 
 ### Purpose
 
-Add a background monitor for due scheduled searches.
-
-### New files
-
-- `src/scheduling/scheduled_search_monitor.py`
-- `scripts/test_phase2_scheduled_search_monitor.py`
+Connect scheduled-search monitoring to application startup and shutdown.
 
 ### Replaced files
 
-- `src/scheduling/__init__.py`
+- `src/ui/main_window.py`
 - `src/version.py`
 - `docs/AI_HANDOVER.md`
 - `docs/BUILD_GUIDE.md`
 
+### New files
+
+- `scripts/test_phase2_schedule_monitor_integration.py`
+
 ### Behaviour
 
-- The monitor checks due schedules at a configurable interval.
-- It runs on one daemon thread and supports clean start and stop.
-- A failed check is logged without terminating the monitor.
-- The monitor is not connected to the main window in this package.
+- OpportunityLab starts the scheduled-search monitor after building the UI.
+- The monitor checks for due schedules once per minute.
+- Scheduled searches use a separate SearchService instance.
+- The monitor stops cleanly before the application closes.
+- No schedule-management UI in this package.
 
 ### Test
 
-`python scripts\test_phase2_scheduled_search_monitor.py`
+`python scripts\test_phase2_schedule_monitor_integration.py`
 
-Expected: `Phase 2 scheduled search monitor test passed.`
+Expected: `Phase 2 schedule monitor integration test passed.`
