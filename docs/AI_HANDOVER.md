@@ -8,31 +8,33 @@ Codename: Trailblazer
 
 ## Current Package
 
-Package-020A-19
+Package-020A-20
 
 ### Purpose
 
-Show each opportunity's discovery source directly on its result card.
+Persist filter and source selections between application sessions.
+
+### New files
+
+- `src/filters/filter_settings_store.py`
+- `scripts/test_phase2_filter_persistence.py`
 
 ### Replaced files
 
-- `src/ui/results_panel.py`
+- `src/filters/filter_engine.py`
 - `src/version.py`
 - `docs/AI_HANDOVER.md`
 - `docs/BUILD_GUIDE.md`
 
-### New files
-
-- `scripts/test_phase2_result_source_labels.py`
-
 ### Behaviour
 
-- Every result card displays its source above the title.
-- Existing score colours and click selection remain unchanged.
+- Blocked domains, blocked keywords, and allowed sources save automatically.
+- Settings load from `data/filter_settings.json` at startup.
+- Missing or invalid settings files safely use defaults.
 - Startup version display properties are retained.
 
 ### Test
 
-`python scripts\test_phase2_result_source_labels.py`
+`python scripts\test_phase2_filter_persistence.py`
 
-Expected: `Phase 2 result source-label test passed.`
+Expected: `Phase 2 filter persistence test passed.`

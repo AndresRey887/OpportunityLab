@@ -8,36 +8,34 @@ Codename: Trailblazer
 ## Completed Packages
 
 - Package-020A-01 through Package-020A-12 — Discovery pipeline foundation.
-- Package-020A-13 — Reddit discovery source.
-- Package-020A-14 — YouTube discovery source.
-- Package-020A-15 — Company-website discovery source.
-- Package-020A-16 — Source filter engine.
-- Package-020A-17 — Source filter UI.
-- Package-020A-18 — Selected-source execution.
+- Package-020A-13 through Package-020A-15 — Live discovery sources.
+- Package-020A-16 through Package-020A-18 — Source filtering and execution.
+- Package-020A-19 — Result source labels.
 
-## Package-020A-19
+## Package-020A-20
 
 ### Goal
 
-Display discovery-source names on result cards.
+Save filter settings between application sessions.
 
 ### New files
 
-- `scripts/test_phase2_result_source_labels.py`
+- `src/filters/filter_settings_store.py`
+- `scripts/test_phase2_filter_persistence.py`
 
 ### Complete replacements
 
-- `src/ui/results_panel.py`
+- `src/filters/filter_engine.py`
 - `src/version.py`
 - `docs/AI_HANDOVER.md`
 - `docs/BUILD_GUIDE.md`
 
 ### Test command
 
-`python scripts\test_phase2_result_source_labels.py`
+`python scripts\test_phase2_filter_persistence.py`
 
 ### Expected result
 
-`Phase 2 result source-label test passed.`
+`Phase 2 filter persistence test passed.`
 
 Stop after this test and report `passed` or paste the error.
