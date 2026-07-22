@@ -8,33 +8,35 @@ Codename: Trailblazer
 
 ## Current Package
 
-Package-020A-28
+Package-020A-29
 
 ### Purpose
 
-Add a visible Scheduled Searches management window.
+Persist the results produced by scheduled searches.
 
 ### New files
 
-- `src/ui/scheduled_search_window.py`
-- `scripts/test_phase2_schedule_window.py`
+- `src/scheduling/scheduled_search_history_store.py`
+- `scripts/test_phase2_scheduled_result_history.py`
 
 ### Replaced files
 
-- `src/ui/main_window.py`
+- `src/scheduling/__init__.py`
+- `src/scheduling/scheduled_search_result.py`
+- `src/scheduling/scheduled_search_runner.py`
 - `src/version.py`
 - `docs/AI_HANDOVER.md`
 - `docs/BUILD_GUIDE.md`
 
 ### Behaviour
 
-- The main search bar includes a `Schedules...` button.
-- Users can add a query, interval, and discovery sources.
-- Saved schedules can be enabled, disabled, or deleted.
-- Changes persist through the existing schedule store.
+- Scheduled results save to `data/scheduled_search_results.json`.
+- Each run stores its query, completion time, count, error, and result summaries.
+- Result history retains the most recent 200 scheduled runs.
+- Existing main-window integration uses this storage automatically.
 
 ### Test
 
-`python scripts\test_phase2_schedule_window.py`
+`python scripts\test_phase2_scheduled_result_history.py`
 
-Expected: `Phase 2 schedule window test passed.`
+Expected: `Phase 2 scheduled result-history test passed.`
