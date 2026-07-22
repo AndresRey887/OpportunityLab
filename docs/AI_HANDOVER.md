@@ -8,33 +8,32 @@ Codename: Trailblazer
 
 ## Current Package
 
-Package-020A-20
+Package-020A-21
 
 ### Purpose
 
-Persist filter and source selections between application sessions.
-
-### New files
-
-- `src/filters/filter_settings_store.py`
-- `scripts/test_phase2_filter_persistence.py`
+Show complete search totals in the main status bar.
 
 ### Replaced files
 
-- `src/filters/filter_engine.py`
+- `src/ui/main_window.py`
 - `src/version.py`
 - `docs/AI_HANDOVER.md`
 - `docs/BUILD_GUIDE.md`
 
+### New files
+
+- `scripts/test_phase2_search_status.py`
+
 ### Behaviour
 
-- Blocked domains, blocked keywords, and allowed sources save automatically.
-- Settings load from `data/filter_settings.json` at startup.
-- Missing or invalid settings files safely use defaults.
+- Finished searches show raw found, unique, displayed, and hidden totals.
+- The status bar shows successful sources compared with attempted sources.
+- Failed-source isolation remains unchanged.
 - Startup version display properties are retained.
 
 ### Test
 
-`python scripts\test_phase2_filter_persistence.py`
+`python scripts\test_phase2_search_status.py`
 
-Expected: `Phase 2 filter persistence test passed.`
+Expected: `Phase 2 search status test passed.`

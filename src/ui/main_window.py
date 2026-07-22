@@ -1139,13 +1139,30 @@ class MainWindow(ctk.CTk):
         self.search_button.configure(state="normal")
 
         stats = self.search_service.statistics
+        search_run = self.search_service.last_search_run
+
+        if search_run is None:
+            found_count = stats.total
+            unique_count = stats.total
+            source_text = "Sources: unavailable"
+        else:
+            found_count = search_run.raw_result_count
+            unique_count = search_run.unique_result_count
+            successful_sources = (
+                search_run.source_count - search_run.failed_source_count
+            )
+            source_text = (
+                f"Sources: {successful_sources}/{search_run.source_count}"
+            )
 
         self.status.configure(
             text=(
                 f"Finished   "
-                f"Found: {stats.total}   "
+                f"Found: {found_count}   "
+                f"Unique: {unique_count}   "
                 f"Displayed: {stats.accepted}   "
-                f"Hidden: {stats.filtered}"
+                f"Hidden: {stats.filtered}   "
+                f"{source_text}"
             )
         )
 

@@ -11,31 +11,31 @@ Codename: Trailblazer
 - Package-020A-13 through Package-020A-15 — Live discovery sources.
 - Package-020A-16 through Package-020A-18 — Source filtering and execution.
 - Package-020A-19 — Result source labels.
+- Package-020A-20 — Persistent filter settings.
 
-## Package-020A-20
+## Package-020A-21
 
 ### Goal
 
-Save filter settings between application sessions.
+Display complete discovery and source totals after each search.
 
 ### New files
 
-- `src/filters/filter_settings_store.py`
-- `scripts/test_phase2_filter_persistence.py`
+- `scripts/test_phase2_search_status.py`
 
 ### Complete replacements
 
-- `src/filters/filter_engine.py`
+- `src/ui/main_window.py`
 - `src/version.py`
 - `docs/AI_HANDOVER.md`
 - `docs/BUILD_GUIDE.md`
 
 ### Test command
 
-`python scripts\test_phase2_filter_persistence.py`
+`python scripts\test_phase2_search_status.py`
 
 ### Expected result
 
-`Phase 2 filter persistence test passed.`
+`Phase 2 search status test passed.`
 
 Stop after this test and report `passed` or paste the error.
