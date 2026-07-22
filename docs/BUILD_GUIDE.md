@@ -3,8 +3,7 @@
 ## Phase 2
 
 Version: 0.20.0  
-Codename: Trailblazer  
-Focus: Expand discovery sources without destabilising Phase 1.
+Codename: Trailblazer
 
 ## Completed Packages
 
@@ -12,35 +11,31 @@ Focus: Expand discovery sources without destabilising Phase 1.
 - Package-020A-13 — Reddit discovery source.
 - Package-020A-14 — YouTube discovery source.
 - Package-020A-15 — Company-website discovery source.
+- Package-020A-16 — Source filter engine.
 
-## Package-020A-16
+## Package-020A-17
 
 ### Goal
 
-Add source-based filtering without changing current default behaviour.
+Add source-selection controls to the Filter Manager.
 
 ### New files
 
-- `src/filters/source_filter.py`
-- `scripts/test_phase2_source_filter.py`
+- `scripts/test_phase2_source_filter_ui.py`
 
 ### Complete replacements
 
-- `src/filters/filter_engine.py`
+- `src/ui/filter_window.py`
 - `src/version.py`
 - `docs/AI_HANDOVER.md`
 - `docs/BUILD_GUIDE.md`
 
 ### Test command
 
-```text
-python scripts\test_phase2_source_filter.py
-```
+`python scripts\test_phase2_source_filter_ui.py`
 
 ### Expected result
 
-```text
-Phase 2 source filter test passed.
-```
+`Phase 2 source filter UI test passed.`
 
 Stop after this test and report `passed` or paste the error.

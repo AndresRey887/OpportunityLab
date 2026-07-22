@@ -1,9 +1,5 @@
 # OpportunityLab AI Handover
 
-## Current Status
-
-Phase 1 is complete.
-
 ## Current Phase
 
 Phase 2 — Discovery Expansion  
@@ -12,36 +8,32 @@ Codename: Trailblazer
 
 ## Current Package
 
-Package-020A-16
+Package-020A-17
 
 ### Purpose
 
-Add discovery-source filtering to the filter engine.
-
-### New files
-
-- `src/filters/source_filter.py`
-- `scripts/test_phase2_source_filter.py`
+Add visible source-selection controls to the Filter Manager.
 
 ### Replaced files
 
-- `src/filters/filter_engine.py`
+- `src/ui/filter_window.py`
 - `src/version.py`
 - `docs/AI_HANDOVER.md`
 - `docs/BUILD_GUIDE.md`
 
+### New files
+
+- `scripts/test_phase2_source_filter_ui.py`
+
 ### Behaviour
 
-- An empty allowed-source list continues to show every source.
-- Selected source names can restrict the accepted opportunities.
-- Filter statistics record excluded sources as `Source not selected`.
-- Version display properties required by the main window are retained.
-- No UI changes in this package.
+- Filter Manager displays Serper, Reddit, YouTube, and Company Websites.
+- At least one result source must remain selected.
+- Selecting every source preserves the existing show-all behaviour.
+- Startup version display properties are retained.
 
 ### Test
 
-```text
-python scripts\test_phase2_source_filter.py
-```
+`python scripts\test_phase2_source_filter_ui.py`
 
-Expected: `Phase 2 source filter test passed.`
+Expected: `Phase 2 source filter UI test passed.`

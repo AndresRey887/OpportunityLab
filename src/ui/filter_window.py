@@ -25,6 +25,8 @@ class FilterWindow(ctk.CTkToplevel):
 
         self.pending_domains = []
         self.pending_keywords = []
+        self.available_sources = []
+        self.source_variables = {}
 
         self.selected_domain = ctk.StringVar(value="")
         self.selected_keyword = ctk.StringVar(value="")
@@ -46,6 +48,7 @@ class FilterWindow(ctk.CTkToplevel):
 
             self.pending_domains = []
             self.pending_keywords = []
+            self.available_sources = []
 
             return
 
@@ -56,6 +59,28 @@ class FilterWindow(ctk.CTkToplevel):
         self.pending_keywords = (
             self.filter_engine.get_blocked_keywords()
         )
+
+        try:
+            self.available_sources = (
+                self.master.search_service.registry.all_names()
+            )
+        except AttributeError:
+            self.available_sources = []
+
+        allowed_sources = {
+            source.casefold()
+            for source in self.filter_engine.get_allowed_sources()
+        }
+
+        self.source_variables = {
+            source: ctk.BooleanVar(
+                value=(
+                    not allowed_sources
+                    or source.casefold() in allowed_sources
+                )
+            )
+            for source in self.available_sources
+        }
 
     def build_ui(self):
 
@@ -137,6 +162,60 @@ class FilterWindow(ctk.CTkToplevel):
             padx=20,
             pady=(4, 10)
         )
+
+        #
+        # Result Sources
+        #
+
+        sources = ctk.CTkFrame(content)
+
+        sources.pack(
+            fill="x",
+            padx=10,
+            pady=10
+        )
+
+        ctk.CTkLabel(
+            sources,
+            text="Result Sources",
+            font=("Segoe UI", 16, "bold")
+        ).pack(
+            anchor="w",
+            padx=10,
+            pady=(10, 2)
+        )
+
+        ctk.CTkLabel(
+            sources,
+            text="Choose which sources can appear in the results.",
+            anchor="w"
+        ).pack(
+            fill="x",
+            padx=10,
+            pady=(0, 6)
+        )
+
+        for source in self.available_sources:
+            ctk.CTkCheckBox(
+                sources,
+                text=source,
+                variable=self.source_variables[source]
+            ).pack(
+                anchor="w",
+                padx=20,
+                pady=4
+            )
+
+        if not self.available_sources:
+            ctk.CTkLabel(
+                sources,
+                text="No discovery sources are available.",
+                anchor="w"
+            ).pack(
+                fill="x",
+                padx=20,
+                pady=(4, 10)
+            )
 
         #
         # Blocked Domains
@@ -594,6 +673,23 @@ class FilterWindow(ctk.CTkToplevel):
 
             return
 
+        selected_sources = [
+            source
+            for source, variable in self.source_variables.items()
+            if variable.get()
+        ]
+
+        if self.available_sources and not selected_sources:
+            self.message.configure(
+                text="Select at least one result source."
+            )
+            return
+
+        if len(selected_sources) == len(self.available_sources):
+            self.filter_engine.clear_allowed_sources()
+        else:
+            self.filter_engine.set_allowed_sources(selected_sources)
+
         self.filter_engine.set_blocked_domains(
             self.pending_domains
         )
@@ -605,6 +701,7 @@ class FilterWindow(ctk.CTkToplevel):
         self.message.configure(
             text=(
                 f"Applied {len(self.pending_domains)} domains and "
-                f"{len(self.pending_keywords)} keywords."
+                f"{len(self.pending_keywords)} keywords. "
+                f"Sources: {len(selected_sources)}."
             )
         )
