@@ -8,32 +8,31 @@ Codename: Trailblazer
 
 ## Current Package
 
-Package-020A-18
+Package-020A-19
 
 ### Purpose
 
-Make Filter Manager source selections control which searches execute.
+Show each opportunity's discovery source directly on its result card.
 
 ### Replaced files
 
-- `src/core/search_service.py`
+- `src/ui/results_panel.py`
 - `src/version.py`
 - `docs/AI_HANDOVER.md`
 - `docs/BUILD_GUIDE.md`
 
 ### New files
 
-- `scripts/test_phase2_selected_source_execution.py`
+- `scripts/test_phase2_result_source_labels.py`
 
 ### Behaviour
 
-- Unchecked sources are not called during a normal UI search.
-- Selecting every source preserves the existing all-source search.
-- Explicit programmatic `source_names` still take priority.
+- Every result card displays its source above the title.
+- Existing score colours and click selection remain unchanged.
 - Startup version display properties are retained.
 
 ### Test
 
-`python scripts\test_phase2_selected_source_execution.py`
+`python scripts\test_phase2_result_source_labels.py`
 
-Expected: `Phase 2 selected-source execution test passed.`
+Expected: `Phase 2 result source-label test passed.`

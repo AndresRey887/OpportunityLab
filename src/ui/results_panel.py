@@ -1,33 +1,24 @@
-"""
-OpportunityLab Results Panel
-"""
+"""OpportunityLab Results Panel."""
 
 import customtkinter as ctk
 
 
 class ResultsPanel(ctk.CTkFrame):
-
     def __init__(self, master, on_selected=None):
-
         super().__init__(master)
-
         self.on_selected = on_selected
         self.cards = []
-
         self.build_ui()
 
     def build_ui(self):
-
         title = ctk.CTkLabel(
             self,
             text="Search Results",
             font=("Segoe UI", 18, "bold")
         )
-
         title.pack(anchor="w", padx=10, pady=(10, 5))
 
         self.results_list = ctk.CTkScrollableFrame(self)
-
         self.results_list.pack(
             fill="both",
             expand=True,
@@ -36,37 +27,25 @@ class ResultsPanel(ctk.CTkFrame):
         )
 
     def clear(self):
-
         for widget in self.results_list.winfo_children():
             widget.destroy()
-
         self.cards.clear()
 
     def score_colour(self, score):
-
         if score >= 90:
             return "#2ECC71"
-
         if score >= 75:
             return "#3498DB"
-
         if score >= 50:
             return "#F1C40F"
-
         return "#E74C3C"
 
     def add_opportunity(self, opportunity):
-
         card = ctk.CTkFrame(
             self.results_list,
             cursor="hand2"
         )
-
-        card.pack(
-            fill="x",
-            padx=5,
-            pady=5
-        )
+        card.pack(fill="x", padx=5, pady=5)
 
         badge = ctk.CTkLabel(
             card,
@@ -77,39 +56,43 @@ class ResultsPanel(ctk.CTkFrame):
             text_color="white",
             font=("Segoe UI", 14, "bold")
         )
+        badge.pack(side="left", padx=10, pady=10)
 
-        badge.pack(
+        text_area = ctk.CTkFrame(card, fg_color="transparent")
+        text_area.pack(
             side="left",
-            padx=10,
-            pady=10
+            fill="x",
+            expand=True,
+            padx=(0, 8),
+            pady=7
         )
 
+        source = ctk.CTkLabel(
+            text_area,
+            text=str(getattr(opportunity, "source", "Unknown Source")),
+            anchor="w",
+            text_color=("gray35", "gray70"),
+            font=("Segoe UI", 11, "bold")
+        )
+        source.pack(fill="x", anchor="w")
+
         title = ctk.CTkLabel(
-            card,
+            text_area,
             text=opportunity.title,
             anchor="w",
             justify="left",
             wraplength=300
         )
+        title.pack(fill="x", anchor="w", pady=(2, 0))
 
-        title.pack(
-            side="left",
-            fill="x",
-            expand=True,
-            padx=5
-        )
-
-        for widget in (card, badge, title):
-
+        for widget in (card, badge, text_area, source, title):
             widget.bind(
                 "<Button-1>",
-                lambda e, o=opportunity: self.select(o)
+                lambda event, item=opportunity: self.select(item)
             )
 
         self.cards.append(card)
 
     def select(self, opportunity):
-
         if self.on_selected:
-
             self.on_selected(opportunity)

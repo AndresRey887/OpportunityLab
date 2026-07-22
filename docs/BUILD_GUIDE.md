@@ -13,30 +13,31 @@ Codename: Trailblazer
 - Package-020A-15 — Company-website discovery source.
 - Package-020A-16 — Source filter engine.
 - Package-020A-17 — Source filter UI.
+- Package-020A-18 — Selected-source execution.
 
-## Package-020A-18
+## Package-020A-19
 
 ### Goal
 
-Skip unchecked discovery sources during searches.
+Display discovery-source names on result cards.
 
 ### New files
 
-- `scripts/test_phase2_selected_source_execution.py`
+- `scripts/test_phase2_result_source_labels.py`
 
 ### Complete replacements
 
-- `src/core/search_service.py`
+- `src/ui/results_panel.py`
 - `src/version.py`
 - `docs/AI_HANDOVER.md`
 - `docs/BUILD_GUIDE.md`
 
 ### Test command
 
-`python scripts\test_phase2_selected_source_execution.py`
+`python scripts\test_phase2_result_source_labels.py`
 
 ### Expected result
 
-`Phase 2 selected-source execution test passed.`
+`Phase 2 result source-label test passed.`
 
 Stop after this test and report `passed` or paste the error.
