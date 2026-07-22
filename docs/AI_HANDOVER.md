@@ -8,35 +8,32 @@ Codename: Trailblazer
 
 ## Current Package
 
-Package-020A-35
+Package-020A-36
 
 ### Purpose
 
-Add the foundation for grouping opportunities by source or website.
-
-### New files
-
-- `src/grouping/__init__.py`
-- `src/grouping/opportunity_group.py`
-- `src/grouping/opportunity_grouper.py`
-- `scripts/test_phase2_opportunity_grouping.py`
+Group main search results by discovery source.
 
 ### Replaced files
 
+- `src/ui/results_panel.py`
 - `src/version.py`
 - `docs/AI_HANDOVER.md`
 - `docs/BUILD_GUIDE.md`
 
+### New files
+
+- `scripts/test_phase2_grouped_results_ui.py`
+
 ### Behaviour
 
-- Opportunities can be grouped by discovery source.
-- Opportunities can be grouped by normalized website domain.
-- Groups expose their label, contents, and result count.
-- Groups are ordered by count and then label.
-- No UI changes in this package.
+- Result cards appear under source headings.
+- Each heading displays its current opportunity count.
+- Existing score colours, source labels, and click selection remain unchanged.
+- Groups reset before every new search.
 
 ### Test
 
-`python scripts\test_phase2_opportunity_grouping.py`
+`python scripts\test_phase2_grouped_results_ui.py`
 
-Expected: `Phase 2 opportunity grouping test passed.`
+Expected: `Phase 2 grouped results UI test passed.`

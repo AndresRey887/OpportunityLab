@@ -8,6 +8,9 @@ class ResultsPanel(ctk.CTkFrame):
         super().__init__(master)
         self.on_selected = on_selected
         self.cards = []
+        self.group_frames = {}
+        self.group_labels = {}
+        self.group_counts = {}
         self.build_ui()
 
     def build_ui(self):
@@ -30,6 +33,9 @@ class ResultsPanel(ctk.CTkFrame):
         for widget in self.results_list.winfo_children():
             widget.destroy()
         self.cards.clear()
+        self.group_frames.clear()
+        self.group_labels.clear()
+        self.group_counts.clear()
 
     def score_colour(self, score):
         if score >= 90:
@@ -40,11 +46,38 @@ class ResultsPanel(ctk.CTkFrame):
             return "#F1C40F"
         return "#E74C3C"
 
+    def _group_for(self, source):
+        label = str(source).strip() or "Unknown Source"
+        key = label.casefold()
+
+        if key not in self.group_frames:
+            group = ctk.CTkFrame(self.results_list)
+            group.pack(fill="x", padx=2, pady=(5, 10))
+
+            heading = ctk.CTkLabel(
+                group,
+                text=f"{label} (0)",
+                anchor="w",
+                font=("Segoe UI", 14, "bold"),
+            )
+            heading.pack(fill="x", padx=10, pady=(8, 3))
+
+            card_area = ctk.CTkFrame(group, fg_color="transparent")
+            card_area.pack(fill="x", padx=5, pady=(0, 5))
+
+            self.group_frames[key] = card_area
+            self.group_labels[key] = (heading, label)
+            self.group_counts[key] = 0
+
+        self.group_counts[key] += 1
+        heading, label = self.group_labels[key]
+        heading.configure(text=f"{label} ({self.group_counts[key]})")
+        return self.group_frames[key]
+
     def add_opportunity(self, opportunity):
-        card = ctk.CTkFrame(
-            self.results_list,
-            cursor="hand2"
-        )
+        group = self._group_for(getattr(opportunity, "source", ""))
+
+        card = ctk.CTkFrame(group, cursor="hand2")
         card.pack(fill="x", padx=5, pady=5)
 
         badge = ctk.CTkLabel(
