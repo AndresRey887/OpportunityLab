@@ -8,34 +8,33 @@ Codename: Trailblazer
 
 ## Current Package
 
-Package-020A-33
+Package-020A-34
 
 ### Purpose
 
-Identify new opportunities in repeated scheduled searches.
+Report completed background schedules in the main status bar.
 
 ### Replaced files
 
-- `src/scheduling/scheduled_search_result.py`
-- `src/scheduling/scheduled_search_runner.py`
-- `src/ui/scheduled_search_window.py`
+- `src/scheduling/scheduled_search_monitor.py`
+- `src/ui/main_window.py`
 - `src/version.py`
 - `docs/AI_HANDOVER.md`
 - `docs/BUILD_GUIDE.md`
 
 ### New files
 
-- `scripts/test_phase2_scheduled_new_results.py`
+- `scripts/test_phase2_scheduled_result_notice.py`
 
 ### Behaviour
 
-- Scheduled results compare opportunity URLs with earlier runs of that schedule.
-- Each run stores the total result count and new result count.
-- New opportunity buttons are marked `NEW` in scheduled history.
-- Repeated URLs are retained but are not counted as new.
+- The monitor forwards completed scheduled runs through a thread-safe queue.
+- The main window reports new-opportunity and failure counts.
+- Tkinter UI updates remain on the main application thread.
+- Scheduled result history remains available in the Schedules window.
 
 ### Test
 
-`python scripts\test_phase2_scheduled_new_results.py`
+`python scripts\test_phase2_scheduled_result_notice.py`
 
-Expected: `Phase 2 scheduled new-result test passed.`
+Expected: `Phase 2 scheduled result notice test passed.`

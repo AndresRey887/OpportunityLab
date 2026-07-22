@@ -5,6 +5,7 @@ from __future__ import annotations
 import logging
 import threading
 from datetime import datetime
+from typing import Any, Callable
 
 from src.scheduling.scheduled_search_runner import ScheduledSearchRunner
 
@@ -14,12 +15,14 @@ class ScheduledSearchMonitor:
         self,
         runner: ScheduledSearchRunner,
         check_interval_seconds: float = 60.0,
+        on_results: Callable[[list[Any]], None] | None = None,
     ) -> None:
         if check_interval_seconds <= 0:
             raise ValueError("Check interval must be greater than zero.")
 
         self.runner = runner
         self.check_interval_seconds = float(check_interval_seconds)
+        self.on_results = on_results
         self.logger = logging.getLogger("OpportunityLab.ScheduledSearchMonitor")
         self._stop_event = threading.Event()
         self._thread: threading.Thread | None = None
@@ -29,7 +32,12 @@ class ScheduledSearchMonitor:
         return self._thread is not None and self._thread.is_alive()
 
     def check_now(self, now: datetime | None = None):
-        return self.runner.run_due(now)
+        results = self.runner.run_due(now)
+
+        if results and self.on_results is not None:
+            self.on_results(list(results))
+
+        return results
 
     def start(self) -> None:
         if self.running:

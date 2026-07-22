@@ -5,6 +5,7 @@ Package-019B-03:
 MainWindow delegates all AI work to AIController.
 """
 
+import queue
 import webbrowser
 
 import customtkinter as ctk
@@ -48,6 +49,7 @@ class MainWindow(ctk.CTk):
 
         self.scheduled_search_service = SearchService()
         self.search_scheduler = SearchScheduler()
+        self.scheduled_result_queue = queue.Queue()
         self.scheduled_search_runner = ScheduledSearchRunner(
             self.search_scheduler,
             self.scheduled_search_service,
@@ -55,6 +57,7 @@ class MainWindow(ctk.CTk):
         self.scheduled_search_monitor = ScheduledSearchMonitor(
             self.scheduled_search_runner,
             check_interval_seconds=60.0,
+            on_results=self.queue_scheduled_results,
         )
 
         self.ai_controller = AIController()
@@ -72,7 +75,40 @@ class MainWindow(ctk.CTk):
 
         self.build_ui()
         self.scheduled_search_monitor.start()
+        self.after(1000, self.poll_scheduled_results)
         logger.info("Scheduled search monitor started")
+
+    def queue_scheduled_results(self, results):
+        self.scheduled_result_queue.put(list(results))
+
+    def poll_scheduled_results(self):
+        latest_results = None
+
+        while True:
+            try:
+                latest_results = self.scheduled_result_queue.get_nowait()
+            except queue.Empty:
+                break
+
+        if latest_results:
+            new_count = sum(
+                result.new_opportunity_count
+                for result in latest_results
+                if result.succeeded
+            )
+            failed_count = sum(
+                not result.succeeded
+                for result in latest_results
+            )
+            self.status.configure(
+                text=(
+                    f"Scheduled searches finished   "
+                    f"New opportunities: {new_count}   "
+                    f"Failed: {failed_count}"
+                )
+            )
+
+        self.after(1000, self.poll_scheduled_results)
 
     def build_ui(self):
 
