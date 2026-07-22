@@ -1151,8 +1151,22 @@ class MainWindow(ctk.CTk):
             successful_sources = (
                 search_run.source_count - search_run.failed_source_count
             )
+            source_parts = []
+
+            for source_name, source_stats in (
+                self.search_service.source_statistics.items()
+            ):
+                if source_stats.get("succeeded"):
+                    source_parts.append(
+                        f"{source_name}: {source_stats.get('result_count', 0)}"
+                    )
+                else:
+                    source_parts.append(f"{source_name}: failed")
+
+            source_detail = "   ".join(source_parts) or "No sources ran"
             source_text = (
-                f"Sources: {successful_sources}/{search_run.source_count}"
+                f"Sources: {successful_sources}/{search_run.source_count}   "
+                f"{source_detail}"
             )
 
         self.status.configure(
@@ -1161,7 +1175,7 @@ class MainWindow(ctk.CTk):
                 f"Found: {found_count}   "
                 f"Unique: {unique_count}   "
                 f"Displayed: {stats.accepted}   "
-                f"Hidden: {stats.filtered}   "
+                f"Hidden: {stats.filtered}\n"
                 f"{source_text}"
             )
         )

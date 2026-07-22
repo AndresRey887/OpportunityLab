@@ -8,11 +8,11 @@ Codename: Trailblazer
 
 ## Current Package
 
-Package-020A-21
+Package-020A-22
 
 ### Purpose
 
-Show complete search totals in the main status bar.
+Show the result count or failure state for every source after a search.
 
 ### Replaced files
 
@@ -23,17 +23,17 @@ Show complete search totals in the main status bar.
 
 ### New files
 
-- `scripts/test_phase2_search_status.py`
+- `scripts/test_phase2_source_status_counts.py`
 
 ### Behaviour
 
-- Finished searches show raw found, unique, displayed, and hidden totals.
-- The status bar shows successful sources compared with attempted sources.
-- Failed-source isolation remains unchanged.
+- The first status line shows found, unique, displayed, and hidden totals.
+- The second status line shows each source and its raw result count.
+- Failed sources are labelled `failed` without stopping other sources.
 - Startup version display properties are retained.
 
 ### Test
 
-`python scripts\test_phase2_search_status.py`
+`python scripts\test_phase2_source_status_counts.py`
 
-Expected: `Phase 2 search status test passed.`
+Expected: `Phase 2 source status-count test passed.`

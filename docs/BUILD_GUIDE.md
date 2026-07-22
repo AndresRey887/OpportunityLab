@@ -12,16 +12,17 @@ Codename: Trailblazer
 - Package-020A-16 through Package-020A-18 — Source filtering and execution.
 - Package-020A-19 — Result source labels.
 - Package-020A-20 — Persistent filter settings.
+- Package-020A-21 — Complete search totals.
 
-## Package-020A-21
+## Package-020A-22
 
 ### Goal
 
-Display complete discovery and source totals after each search.
+Display per-source result counts after each search.
 
 ### New files
 
-- `scripts/test_phase2_search_status.py`
+- `scripts/test_phase2_source_status_counts.py`
 
 ### Complete replacements
 
@@ -32,10 +33,10 @@ Display complete discovery and source totals after each search.
 
 ### Test command
 
-`python scripts\test_phase2_search_status.py`
+`python scripts\test_phase2_source_status_counts.py`
 
 ### Expected result
 
-`Phase 2 search status test passed.`
+`Phase 2 source status-count test passed.`
 
 Stop after this test and report `passed` or paste the error.
