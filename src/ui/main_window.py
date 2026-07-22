@@ -21,6 +21,7 @@ from src.ui.details_panel import DetailsPanel
 from src.ui.filter_window import FilterWindow
 from src.ui.related_search_panel import RelatedSearchPanel
 from src.ui.results_panel import ResultsPanel
+from src.ui.scheduled_search_window import ScheduledSearchWindow
 from src.version import VERSION_INFO
 
 
@@ -62,6 +63,7 @@ class MainWindow(ctk.CTk):
         self.protocol("WM_DELETE_WINDOW", self.on_close)
 
         self.filter_window = None
+        self.scheduled_search_window = None
         self.analysis_running = False
         self.related_search_running = False
         self.selected_opportunity = None
@@ -189,6 +191,20 @@ class MainWindow(ctk.CTk):
         self.filter_button.grid(
             row=0,
             column=4,
+            padx=5
+        )
+
+        self.schedule_button = ctk.CTkButton(
+            search_row,
+            text="Schedules...",
+            width=105,
+            height=38,
+            command=self.open_scheduled_searches
+        )
+
+        self.schedule_button.grid(
+            row=0,
+            column=5,
             padx=(5, 0)
         )
 
@@ -1096,6 +1112,19 @@ class MainWindow(ctk.CTk):
         self.filter_window = FilterWindow(
             self
         )
+
+    def open_scheduled_searches(self):
+
+        if self.scheduled_search_window is not None:
+
+            try:
+                if self.scheduled_search_window.winfo_exists():
+                    self.scheduled_search_window.focus()
+                    return
+            except Exception:
+                pass
+
+        self.scheduled_search_window = ScheduledSearchWindow(self)
 
     #
     # Search

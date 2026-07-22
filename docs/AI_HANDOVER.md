@@ -8,11 +8,16 @@ Codename: Trailblazer
 
 ## Current Package
 
-Package-020A-27
+Package-020A-28
 
 ### Purpose
 
-Connect scheduled-search monitoring to application startup and shutdown.
+Add a visible Scheduled Searches management window.
+
+### New files
+
+- `src/ui/scheduled_search_window.py`
+- `scripts/test_phase2_schedule_window.py`
 
 ### Replaced files
 
@@ -21,20 +26,15 @@ Connect scheduled-search monitoring to application startup and shutdown.
 - `docs/AI_HANDOVER.md`
 - `docs/BUILD_GUIDE.md`
 
-### New files
-
-- `scripts/test_phase2_schedule_monitor_integration.py`
-
 ### Behaviour
 
-- OpportunityLab starts the scheduled-search monitor after building the UI.
-- The monitor checks for due schedules once per minute.
-- Scheduled searches use a separate SearchService instance.
-- The monitor stops cleanly before the application closes.
-- No schedule-management UI in this package.
+- The main search bar includes a `Schedules...` button.
+- Users can add a query, interval, and discovery sources.
+- Saved schedules can be enabled, disabled, or deleted.
+- Changes persist through the existing schedule store.
 
 ### Test
 
-`python scripts\test_phase2_schedule_monitor_integration.py`
+`python scripts\test_phase2_schedule_window.py`
 
-Expected: `Phase 2 schedule monitor integration test passed.`
+Expected: `Phase 2 schedule window test passed.`
