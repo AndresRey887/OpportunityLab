@@ -6,8 +6,6 @@ Phase 1 is complete.
 
 OpportunityLab is a Python desktop application using CustomTkinter.
 
-Working features include Serper search, SQLite storage, opportunity scoring, filters, search history, Gemini intelligence, Ollama foundations, AI routing, background tasks, logging, and the Phase 2 discovery-source registry and multi-source pipeline.
-
 ## Current Phase
 
 Phase 2 — Discovery Expansion
@@ -17,24 +15,20 @@ Codename: Trailblazer
 
 ## Current Package
 
-Package-020A-04
-
-### Status
-
-Ready for user test.
+Package-020A-09
 
 ### Purpose
 
-Add reusable result aggregation and source execution statistics for the Phase 2 multi-source discovery pipeline.
+Add one structured result object for a complete discovery query.
 
 ### New files
 
-- `src/discovery/discovery_result.py`
-- `src/discovery/result_aggregator.py`
-- `scripts/test_phase2_result_aggregation.py`
+- `src/discovery/discovery_run.py`
+- `scripts/test_phase2_discovery_run.py`
 
 ### Replaced files
 
+- `src/discovery/discovery_pipeline.py`
 - `src/discovery/__init__.py`
 - `src/version.py`
 - `docs/AI_HANDOVER.md`
@@ -42,25 +36,22 @@ Add reusable result aggregation and source execution statistics for the Phase 2 
 
 ### Behaviour
 
-- Combines result dictionaries from multiple discovery sources.
-- Removes duplicate links while preserving first-source order.
-- Records per-source result count, elapsed time, and errors.
-- Adds source attribution to aggregated results.
+- Runs all enabled discovery sources.
+- Preserves source failures without stopping the run.
+- Normalizes and deduplicates opportunities.
+- Returns one `DiscoveryRun` object containing the query, source results,
+  unique opportunities, counts, and source errors.
 - No UI changes.
-- No new live discovery source.
+- No live API test required.
 
 ### Test
 
 ```text
-python scripts\test_phase2_result_aggregation.py
+python scripts\test_phase2_discovery_run.py
 ```
 
 Expected:
 
 ```text
-Phase 2 result aggregation test passed.
+Phase 2 discovery run test passed.
 ```
-
-## Next Package
-
-Do not begin until Package-020A-04 passes.
