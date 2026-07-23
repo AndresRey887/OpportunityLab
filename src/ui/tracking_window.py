@@ -19,6 +19,7 @@ class TrackingWindow(ctk.CTkToplevel):
         self.transient(master)
 
         self.service = master.tracking_service
+        self.reminder_service = master.reminder_service
         self.status_filter = ctk.StringVar(value="All")
         self.build_ui()
         self.refresh_records()
@@ -45,6 +46,20 @@ class TrackingWindow(ctk.CTkToplevel):
             width=130,
         ).grid(row=0, column=1, padx=12, pady=12)
 
+        self.reminder_summary = ctk.CTkLabel(
+            header,
+            text="",
+            anchor="w",
+        )
+        self.reminder_summary.grid(
+            row=1,
+            column=0,
+            columnspan=2,
+            sticky="ew",
+            padx=12,
+            pady=(0, 10),
+        )
+
         self.record_list = ctk.CTkScrollableFrame(self)
         self.record_list.grid(
             row=1,
@@ -60,6 +75,15 @@ class TrackingWindow(ctk.CTkToplevel):
     def refresh_records(self):
         for widget in self.record_list.winfo_children():
             widget.destroy()
+
+        due_count = len(self.reminder_service.due())
+        upcoming_count = len(self.reminder_service.upcoming(days=7))
+        self.reminder_summary.configure(
+            text=(
+                f"Due or overdue: {due_count}   "
+                f"Coming in 7 days: {upcoming_count}"
+            )
+        )
 
         records = self.service.all(self.status_filter.get())
         if not records:
@@ -78,9 +102,19 @@ class TrackingWindow(ctk.CTkToplevel):
         card.pack(fill="x", padx=5, pady=6)
         card.grid_columnconfigure(0, weight=1)
 
+        follow_up_text = (
+            f"   Follow-up: {record.follow_up_date}"
+            if record.follow_up_date
+            else ""
+        )
+
         ctk.CTkLabel(
             card,
-            text=f"{record.title}\n{record.source}   Score: {record.score}/100",
+            text=(
+                f"{record.title}\n"
+                f"{record.source}   Score: {record.score}/100"
+                f"{follow_up_text}"
+            ),
             justify="left",
             anchor="w",
             font=("Segoe UI", 14, "bold"),
@@ -157,6 +191,8 @@ class TrackingWindow(ctk.CTkToplevel):
             follow_up_date=follow_up_date,
         )
         self.message.configure(text="Notes and follow-up saved.")
+        self.master.refresh_tracking_notice()
+        self.refresh_records()
 
     def remove_record(self, record):
         if not messagebox.askyesno(
@@ -167,6 +203,7 @@ class TrackingWindow(ctk.CTkToplevel):
             return
         self.service.remove(record.tracking_id)
         self.message.configure(text="Tracked opportunity removed.")
+        self.master.refresh_tracking_notice()
         self.refresh_records()
 
     @staticmethod

@@ -14,6 +14,7 @@ from src.ai.ai_controller import AIController
 from src.core.app_logger import get_logger
 from src.core.search_service import SearchService
 from src.core.task_manager import BackgroundTaskManager
+from src.reminders.reminder_service import ReminderService
 from src.scheduling.scheduled_search_monitor import ScheduledSearchMonitor
 from src.scheduling.scheduled_search_runner import ScheduledSearchRunner
 from src.scheduling.search_scheduler import SearchScheduler
@@ -49,6 +50,7 @@ class MainWindow(ctk.CTk):
         self.search_service = SearchService()
         self.search_history = SearchHistoryService()
         self.tracking_service = TrackingService()
+        self.reminder_service = ReminderService(self.tracking_service)
 
         self.scheduled_search_service = SearchService()
         self.search_scheduler = SearchScheduler()
@@ -78,6 +80,7 @@ class MainWindow(ctk.CTk):
         self.suggestion_buttons = []
 
         self.build_ui()
+        self.refresh_tracking_notice()
         self.scheduled_search_monitor.start()
         self.after(1000, self.poll_scheduled_results)
         logger.info("Scheduled search monitor started")
@@ -113,6 +116,22 @@ class MainWindow(ctk.CTk):
             )
 
         self.after(1000, self.poll_scheduled_results)
+
+    def refresh_tracking_notice(self):
+        due_count = len(self.reminder_service.due())
+
+        self.tracking_button.configure(
+            text=(
+                f"Tracked ({due_count} due)..."
+                if due_count
+                else "Tracked..."
+            )
+        )
+
+        if due_count:
+            self.status.configure(
+                text=f"Follow-up reminders due: {due_count}"
+            )
 
     def build_ui(self):
 
@@ -1233,6 +1252,8 @@ class MainWindow(ctk.CTk):
             and self.tracking_window.winfo_exists()
         ):
             self.tracking_window.refresh_records()
+
+        self.refresh_tracking_notice()
 
     #
     # Search

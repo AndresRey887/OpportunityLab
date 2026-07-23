@@ -10,41 +10,40 @@ Phase 3 is in development.
 
 Version: 0.21.0  
 Codename: Catalyst  
-Package: Package-021A-01
+Package: Package-021A-02
 
-## Package-021A-01
+## Package-021A-02
 
 ### Purpose
 
-Deliver the first complete opportunity-tracking workflow.
+Add follow-up reminders and visible reminder notices to opportunity tracking.
 
 ### New files
 
-- `src/tracking/__init__.py`
-- `src/tracking/tracked_opportunity.py`
-- `src/tracking/tracking_store.py`
-- `src/tracking/tracking_service.py`
-- `src/ui/tracking_window.py`
-- `scripts/test_phase3_opportunity_tracking.py`
+- `src/reminders/__init__.py`
+- `src/reminders/follow_up_reminder.py`
+- `src/reminders/reminder_service.py`
+- `scripts/test_phase3_follow_up_reminders.py`
 
 ### Replaced files
 
 - `src/ui/main_window.py`
+- `src/ui/tracking_window.py`
 - `src/version.py`
 - `docs/AI_HANDOVER.md`
 - `docs/BUILD_GUIDE.md`
 
 ### Behaviour
 
-- Selected search results can be added to tracking.
-- Tracking records persist in `data/tracked_opportunities.json`.
-- Duplicate URLs are not added twice.
-- Tracked opportunities support status, 0–5 rating, notes, and follow-up date.
-- The main toolbar opens the Tracked Opportunities window.
-- Tracked records can be filtered, opened, updated, and removed.
+- Follow-up dates generate overdue, due-today, and upcoming reminders.
+- Closed opportunities do not generate reminders.
+- The main toolbar displays the number of due reminders.
+- Startup status reports due follow-ups.
+- The tracking window shows due and seven-day upcoming totals.
+- Each tracked card displays its follow-up date.
 
 ### Test
 
-`python scripts\test_phase3_opportunity_tracking.py`
+`python scripts\test_phase3_follow_up_reminders.py`
 
-Expected: `Phase 3 opportunity tracking test passed.`
+Expected: `Phase 3 follow-up reminder test passed.`
