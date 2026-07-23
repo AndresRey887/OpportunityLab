@@ -11,6 +11,7 @@ import webbrowser
 import customtkinter as ctk
 
 from src.ai.ai_controller import AIController
+from src.backups.backup_service import BackupService
 from src.contacts.contact_service import ContactService
 from src.exports.export_service import ExportService
 from src.core.app_logger import get_logger
@@ -34,6 +35,7 @@ from src.ui.tracking_window import TrackingWindow
 from src.ui.checklist_window import ChecklistWindow
 from src.ui.contact_history_window import ContactHistoryWindow
 from src.ui.draft_window import DraftWindow
+from src.ui.data_tools_window import DataToolsWindow
 from src.ui.pipeline_window import PipelineWindow
 from src.version import VERSION_INFO
 
@@ -75,6 +77,7 @@ class MainWindow(ctk.CTk):
             self.response_service,
             self.contact_service,
         )
+        self.backup_service = BackupService()
 
         self.scheduled_search_service = SearchService()
         self.search_scheduler = SearchScheduler()
@@ -98,6 +101,7 @@ class MainWindow(ctk.CTk):
         self.scheduled_search_window = None
         self.tracking_window = None
         self.pipeline_window = None
+        self.data_tools_window = None
         self.analysis_running = False
         self.related_search_running = False
         self.selected_opportunity = None
@@ -317,6 +321,20 @@ class MainWindow(ctk.CTk):
         self.pipeline_button.grid(
             row=0,
             column=7,
+            padx=5
+        )
+
+        self.data_tools_button = ctk.CTkButton(
+            search_row,
+            text="Data...",
+            width=85,
+            height=38,
+            command=self.open_data_tools
+        )
+
+        self.data_tools_button.grid(
+            row=0,
+            column=8,
             padx=(5, 0)
         )
 
@@ -1284,6 +1302,22 @@ class MainWindow(ctk.CTk):
             self,
             self.pipeline_service,
             self.export_service,
+        )
+
+    def open_data_tools(self):
+
+        if self.data_tools_window is not None:
+
+            try:
+                if self.data_tools_window.winfo_exists():
+                    self.data_tools_window.focus()
+                    return
+            except Exception:
+                pass
+
+        self.data_tools_window = DataToolsWindow(
+            self,
+            self.backup_service,
         )
 
     def track_selected_opportunity(self):
