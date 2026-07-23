@@ -1,6 +1,6 @@
 # OpportunityLab Build Guide
 
-## Install Package-022A-02
+## Install Package-022A-05
 
 Copy every folder from the package ZIP into the OpportunityLab project folder.
 Allow Windows to merge folders and replace existing files.
@@ -10,13 +10,13 @@ Allow Windows to merge folders and replace existing files.
 From `D:\OpportunityLab` with the virtual environment active:
 
 ```powershell
-python scripts/test_phase4_opportunity_timeline.py
+python scripts/test_phase4_recommendations.py
 ```
 
 Expected result:
 
 ```text
-Phase 4 opportunity timeline test passed.
+Phase 4 recommendation test passed.
 ```
 
 ## Run
@@ -25,5 +25,5 @@ Phase 4 opportunity timeline test passed.
 python -m src.ui.main_window
 ```
 
-Open **Tracked...** or **Pipeline...**, then choose **Timeline** beside a tracked
-opportunity.
+Select a search result and choose **Why This Opportunity?** to see its match
+score, confidence, reasons, and cautions.

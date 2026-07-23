@@ -13,12 +13,15 @@ import customtkinter as ctk
 from src.ai.ai_controller import AIController
 from src.backups.backup_service import BackupService
 from src.contacts.contact_service import ContactService
+from src.clustering.duplicate_cluster_service import DuplicateClusterService
 from src.exports.export_service import ExportService
+from src.learning.search_memory_service import SearchMemoryService
 from src.outcomes.outcome_service import OutcomeService
 from src.core.app_logger import get_logger
 from src.core.search_service import SearchService
 from src.core.task_manager import BackgroundTaskManager
 from src.reminders.reminder_service import ReminderService
+from src.recommendations.recommendation_service import RecommendationService
 from src.pipeline.pipeline_service import PipelineService
 from src.responses.response_service import ResponseService
 from src.scheduling.scheduled_search_monitor import ScheduledSearchMonitor
@@ -31,6 +34,7 @@ from src.workflows.workflow_service import WorkflowService
 from src.ui.details_panel import DetailsPanel
 from src.ui.filter_window import FilterWindow
 from src.ui.related_search_panel import RelatedSearchPanel
+from src.ui.recommendation_window import RecommendationWindow
 from src.ui.results_panel import ResultsPanel
 from src.ui.scheduled_search_window import ScheduledSearchWindow
 from src.ui.tracking_window import TrackingWindow
@@ -78,6 +82,15 @@ class MainWindow(ctk.CTk):
         )
         self.outcome_service = OutcomeService(
             timeline_service=self.timeline_service
+        )
+        self.duplicate_cluster_service = DuplicateClusterService()
+        self.search_memory_service = SearchMemoryService(
+            self.tracking_service,
+            self.outcome_service,
+        )
+        self.recommendation_service = RecommendationService(
+            self.search_memory_service,
+            self.outcome_service,
         )
         self.pipeline_service = PipelineService(
             self.tracking_service,
@@ -773,6 +786,19 @@ class MainWindow(ctk.CTk):
             pady=4
         )
 
+        self.recommendation_button = ctk.CTkButton(
+            action_card,
+            text="Why This Opportunity?",
+            command=self.open_selected_recommendation,
+            state="disabled"
+        )
+
+        self.recommendation_button.pack(
+            fill="x",
+            padx=12,
+            pady=4
+        )
+
         self.checklist_button = ctk.CTkButton(
             action_card,
             text="Create Checklist",
@@ -1410,6 +1436,20 @@ class MainWindow(ctk.CTk):
         )
         self.track_opportunity_button.configure(text="Tracked")
 
+    def open_selected_recommendation(self):
+
+        if self.selected_opportunity is None:
+            return
+
+        recommendation = self.recommendation_service.evaluate(
+            self.selected_opportunity
+        )
+        RecommendationWindow(
+            self,
+            self.selected_opportunity,
+            recommendation,
+        )
+
     #
     # Search
     #
@@ -1539,6 +1579,7 @@ class MainWindow(ctk.CTk):
         self.checklist_button.configure(state="normal")
         self.draft_email_button.configure(state="normal")
         self.draft_application_button.configure(state="normal")
+        self.recommendation_button.configure(state="normal")
 
         tracked = self.tracking_service.is_tracked(opportunity.url)
         self.track_opportunity_button.configure(

@@ -18,6 +18,7 @@ class TrackedOpportunity:
     url: str
     snippet: str = ""
     source: str = ""
+    search_query: str = ""
     score: int = 0
     status: str = "New"
     rating: int = 0
@@ -52,6 +53,12 @@ class TrackedOpportunity:
             url=url,
             snippet=str(getattr(opportunity, "snippet", "")),
             source=str(getattr(opportunity, "source", "")),
+            search_query=str(
+                getattr(opportunity, "metadata", {}).get(
+                    "search_query",
+                    "",
+                )
+            ),
             score=int(getattr(opportunity, "score", 0) or 0),
         )
 

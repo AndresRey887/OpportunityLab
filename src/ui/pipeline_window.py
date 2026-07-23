@@ -11,7 +11,9 @@ from src.tracking.tracked_opportunity import TrackedOpportunity
 from src.ui.checklist_window import ChecklistWindow
 from src.ui.contact_history_window import ContactHistoryWindow
 from src.ui.draft_window import DraftWindow
+from src.ui.duplicate_clusters_window import DuplicateClustersWindow
 from src.ui.outcome_window import OutcomeWindow
+from src.ui.search_memory_window import SearchMemoryWindow
 from src.ui.timeline_window import TimelineWindow
 
 
@@ -20,6 +22,8 @@ class PipelineWindow(ctk.CTkToplevel):
         super().__init__(master)
         self.service = service
         self.export_service = export_service
+        self.clusters_window = None
+        self.search_memory_window = None
 
         self.title("Opportunity Pipeline")
         self.geometry("1120x780")
@@ -69,10 +73,24 @@ class PipelineWindow(ctk.CTkToplevel):
 
         ctk.CTkButton(
             header,
+            text="Clusters",
+            width=90,
+            command=self.open_clusters,
+        ).grid(row=0, column=4, padx=6, pady=12)
+
+        ctk.CTkButton(
+            header,
+            text="Memory",
+            width=85,
+            command=self.open_search_memory,
+        ).grid(row=0, column=5, padx=6, pady=12)
+
+        ctk.CTkButton(
+            header,
             text="Refresh",
             width=90,
             command=self.refresh_dashboard,
-        ).grid(row=0, column=4, padx=12, pady=12)
+        ).grid(row=0, column=6, padx=12, pady=12)
 
         self.outcome_summary = ctk.CTkLabel(
             header,
@@ -82,7 +100,7 @@ class PipelineWindow(ctk.CTkToplevel):
         self.outcome_summary.grid(
             row=1,
             column=0,
-            columnspan=5,
+            columnspan=7,
             sticky="ew",
             padx=12,
             pady=(0, 10),
@@ -243,6 +261,34 @@ class PipelineWindow(ctk.CTkToplevel):
             self,
             record,
             self.master.timeline_service,
+        )
+
+    def open_clusters(self):
+        if self.clusters_window is not None:
+            try:
+                if self.clusters_window.winfo_exists():
+                    self.clusters_window.refresh_clusters()
+                    self.clusters_window.focus()
+                    return
+            except Exception:
+                pass
+        self.clusters_window = DuplicateClustersWindow(
+            self.master,
+            self.master.duplicate_cluster_service,
+        )
+
+    def open_search_memory(self):
+        if self.search_memory_window is not None:
+            try:
+                if self.search_memory_window.winfo_exists():
+                    self.search_memory_window.refresh_memory()
+                    self.search_memory_window.focus()
+                    return
+            except Exception:
+                pass
+        self.search_memory_window = SearchMemoryWindow(
+            self.master,
+            self.master.search_memory_service,
         )
 
     def export_csv(self):

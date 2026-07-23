@@ -115,6 +115,8 @@ class SearchService(Service):
             self.engine.score(opportunity)
             for opportunity in discovery_run.opportunities
         ]
+        for opportunity in scored_opportunities:
+            opportunity.metadata["search_query"] = query
         self.source_statistics = self.pipeline.statistics()
 
         filtered_opportunities = self.filter_engine.process(scored_opportunities)
