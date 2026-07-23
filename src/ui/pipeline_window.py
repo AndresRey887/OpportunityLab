@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import webbrowser
+from tkinter import filedialog
 
 import customtkinter as ctk
 
@@ -13,9 +14,10 @@ from src.ui.draft_window import DraftWindow
 
 
 class PipelineWindow(ctk.CTkToplevel):
-    def __init__(self, master, service):
+    def __init__(self, master, service, export_service):
         super().__init__(master)
         self.service = service
+        self.export_service = export_service
 
         self.title("Opportunity Pipeline")
         self.geometry("1120x780")
@@ -58,10 +60,17 @@ class PipelineWindow(ctk.CTkToplevel):
 
         ctk.CTkButton(
             header,
+            text="Export CSV",
+            width=100,
+            command=self.export_csv,
+        ).grid(row=0, column=3, padx=6, pady=12)
+
+        ctk.CTkButton(
+            header,
             text="Refresh",
             width=90,
             command=self.refresh_dashboard,
-        ).grid(row=0, column=3, padx=12, pady=12)
+        ).grid(row=0, column=4, padx=12, pady=12)
 
         self.total_frame = ctk.CTkFrame(self)
         self.total_frame.grid(row=1, column=0, sticky="ew", padx=12, pady=6)
@@ -129,7 +138,7 @@ class PipelineWindow(ctk.CTkToplevel):
         ).grid(
             row=0,
             column=0,
-            columnspan=4,
+            columnspan=5,
             sticky="ew",
             padx=12,
             pady=10,
@@ -160,6 +169,13 @@ class PipelineWindow(ctk.CTkToplevel):
             command=lambda: webbrowser.open(record.url) if record.url else None,
         ).grid(row=1, column=3, padx=(5, 12), pady=(0, 10))
 
+        ctk.CTkButton(
+            card,
+            text="Report",
+            width=80,
+            command=lambda: self.export_report(record),
+        ).grid(row=1, column=4, padx=(5, 12), pady=(0, 10))
+
     def open_checklist(self, record):
         workflow = self.master.workflow_service.get_or_create(record)
         ChecklistWindow(
@@ -174,3 +190,29 @@ class PipelineWindow(ctk.CTkToplevel):
 
     def open_contacts(self, record):
         ContactHistoryWindow(self, record, self.master.contact_service)
+
+    def export_csv(self):
+        path = filedialog.asksaveasfilename(
+            parent=self,
+            title="Export Pipeline CSV",
+            defaultextension=".csv",
+            initialfile="opportunity_pipeline.csv",
+            filetypes=[("CSV files", "*.csv")],
+        )
+        if path:
+            self.export_service.export_pipeline(
+                path,
+                stage=self.stage_value.get(),
+                priority=self.priority_value.get(),
+            )
+
+    def export_report(self, record):
+        path = filedialog.asksaveasfilename(
+            parent=self,
+            title="Export Opportunity Report",
+            defaultextension=".txt",
+            initialfile=self.export_service.suggested_report_name(record.title),
+            filetypes=[("Text files", "*.txt")],
+        )
+        if path:
+            self.export_service.export_opportunity_report(record, path)

@@ -1,6 +1,6 @@
 # OpportunityLab Build Guide
 
-## Install Package-021A-06
+## Install Package-021A-07
 
 Copy every folder from the package ZIP into the OpportunityLab project folder.
 Allow Windows to merge folders and replace existing files.
@@ -10,13 +10,13 @@ Allow Windows to merge folders and replace existing files.
 From `D:\OpportunityLab` with the virtual environment active:
 
 ```powershell
-python scripts/test_phase3_pipeline_dashboard.py
+python scripts/test_phase3_exports.py
 ```
 
 Expected result:
 
 ```text
-Phase 3 pipeline dashboard test passed.
+Phase 3 export test passed.
 ```
 
 ## Run
@@ -25,5 +25,5 @@ Phase 3 pipeline dashboard test passed.
 python -m src.ui.main_window
 ```
 
-Choose **Pipeline...** from the main toolbar to see stage totals, priority
-views, progress, drafts, and interaction counts.
+Open **Pipeline...**, then choose **Export CSV** for the current view or
+**Report** beside an opportunity.

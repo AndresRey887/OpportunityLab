@@ -12,6 +12,7 @@ import customtkinter as ctk
 
 from src.ai.ai_controller import AIController
 from src.contacts.contact_service import ContactService
+from src.exports.export_service import ExportService
 from src.core.app_logger import get_logger
 from src.core.search_service import SearchService
 from src.core.task_manager import BackgroundTaskManager
@@ -64,6 +65,12 @@ class MainWindow(ctk.CTk):
         self.contact_service = ContactService()
         self.pipeline_service = PipelineService(
             self.tracking_service,
+            self.workflow_service,
+            self.response_service,
+            self.contact_service,
+        )
+        self.export_service = ExportService(
+            self.pipeline_service,
             self.workflow_service,
             self.response_service,
             self.contact_service,
@@ -1276,6 +1283,7 @@ class MainWindow(ctk.CTk):
         self.pipeline_window = PipelineWindow(
             self,
             self.pipeline_service,
+            self.export_service,
         )
 
     def track_selected_opportunity(self):
