@@ -15,6 +15,7 @@ from src.core.app_logger import get_logger
 from src.core.search_service import SearchService
 from src.core.task_manager import BackgroundTaskManager
 from src.reminders.reminder_service import ReminderService
+from src.responses.response_service import ResponseService
 from src.scheduling.scheduled_search_monitor import ScheduledSearchMonitor
 from src.scheduling.scheduled_search_runner import ScheduledSearchRunner
 from src.scheduling.search_scheduler import SearchScheduler
@@ -28,6 +29,7 @@ from src.ui.results_panel import ResultsPanel
 from src.ui.scheduled_search_window import ScheduledSearchWindow
 from src.ui.tracking_window import TrackingWindow
 from src.ui.checklist_window import ChecklistWindow
+from src.ui.draft_window import DraftWindow
 from src.version import VERSION_INFO
 
 
@@ -54,6 +56,7 @@ class MainWindow(ctk.CTk):
         self.tracking_service = TrackingService()
         self.reminder_service = ReminderService(self.tracking_service)
         self.workflow_service = WorkflowService()
+        self.response_service = ResponseService()
 
         self.scheduled_search_service = SearchService()
         self.search_scheduler = SearchScheduler()
@@ -681,7 +684,8 @@ class MainWindow(ctk.CTk):
 
         self.draft_email_button = ctk.CTkButton(
             action_card,
-            text="Draft Email — Coming Soon",
+            text="Draft Response",
+            command=self.open_selected_draft,
             state="disabled"
         )
 
@@ -1276,6 +1280,21 @@ class MainWindow(ctk.CTk):
         )
         self.track_opportunity_button.configure(text="Tracked")
 
+    def open_selected_draft(self):
+
+        if self.selected_opportunity is None:
+            return
+
+        record, _ = self.tracking_service.track(
+            self.selected_opportunity
+        )
+        DraftWindow(
+            self,
+            record,
+            self.response_service,
+        )
+        self.track_opportunity_button.configure(text="Tracked")
+
     #
     # Search
     #
@@ -1403,6 +1422,7 @@ class MainWindow(ctk.CTk):
             state="normal"
         )
         self.checklist_button.configure(state="normal")
+        self.draft_email_button.configure(state="normal")
 
         tracked = self.tracking_service.is_tracked(opportunity.url)
         self.track_opportunity_button.configure(

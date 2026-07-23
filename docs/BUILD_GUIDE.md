@@ -1,6 +1,6 @@
 # OpportunityLab Build Guide
 
-## Install Package-021A-03
+## Install Package-021A-04
 
 Copy every folder from the package ZIP into the OpportunityLab project folder.
 Allow Windows to merge folders and replace existing files.
@@ -10,13 +10,13 @@ Allow Windows to merge folders and replace existing files.
 From `D:\OpportunityLab` with the virtual environment active:
 
 ```powershell
-python scripts/test_phase3_action_checklists.py
+python scripts/test_phase3_response_drafts.py
 ```
 
 Expected result:
 
 ```text
-Phase 3 action checklist test passed.
+Phase 3 response draft test passed.
 ```
 
 ## Run
@@ -25,5 +25,5 @@ Phase 3 action checklist test passed.
 python -m src.ui.main_window
 ```
 
-Select an opportunity and choose **Create Checklist**, or open **Tracked
-Opportunities** and choose **Checklist** beside an existing record.
+Select an opportunity and choose **Draft Response**, or open **Tracked
+Opportunities** and choose **Draft** beside an existing record.
