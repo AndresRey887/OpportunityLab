@@ -3,34 +3,33 @@
 ## Current build
 
 - Version: 0.21.0
-- Package: Package-021A-04
-- Build: 4
+- Package: Package-021A-05
+- Build: 5
 - Codename: Catalyst
 
-## Package-021A-04
+## Package-021A-05
 
-This package adds reusable response templates and saved draft workspaces.
+This package adds contact records and interaction histories.
 
-- Selected results can open a Draft Response workspace.
-- Tracked Opportunities provides direct Draft access.
-- Three built-in templates cover enquiries, expressions of interest, and
-  follow-ups.
-- Template fields automatically insert the opportunity title, URL, and source.
-- Subject and response body are saved separately for each opportunity.
-- Drafts can be copied to the clipboard.
-- Any edited draft can be saved as a reusable custom template.
-- Templates are stored in `data/response_templates.json`.
-- Drafts are stored in `data/opportunity_drafts.json`.
+- Every tracked opportunity can have a named contact and organisation.
+- Email, phone, website, and contact notes are saved persistently.
+- Interaction history supports Email, Phone, Meeting, Application, Note, and
+  Other entries.
+- Every history entry includes a date and summary.
+- History is displayed newest first and entries can be removed.
+- Selected results and Tracked Opportunities both provide direct access.
+- Contacts are stored in `data/opportunity_contacts.json`.
+- History is stored in `data/interaction_history.json`.
 
 ## New files
 
-- `src/responses/__init__.py`
-- `src/responses/response_template.py`
-- `src/responses/opportunity_draft.py`
-- `src/responses/response_store.py`
-- `src/responses/response_service.py`
-- `src/ui/draft_window.py`
-- `scripts/test_phase3_response_drafts.py`
+- `src/contacts/__init__.py`
+- `src/contacts/contact_record.py`
+- `src/contacts/interaction_entry.py`
+- `src/contacts/contact_store.py`
+- `src/contacts/contact_service.py`
+- `src/ui/contact_history_window.py`
+- `scripts/test_phase3_contacts_history.py`
 
 ## Replaced files
 
@@ -42,5 +41,5 @@ This package adds reusable response templates and saved draft workspaces.
 
 ## Next package
 
-Continue Phase 3 with contact records and an interaction history for each
-tracked opportunity.
+Continue Phase 3 with an opportunity pipeline dashboard, stage totals, and
+priority views.

@@ -11,6 +11,7 @@ import webbrowser
 import customtkinter as ctk
 
 from src.ai.ai_controller import AIController
+from src.contacts.contact_service import ContactService
 from src.core.app_logger import get_logger
 from src.core.search_service import SearchService
 from src.core.task_manager import BackgroundTaskManager
@@ -29,6 +30,7 @@ from src.ui.results_panel import ResultsPanel
 from src.ui.scheduled_search_window import ScheduledSearchWindow
 from src.ui.tracking_window import TrackingWindow
 from src.ui.checklist_window import ChecklistWindow
+from src.ui.contact_history_window import ContactHistoryWindow
 from src.ui.draft_window import DraftWindow
 from src.version import VERSION_INFO
 
@@ -57,6 +59,7 @@ class MainWindow(ctk.CTk):
         self.reminder_service = ReminderService(self.tracking_service)
         self.workflow_service = WorkflowService()
         self.response_service = ResponseService()
+        self.contact_service = ContactService()
 
         self.scheduled_search_service = SearchService()
         self.search_scheduler = SearchScheduler()
@@ -697,7 +700,8 @@ class MainWindow(ctk.CTk):
 
         self.draft_application_button = ctk.CTkButton(
             action_card,
-            text="Draft Application — Coming Soon",
+            text="Contacts & History",
+            command=self.open_selected_contacts,
             state="disabled"
         )
 
@@ -1295,6 +1299,21 @@ class MainWindow(ctk.CTk):
         )
         self.track_opportunity_button.configure(text="Tracked")
 
+    def open_selected_contacts(self):
+
+        if self.selected_opportunity is None:
+            return
+
+        record, _ = self.tracking_service.track(
+            self.selected_opportunity
+        )
+        ContactHistoryWindow(
+            self,
+            record,
+            self.contact_service,
+        )
+        self.track_opportunity_button.configure(text="Tracked")
+
     #
     # Search
     #
@@ -1423,6 +1442,7 @@ class MainWindow(ctk.CTk):
         )
         self.checklist_button.configure(state="normal")
         self.draft_email_button.configure(state="normal")
+        self.draft_application_button.configure(state="normal")
 
         tracked = self.tracking_service.is_tracked(opportunity.url)
         self.track_opportunity_button.configure(
