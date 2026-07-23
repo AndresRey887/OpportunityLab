@@ -14,6 +14,8 @@ from src.ai.ai_controller import AIController
 from src.backups.backup_service import BackupService
 from src.contacts.contact_service import ContactService
 from src.clustering.duplicate_cluster_service import DuplicateClusterService
+from src.companies.company_intelligence_service import CompanyIntelligenceService
+from src.competition.competitor_service import CompetitorService
 from src.exports.export_service import ExportService
 from src.feedback.recommendation_feedback_service import (
     RecommendationFeedbackService,
@@ -25,6 +27,7 @@ from src.core.search_service import SearchService
 from src.core.task_manager import BackgroundTaskManager
 from src.reminders.reminder_service import ReminderService
 from src.recommendations.recommendation_service import RecommendationService
+from src.research.research_evidence_service import ResearchEvidenceService
 from src.review.decision_review_service import DecisionReviewService
 from src.review.learning_export_service import LearningExportService
 from src.pipeline.pipeline_service import PipelineService
@@ -35,6 +38,11 @@ from src.scheduling.search_scheduler import SearchScheduler
 from src.services.search_history_service import SearchHistoryService
 from src.tracking.tracking_service import TrackingService
 from src.timeline.timeline_service import TimelineService
+from src.trends.trend_service import TrendService
+from src.signals.social_signal_service import SocialSignalService
+from src.launches.product_launch_service import ProductLaunchService
+from src.workspaces.research_workspace_service import ResearchWorkspaceService
+from src.briefs.discovery_brief_service import DiscoveryBriefService
 from src.workflows.workflow_service import WorkflowService
 from src.ui.details_panel import DetailsPanel
 from src.ui.filter_window import FilterWindow
@@ -45,6 +53,7 @@ from src.ui.scheduled_search_window import ScheduledSearchWindow
 from src.ui.tracking_window import TrackingWindow
 from src.ui.checklist_window import ChecklistWindow
 from src.ui.contact_history_window import ContactHistoryWindow
+from src.ui.company_profile_window import CompanyProfileWindow
 from src.ui.draft_window import DraftWindow
 from src.ui.data_tools_window import DataToolsWindow
 from src.ui.pipeline_window import PipelineWindow
@@ -89,6 +98,21 @@ class MainWindow(ctk.CTk):
             timeline_service=self.timeline_service
         )
         self.duplicate_cluster_service = DuplicateClusterService()
+        self.company_intelligence_service = CompanyIntelligenceService()
+        self.research_evidence_service = ResearchEvidenceService()
+        self.competitor_service = CompetitorService()
+        self.trend_service = TrendService()
+        self.social_signal_service = SocialSignalService()
+        self.product_launch_service = ProductLaunchService()
+        self.research_workspace_service = ResearchWorkspaceService()
+        self.discovery_brief_service = DiscoveryBriefService(
+            self.company_intelligence_service,
+            self.research_evidence_service,
+            self.competitor_service,
+            self.trend_service,
+            self.social_signal_service,
+            self.product_launch_service,
+        )
         self.search_memory_service = SearchMemoryService(
             self.tracking_service,
             self.outcome_service,
@@ -819,6 +843,19 @@ class MainWindow(ctk.CTk):
             pady=4
         )
 
+        self.company_intelligence_button = ctk.CTkButton(
+            action_card,
+            text="Company Intelligence",
+            command=self.open_selected_company,
+            state="disabled"
+        )
+
+        self.company_intelligence_button.pack(
+            fill="x",
+            padx=12,
+            pady=4
+        )
+
         self.checklist_button = ctk.CTkButton(
             action_card,
             text="Create Checklist",
@@ -1471,6 +1508,25 @@ class MainWindow(ctk.CTk):
             self.recommendation_feedback_service,
         )
 
+    def open_selected_company(self):
+
+        if self.selected_opportunity is None:
+            return
+
+        record, _ = self.tracking_service.track(
+            self.selected_opportunity
+        )
+        profile = self.company_intelligence_service.get_or_create(record)
+        CompanyProfileWindow(
+            self,
+            profile,
+            self.company_intelligence_service,
+            self.tracking_service,
+            self.research_evidence_service,
+            self.competitor_service,
+        )
+        self.track_opportunity_button.configure(text="Tracked")
+
     #
     # Search
     #
@@ -1601,6 +1657,7 @@ class MainWindow(ctk.CTk):
         self.draft_email_button.configure(state="normal")
         self.draft_application_button.configure(state="normal")
         self.recommendation_button.configure(state="normal")
+        self.company_intelligence_button.configure(state="normal")
 
         tracked = self.tracking_service.is_tracked(opportunity.url)
         self.track_opportunity_button.configure(

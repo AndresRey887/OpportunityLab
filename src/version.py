@@ -1,6 +1,5 @@
 from dataclasses import dataclass
 
-
 @dataclass(frozen=True)
 class VersionInfo:
     app_name: str
@@ -11,22 +10,21 @@ class VersionInfo:
     status: str
 
     @property
-    def window_title(self) -> str:
+    def window_title(self):
         return f"{self.app_name} {self.version}"
 
     @property
-    def full_label(self) -> str:
+    def full_label(self):
         return (
             f"{self.app_name} {self.version} | {self.package} | "
             f"Build {self.build} | {self.codename} | {self.status}"
         )
 
-
 VERSION_INFO = VersionInfo(
-    app_name="OpportunityLab",
-    version="0.22.0",
-    package="Package-022A-08",
-    build=8,
-    codename="Pathfinder",
-    status="Development",
+    "OpportunityLab",
+    "0.23.0",
+    "Package-023A-08A",
+    9,
+    "Discovery",
+    "Development",
 )

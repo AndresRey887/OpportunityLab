@@ -10,12 +10,17 @@ import customtkinter as ctk
 from src.tracking.tracked_opportunity import TrackedOpportunity
 from src.ui.checklist_window import ChecklistWindow
 from src.ui.contact_history_window import ContactHistoryWindow
+from src.ui.company_profile_window import CompanyProfileWindow
 from src.ui.draft_window import DraftWindow
 from src.ui.duplicate_clusters_window import DuplicateClustersWindow
 from src.ui.decision_review_window import DecisionReviewWindow
 from src.ui.outcome_window import OutcomeWindow
 from src.ui.search_memory_window import SearchMemoryWindow
 from src.ui.timeline_window import TimelineWindow
+from src.ui.market_trends_window import MarketTrendsWindow
+from src.ui.social_signals_window import SocialSignalsWindow
+from src.ui.product_launches_window import ProductLaunchesWindow
+from src.ui.research_workspaces_window import ResearchWorkspacesWindow
 
 
 class PipelineWindow(ctk.CTkToplevel):
@@ -26,9 +31,13 @@ class PipelineWindow(ctk.CTkToplevel):
         self.clusters_window = None
         self.search_memory_window = None
         self.decision_review_window = None
+        self.market_trends_window = None
+        self.social_signals_window = None
+        self.product_launches_window = None
+        self.research_workspaces_window = None
 
         self.title("Opportunity Pipeline")
-        self.geometry("1120x780")
+        self.geometry("1400x780")
         self.minsize(900, 620)
         self.transient(master)
         self.stage_value = ctk.StringVar(value="All")
@@ -96,10 +105,38 @@ class PipelineWindow(ctk.CTkToplevel):
 
         ctk.CTkButton(
             header,
+            text="Trends",
+            width=80,
+            command=self.open_market_trends,
+        ).grid(row=0, column=7, padx=6, pady=12)
+
+        ctk.CTkButton(
+            header,
+            text="Signals",
+            width=80,
+            command=self.open_social_signals,
+        ).grid(row=0, column=8, padx=6, pady=12)
+
+        ctk.CTkButton(
+            header,
+            text="Launches",
+            width=85,
+            command=self.open_product_launches,
+        ).grid(row=0, column=9, padx=6, pady=12)
+
+        ctk.CTkButton(
+            header,
+            text="Workspaces",
+            width=95,
+            command=self.open_research_workspaces,
+        ).grid(row=0, column=10, padx=6, pady=12)
+
+        ctk.CTkButton(
+            header,
             text="Refresh",
             width=90,
             command=self.refresh_dashboard,
-        ).grid(row=0, column=7, padx=12, pady=12)
+        ).grid(row=0, column=11, padx=12, pady=12)
 
         self.outcome_summary = ctk.CTkLabel(
             header,
@@ -109,7 +146,7 @@ class PipelineWindow(ctk.CTkToplevel):
         self.outcome_summary.grid(
             row=1,
             column=0,
-            columnspan=8,
+            columnspan=12,
             sticky="ew",
             padx=12,
             pady=(0, 10),
@@ -190,7 +227,7 @@ class PipelineWindow(ctk.CTkToplevel):
         ).grid(
             row=0,
             column=0,
-            columnspan=7,
+            columnspan=8,
             sticky="ew",
             padx=12,
             pady=10,
@@ -242,6 +279,13 @@ class PipelineWindow(ctk.CTkToplevel):
             command=lambda: self.open_timeline(record),
         ).grid(row=1, column=6, padx=(5, 12), pady=(0, 10))
 
+        ctk.CTkButton(
+            card,
+            text="Company",
+            width=85,
+            command=lambda: self.open_company(record),
+        ).grid(row=1, column=7, padx=(5, 12), pady=(0, 10))
+
     def open_checklist(self, record):
         workflow = self.master.workflow_service.get_or_create(record)
         ChecklistWindow(
@@ -270,6 +314,17 @@ class PipelineWindow(ctk.CTkToplevel):
             self,
             record,
             self.master.timeline_service,
+        )
+
+    def open_company(self, record):
+        profile = self.master.company_intelligence_service.get_or_create(record)
+        CompanyProfileWindow(
+            self,
+            profile,
+            self.master.company_intelligence_service,
+            self.master.tracking_service,
+            self.master.research_evidence_service,
+            self.master.competitor_service,
         )
 
     def open_clusters(self):
@@ -313,6 +368,67 @@ class PipelineWindow(ctk.CTkToplevel):
             self.master,
             self.master.decision_review_service,
             self.master.learning_export_service,
+        )
+
+    def open_market_trends(self):
+        if self.market_trends_window is not None:
+            try:
+                if self.market_trends_window.winfo_exists():
+                    self.market_trends_window.refresh_topics()
+                    self.market_trends_window.focus()
+                    return
+            except Exception:
+                pass
+        self.market_trends_window = MarketTrendsWindow(
+            self.master,
+            self.master.trend_service,
+        )
+
+    def open_social_signals(self):
+        if self.social_signals_window is not None:
+            try:
+                if self.social_signals_window.winfo_exists():
+                    self.social_signals_window.refresh_topics()
+                    self.social_signals_window.refresh_signals()
+                    self.social_signals_window.focus()
+                    return
+            except Exception:
+                pass
+        self.social_signals_window = SocialSignalsWindow(
+            self.master,
+            self.master.social_signal_service,
+            self.master.trend_service,
+        )
+
+    def open_product_launches(self):
+        if self.product_launches_window is not None:
+            try:
+                if self.product_launches_window.winfo_exists():
+                    self.product_launches_window.refresh_companies()
+                    self.product_launches_window.refresh_launches()
+                    self.product_launches_window.focus()
+                    return
+            except Exception:
+                pass
+        self.product_launches_window = ProductLaunchesWindow(
+            self.master,
+            self.master.product_launch_service,
+            self.master.company_intelligence_service,
+        )
+
+    def open_research_workspaces(self):
+        if self.research_workspaces_window is not None:
+            try:
+                if self.research_workspaces_window.winfo_exists():
+                    self.research_workspaces_window.refresh()
+                    self.research_workspaces_window.focus()
+                    return
+            except Exception:
+                pass
+        self.research_workspaces_window = ResearchWorkspacesWindow(
+            self.master,
+            self.master.research_workspace_service,
+            self.master.discovery_brief_service,
         )
 
     def export_csv(self):
