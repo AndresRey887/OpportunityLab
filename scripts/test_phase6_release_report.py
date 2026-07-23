@@ -24,6 +24,11 @@ def main() -> None:
             "customtkinter\n",
             encoding="utf-8",
         )
+        (root / "requirements-build.txt").write_text(
+            "pyinstaller\n",
+            encoding="utf-8",
+        )
+        (root / "OpportunityLab.spec").write_text("# spec\n", encoding="utf-8")
         (root / "src/version.py").write_text("# version\n", encoding="utf-8")
         (root / "docs/AI_HANDOVER.md").write_text("# Handover\n", encoding="utf-8")
         (root / "docs/BUILD_GUIDE.md").write_text("# Guide\n", encoding="utf-8")
@@ -55,8 +60,8 @@ def main() -> None:
         encoding="utf-8"
     )
     assert "Export Report" in ui_source
-    assert VERSION_INFO.package == "Package-100A-03"
-    assert VERSION_INFO.build == 5
+    assert VERSION_INFO.package == "Package-100A-08"
+    assert VERSION_INFO.build == 10
     print("Phase 6 release report test passed.")
 
 

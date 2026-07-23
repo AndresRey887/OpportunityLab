@@ -3,10 +3,11 @@
 ## Current build
 
 - Version: 1.0.0
-- Package: Package-100A-03
-- Build: 5
+- Package: Package-100A-08
+- Build: 10
 - Codename: Gold Rush
-- Phase: 6 — production readiness
+- Status: Production
+- Phase: 6 — complete
 
 ## Package 100A-01
 
@@ -28,7 +29,27 @@ Package 100A-03 installs a Tkinter callback error boundary. Unexpected UI
 callback failures are logged normally, saved as timestamped local crash reports
 under `logs`, and shown to the user with the report location.
 
+Package 100A-04 prepares reproducible Windows application builds with a
+PyInstaller spec, separate build dependency file, dependency-complete runtime
+requirements, and a guarded Windows build command.
+
+Package 100A-05 adds a controlled regression runner with per-test isolation,
+timeouts, captured failure details, execution timing, and a one-command Phase 6
+release-check summary.
+
+Package 100A-06 records monotonic application startup timings at service
+initialisation, interface construction, and ready state. The summary is written
+to the normal application log for performance comparison without user data.
+
+Package 100A-07 coordinates shutdown actions independently. The scheduled
+search monitor, background task manager, and main window are all given a chance
+to close even if another shutdown action fails; failures are logged.
+
+Package 100A-08 completes Phase 6 and marks OpportunityLab 1.0.0 as Production.
+Release manifests provide deterministic SHA-256 checksums for distributable
+source, scripts, documentation, requirements, and build configuration while
+excluding private application data.
+
 ## Next work
 
-Continue Phase 6 with regression coverage, performance checks, installer
-preparation, release documentation, and final stability work.
+Phase 6 production-readiness work is complete.

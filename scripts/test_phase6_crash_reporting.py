@@ -38,8 +38,8 @@ def main() -> None:
     assert "def report_callback_exception" in main_source
     assert "CrashReporter()" in main_source
     assert "showerror" in main_source
-    assert VERSION_INFO.package == "Package-100A-03"
-    assert VERSION_INFO.build == 5
+    assert VERSION_INFO.package == "Package-100A-08"
+    assert VERSION_INFO.build == 10
     print("Phase 6 crash reporting test passed.")
 
 

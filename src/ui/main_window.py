@@ -26,6 +26,8 @@ from src.learning.search_memory_service import SearchMemoryService
 from src.outcomes.outcome_service import OutcomeService
 from src.core.app_logger import get_logger
 from src.core.crash_reporter import CrashReporter
+from src.core.performance_tracker import PerformanceTracker
+from src.core.shutdown_coordinator import ShutdownAction, ShutdownCoordinator
 from src.core.search_service import SearchService
 from src.core.task_manager import BackgroundTaskManager
 from src.reminders.reminder_service import ReminderService
@@ -71,6 +73,7 @@ class MainWindow(ctk.CTk):
     def __init__(self):
 
         super().__init__()
+        self.startup_performance = PerformanceTracker("Application startup")
 
         ctk.set_appearance_mode("Dark")
         ctk.set_default_color_theme("blue")
@@ -167,6 +170,7 @@ class MainWindow(ctk.CTk):
             check_interval_seconds=60.0,
             on_results=self.queue_scheduled_results,
         )
+        self.startup_performance.checkpoint("services")
 
         self.ai_controller = AIController()
         self.task_manager = BackgroundTaskManager(self)
@@ -185,9 +189,12 @@ class MainWindow(ctk.CTk):
         self.suggestion_buttons = []
 
         self.build_ui()
+        self.startup_performance.checkpoint("interface")
         self.refresh_tracking_notice()
         self.scheduled_search_monitor.start()
         self.after(1000, self.poll_scheduled_results)
+        self.startup_performance.checkpoint("ready")
+        logger.info(self.startup_performance.summary())
         logger.info("Scheduled search monitor started")
 
     def report_callback_exception(
@@ -2237,9 +2244,26 @@ class MainWindow(ctk.CTk):
     def on_close(self):
         """Stop background workers before closing the application."""
         logger.info("Application closing")
-        self.scheduled_search_monitor.stop()
-        self.task_manager.shutdown(wait=False)
-        self.destroy()
+        results = ShutdownCoordinator().run(
+            (
+                ShutdownAction(
+                    "scheduled search monitor",
+                    self.scheduled_search_monitor.stop,
+                ),
+                ShutdownAction(
+                    "background task manager",
+                    lambda: self.task_manager.shutdown(wait=False),
+                ),
+                ShutdownAction("main window", self.destroy),
+            )
+        )
+        for result in results:
+            if not result.succeeded:
+                logger.error(
+                    "Shutdown action failed: %s | %s",
+                    result.name,
+                    result.error,
+                )
 
 
 

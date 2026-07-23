@@ -25,8 +25,8 @@ class VersionInfo:
 VERSION_INFO = VersionInfo(
     "OpportunityLab",
     "1.0.0",
-    "Package-100A-03",
-    5,
+    "Package-100A-08",
+    10,
     "Gold Rush",
-    "Development",
+    "Production",
 )

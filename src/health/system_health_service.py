@@ -87,6 +87,8 @@ class SystemHealthService:
     def _release_files_check(self) -> HealthCheck:
         required = (
             "requirements.txt",
+            "requirements-build.txt",
+            "OpportunityLab.spec",
             "docs/AI_HANDOVER.md",
             "docs/BUILD_GUIDE.md",
             "src/version.py",
