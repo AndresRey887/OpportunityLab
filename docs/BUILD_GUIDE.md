@@ -1,42 +1,29 @@
 # OpportunityLab Build Guide
 
-## Phase 3
+## Install Package-021A-03
 
-Version: 0.21.0  
-Codename: Catalyst  
-Focus: Turn discovered opportunities into actions.
+Copy every folder from the package ZIP into the OpportunityLab project folder.
+Allow Windows to merge folders and replace existing files.
 
-## Completed Packages
+## Test
 
-- Package-021A-01 — Persistent opportunity tracking and tracking UI.
+From `D:\OpportunityLab` with the virtual environment active:
 
-## Package-021A-02
+```powershell
+python scripts/test_phase3_action_checklists.py
+```
 
-### Goal
+Expected result:
 
-Add follow-up reminder calculation and visible reminder notices.
+```text
+Phase 3 action checklist test passed.
+```
 
-### New files
+## Run
 
-- `src/reminders/__init__.py`
-- `src/reminders/follow_up_reminder.py`
-- `src/reminders/reminder_service.py`
-- `scripts/test_phase3_follow_up_reminders.py`
+```powershell
+python -m src.ui.main_window
+```
 
-### Complete replacements
-
-- `src/ui/main_window.py`
-- `src/ui/tracking_window.py`
-- `src/version.py`
-- `docs/AI_HANDOVER.md`
-- `docs/BUILD_GUIDE.md`
-
-### Test command
-
-`python scripts\test_phase3_follow_up_reminders.py`
-
-### Expected result
-
-`Phase 3 follow-up reminder test passed.`
-
-Stop after this test and report `passed` or paste the error.
+Select an opportunity and choose **Create Checklist**, or open **Tracked
+Opportunities** and choose **Checklist** beside an existing record.

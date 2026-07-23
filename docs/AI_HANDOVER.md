@@ -1,31 +1,34 @@
 # OpportunityLab AI Handover
 
-## Current Status
+## Current build
 
-Phase 1 is complete.  
-Phase 2 is complete.  
-Phase 3 is in development.
+- Version: 0.21.0
+- Package: Package-021A-03
+- Build: 3
+- Codename: Catalyst
 
-## Current Version
+## Package-021A-03
 
-Version: 0.21.0  
-Codename: Catalyst  
-Package: Package-021A-02
+This package adds persistent action checklists to Phase 3 opportunity tracking.
 
-## Package-021A-02
+- A selected search result can be tracked and opened as a checklist.
+- Every new checklist starts with six practical default actions.
+- Users can complete, add, and remove actions.
+- Checklist progress is shown as a completed count and percentage.
+- Checklists are stored in `data/opportunity_workflows.json`.
+- Tracked Opportunities provides direct access to each checklist.
 
-### Purpose
+## New files
 
-Add follow-up reminders and visible reminder notices to opportunity tracking.
+- `src/workflows/__init__.py`
+- `src/workflows/action_item.py`
+- `src/workflows/opportunity_workflow.py`
+- `src/workflows/workflow_store.py`
+- `src/workflows/workflow_service.py`
+- `src/ui/checklist_window.py`
+- `scripts/test_phase3_action_checklists.py`
 
-### New files
-
-- `src/reminders/__init__.py`
-- `src/reminders/follow_up_reminder.py`
-- `src/reminders/reminder_service.py`
-- `scripts/test_phase3_follow_up_reminders.py`
-
-### Replaced files
+## Replaced files
 
 - `src/ui/main_window.py`
 - `src/ui/tracking_window.py`
@@ -33,17 +36,7 @@ Add follow-up reminders and visible reminder notices to opportunity tracking.
 - `docs/AI_HANDOVER.md`
 - `docs/BUILD_GUIDE.md`
 
-### Behaviour
+## Next package
 
-- Follow-up dates generate overdue, due-today, and upcoming reminders.
-- Closed opportunities do not generate reminders.
-- The main toolbar displays the number of due reminders.
-- Startup status reports due follow-ups.
-- The tracking window shows due and seven-day upcoming totals.
-- Each tracked card displays its follow-up date.
-
-### Test
-
-`python scripts\test_phase3_follow_up_reminders.py`
-
-Expected: `Phase 3 follow-up reminder test passed.`
+Continue Phase 3 with reusable response templates and opportunity-specific draft
+workspaces.

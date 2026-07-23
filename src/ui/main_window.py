@@ -20,12 +20,14 @@ from src.scheduling.scheduled_search_runner import ScheduledSearchRunner
 from src.scheduling.search_scheduler import SearchScheduler
 from src.services.search_history_service import SearchHistoryService
 from src.tracking.tracking_service import TrackingService
+from src.workflows.workflow_service import WorkflowService
 from src.ui.details_panel import DetailsPanel
 from src.ui.filter_window import FilterWindow
 from src.ui.related_search_panel import RelatedSearchPanel
 from src.ui.results_panel import ResultsPanel
 from src.ui.scheduled_search_window import ScheduledSearchWindow
 from src.ui.tracking_window import TrackingWindow
+from src.ui.checklist_window import ChecklistWindow
 from src.version import VERSION_INFO
 
 
@@ -51,6 +53,7 @@ class MainWindow(ctk.CTk):
         self.search_history = SearchHistoryService()
         self.tracking_service = TrackingService()
         self.reminder_service = ReminderService(self.tracking_service)
+        self.workflow_service = WorkflowService()
 
         self.scheduled_search_service = SearchService()
         self.search_scheduler = SearchScheduler()
@@ -702,7 +705,8 @@ class MainWindow(ctk.CTk):
 
         self.checklist_button = ctk.CTkButton(
             action_card,
-            text="Create Checklist — Coming Soon",
+            text="Create Checklist",
+            command=self.open_selected_checklist,
             state="disabled"
         )
 
@@ -1255,6 +1259,23 @@ class MainWindow(ctk.CTk):
 
         self.refresh_tracking_notice()
 
+    def open_selected_checklist(self):
+
+        if self.selected_opportunity is None:
+            return
+
+        record, _ = self.tracking_service.track(
+            self.selected_opportunity
+        )
+        workflow = self.workflow_service.get_or_create(record)
+        ChecklistWindow(
+            self,
+            workflow,
+            self.workflow_service,
+            record.url,
+        )
+        self.track_opportunity_button.configure(text="Tracked")
+
     #
     # Search
     #
@@ -1381,6 +1402,7 @@ class MainWindow(ctk.CTk):
         self.open_website_button.configure(
             state="normal"
         )
+        self.checklist_button.configure(state="normal")
 
         tracked = self.tracking_service.is_tracked(opportunity.url)
         self.track_opportunity_button.configure(
