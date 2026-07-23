@@ -16,6 +16,7 @@ from src.core.app_logger import get_logger
 from src.core.search_service import SearchService
 from src.core.task_manager import BackgroundTaskManager
 from src.reminders.reminder_service import ReminderService
+from src.pipeline.pipeline_service import PipelineService
 from src.responses.response_service import ResponseService
 from src.scheduling.scheduled_search_monitor import ScheduledSearchMonitor
 from src.scheduling.scheduled_search_runner import ScheduledSearchRunner
@@ -32,6 +33,7 @@ from src.ui.tracking_window import TrackingWindow
 from src.ui.checklist_window import ChecklistWindow
 from src.ui.contact_history_window import ContactHistoryWindow
 from src.ui.draft_window import DraftWindow
+from src.ui.pipeline_window import PipelineWindow
 from src.version import VERSION_INFO
 
 
@@ -60,6 +62,12 @@ class MainWindow(ctk.CTk):
         self.workflow_service = WorkflowService()
         self.response_service = ResponseService()
         self.contact_service = ContactService()
+        self.pipeline_service = PipelineService(
+            self.tracking_service,
+            self.workflow_service,
+            self.response_service,
+            self.contact_service,
+        )
 
         self.scheduled_search_service = SearchService()
         self.search_scheduler = SearchScheduler()
@@ -82,6 +90,7 @@ class MainWindow(ctk.CTk):
         self.filter_window = None
         self.scheduled_search_window = None
         self.tracking_window = None
+        self.pipeline_window = None
         self.analysis_running = False
         self.related_search_running = False
         self.selected_opportunity = None
@@ -287,6 +296,20 @@ class MainWindow(ctk.CTk):
         self.tracking_button.grid(
             row=0,
             column=6,
+            padx=5
+        )
+
+        self.pipeline_button = ctk.CTkButton(
+            search_row,
+            text="Pipeline...",
+            width=100,
+            height=38,
+            command=self.open_pipeline_window
+        )
+
+        self.pipeline_button.grid(
+            row=0,
+            column=7,
             padx=(5, 0)
         )
 
@@ -1237,6 +1260,23 @@ class MainWindow(ctk.CTk):
                 pass
 
         self.tracking_window = TrackingWindow(self)
+
+    def open_pipeline_window(self):
+
+        if self.pipeline_window is not None:
+
+            try:
+                if self.pipeline_window.winfo_exists():
+                    self.pipeline_window.refresh_dashboard()
+                    self.pipeline_window.focus()
+                    return
+            except Exception:
+                pass
+
+        self.pipeline_window = PipelineWindow(
+            self,
+            self.pipeline_service,
+        )
 
     def track_selected_opportunity(self):
 

@@ -3,43 +3,37 @@
 ## Current build
 
 - Version: 0.21.0
-- Package: Package-021A-05
-- Build: 5
+- Package: Package-021A-06
+- Build: 6
 - Codename: Catalyst
 
-## Package-021A-05
+## Package-021A-06
 
-This package adds contact records and interaction histories.
+This package adds an opportunity pipeline dashboard.
 
-- Every tracked opportunity can have a named contact and organisation.
-- Email, phone, website, and contact notes are saved persistently.
-- Interaction history supports Email, Phone, Meeting, Application, Note, and
-  Other entries.
-- Every history entry includes a date and summary.
-- History is displayed newest first and entries can be removed.
-- Selected results and Tracked Opportunities both provide direct access.
-- Contacts are stored in `data/opportunity_contacts.json`.
-- History is stored in `data/interaction_history.json`.
+- The main toolbar now provides a Pipeline window.
+- Stage cards show totals for New, Reviewing, Applied, Watching, and Closed.
+- Pipeline results can be filtered by stage and High, Medium, or Low priority.
+- Priority combines opportunity score, user rating, and due follow-ups.
+- Each row shows checklist progress, saved-draft state, and interaction count.
+- Quick actions open the checklist, draft, contacts, or opportunity website.
+- Pipeline results are sorted by priority automatically.
 
 ## New files
 
-- `src/contacts/__init__.py`
-- `src/contacts/contact_record.py`
-- `src/contacts/interaction_entry.py`
-- `src/contacts/contact_store.py`
-- `src/contacts/contact_service.py`
-- `src/ui/contact_history_window.py`
-- `scripts/test_phase3_contacts_history.py`
+- `src/pipeline/__init__.py`
+- `src/pipeline/pipeline_item.py`
+- `src/pipeline/pipeline_service.py`
+- `src/ui/pipeline_window.py`
+- `scripts/test_phase3_pipeline_dashboard.py`
 
 ## Replaced files
 
 - `src/ui/main_window.py`
-- `src/ui/tracking_window.py`
 - `src/version.py`
 - `docs/AI_HANDOVER.md`
 - `docs/BUILD_GUIDE.md`
 
 ## Next package
 
-Continue Phase 3 with an opportunity pipeline dashboard, stage totals, and
-priority views.
+Continue Phase 3 with exportable opportunity reports and CSV pipeline exports.
