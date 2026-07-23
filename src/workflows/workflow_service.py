@@ -17,8 +17,13 @@ class WorkflowService:
         "Set a follow-up date",
     )
 
-    def __init__(self, store: WorkflowStore | None = None) -> None:
+    def __init__(
+        self,
+        store: WorkflowStore | None = None,
+        timeline_service=None,
+    ) -> None:
         self.store = store or WorkflowStore()
+        self.timeline_service = timeline_service
         self.workflows = self.store.load()
 
     def get(self, tracking_id: str) -> OpportunityWorkflow:
@@ -38,6 +43,11 @@ class WorkflowService:
             )
             self.workflows.append(workflow)
             self.save()
+            self._record(
+                record.tracking_id,
+                "Checklist created",
+                f"{len(workflow.items)} starting actions",
+            )
             return workflow
 
     def add_item(self, tracking_id: str, text: str) -> ActionItem:
@@ -46,6 +56,7 @@ class WorkflowService:
         workflow.items.append(item)
         workflow.touch()
         self.save()
+        self._record(tracking_id, "Checklist action added", item.text)
         return item
 
     def set_completed(
@@ -60,17 +71,44 @@ class WorkflowService:
                 item.completed = bool(completed)
                 workflow.touch()
                 self.save()
+                self._record(
+                    tracking_id,
+                    (
+                        "Checklist action completed"
+                        if completed
+                        else "Checklist action reopened"
+                    ),
+                    item.text,
+                )
                 return
         raise KeyError(item_id)
 
     def remove_item(self, tracking_id: str, item_id: str) -> None:
         workflow = self.get(tracking_id)
         original_count = len(workflow.items)
+        removed = next(
+            (item for item in workflow.items if item.item_id == item_id),
+            None,
+        )
         workflow.items = [item for item in workflow.items if item.item_id != item_id]
         if len(workflow.items) == original_count:
             raise KeyError(item_id)
         workflow.touch()
         self.save()
+        self._record(
+            tracking_id,
+            "Checklist action removed",
+            removed.text if removed else "",
+        )
 
     def save(self) -> None:
         self.store.save(self.workflows)
+
+    def _record(self, tracking_id, title, details=""):
+        if self.timeline_service is not None:
+            self.timeline_service.record(
+                tracking_id,
+                "Checklist",
+                title,
+                details,
+            )

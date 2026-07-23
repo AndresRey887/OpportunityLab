@@ -7,8 +7,13 @@ from src.tracking.tracking_store import TrackingStore
 
 
 class TrackingService:
-    def __init__(self, store: TrackingStore | None = None) -> None:
+    def __init__(
+        self,
+        store: TrackingStore | None = None,
+        timeline_service=None,
+    ) -> None:
         self.store = store or TrackingStore()
+        self.timeline_service = timeline_service
         self.records = self.store.load()
 
     def all(self, status: str | None = None) -> list[TrackedOpportunity]:
@@ -44,6 +49,12 @@ class TrackingService:
 
         self.records.append(candidate)
         self.save()
+        self._record_event(
+            candidate.tracking_id,
+            "Tracking",
+            "Opportunity added to tracking",
+            candidate.title,
+        )
         return candidate, True
 
     def update(
@@ -70,10 +81,34 @@ class TrackingService:
 
         record.touch()
         self.save()
+        changes = []
+        if status is not None:
+            changes.append(f"Status: {record.status}")
+        if rating is not None:
+            changes.append(f"Rating: {record.rating}/5")
+        if notes is not None:
+            changes.append("Notes updated")
+        if follow_up_date is not None:
+            changes.append(
+                f"Follow-up: {record.follow_up_date or 'cleared'}"
+            )
+        if changes:
+            self._record_event(
+                tracking_id,
+                "Tracking",
+                "Tracked opportunity updated",
+                " | ".join(changes),
+            )
         return record
 
     def remove(self, tracking_id: str) -> None:
-        self.get(tracking_id)
+        record = self.get(tracking_id)
+        self._record_event(
+            tracking_id,
+            "Tracking",
+            "Opportunity removed from tracking",
+            record.title,
+        )
         self.records = [
             record
             for record in self.records
@@ -83,3 +118,12 @@ class TrackingService:
 
     def save(self) -> None:
         self.store.save(self.records)
+
+    def _record_event(self, tracking_id, event_type, title, details=""):
+        if self.timeline_service is not None:
+            self.timeline_service.record(
+                tracking_id,
+                event_type,
+                title,
+                details,
+            )

@@ -14,6 +14,7 @@ from src.ai.ai_controller import AIController
 from src.backups.backup_service import BackupService
 from src.contacts.contact_service import ContactService
 from src.exports.export_service import ExportService
+from src.outcomes.outcome_service import OutcomeService
 from src.core.app_logger import get_logger
 from src.core.search_service import SearchService
 from src.core.task_manager import BackgroundTaskManager
@@ -25,6 +26,7 @@ from src.scheduling.scheduled_search_runner import ScheduledSearchRunner
 from src.scheduling.search_scheduler import SearchScheduler
 from src.services.search_history_service import SearchHistoryService
 from src.tracking.tracking_service import TrackingService
+from src.timeline.timeline_service import TimelineService
 from src.workflows.workflow_service import WorkflowService
 from src.ui.details_panel import DetailsPanel
 from src.ui.filter_window import FilterWindow
@@ -60,11 +62,23 @@ class MainWindow(ctk.CTk):
 
         self.search_service = SearchService()
         self.search_history = SearchHistoryService()
-        self.tracking_service = TrackingService()
+        self.timeline_service = TimelineService()
+        self.tracking_service = TrackingService(
+            timeline_service=self.timeline_service
+        )
         self.reminder_service = ReminderService(self.tracking_service)
-        self.workflow_service = WorkflowService()
-        self.response_service = ResponseService()
-        self.contact_service = ContactService()
+        self.workflow_service = WorkflowService(
+            timeline_service=self.timeline_service
+        )
+        self.response_service = ResponseService(
+            timeline_service=self.timeline_service
+        )
+        self.contact_service = ContactService(
+            timeline_service=self.timeline_service
+        )
+        self.outcome_service = OutcomeService(
+            timeline_service=self.timeline_service
+        )
         self.pipeline_service = PipelineService(
             self.tracking_service,
             self.workflow_service,

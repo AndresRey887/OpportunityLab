@@ -8,8 +8,13 @@ from src.contacts.interaction_entry import InteractionEntry
 
 
 class ContactService:
-    def __init__(self, store: ContactStore | None = None) -> None:
+    def __init__(
+        self,
+        store: ContactStore | None = None,
+        timeline_service=None,
+    ) -> None:
         self.store = store or ContactStore()
+        self.timeline_service = timeline_service
         self.contacts = self.store.load_contacts()
         self.interactions = self.store.load_interactions()
 
@@ -40,6 +45,11 @@ class ContactService:
                 setattr(contact, field_name, str(values[field_name]).strip())
         contact.touch()
         self.store.save_contacts(self.contacts)
+        self._record(
+            tracking_id,
+            "Contact details saved",
+            contact.contact_name or contact.organisation,
+        )
         return contact
 
     def get_contact(self, tracking_id: str) -> ContactRecord:
@@ -74,6 +84,12 @@ class ContactService:
         )
         self.interactions.append(entry)
         self.store.save_interactions(self.interactions)
+        self._record(
+            tracking_id,
+            f"{entry.interaction_type} interaction added",
+            entry.summary,
+            event_at=entry.interaction_date,
+        )
         return entry
 
     def remove_interaction(self, entry_id: str) -> None:
@@ -85,3 +101,20 @@ class ContactService:
         if len(self.interactions) == original_count:
             raise KeyError(entry_id)
         self.store.save_interactions(self.interactions)
+
+    def _record(
+        self,
+        tracking_id,
+        title,
+        details="",
+        *,
+        event_at=None,
+    ):
+        if self.timeline_service is not None:
+            self.timeline_service.record(
+                tracking_id,
+                "Contact",
+                title,
+                details,
+                event_at=event_at,
+            )

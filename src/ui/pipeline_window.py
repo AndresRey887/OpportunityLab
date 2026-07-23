@@ -11,6 +11,8 @@ from src.tracking.tracked_opportunity import TrackedOpportunity
 from src.ui.checklist_window import ChecklistWindow
 from src.ui.contact_history_window import ContactHistoryWindow
 from src.ui.draft_window import DraftWindow
+from src.ui.outcome_window import OutcomeWindow
+from src.ui.timeline_window import TimelineWindow
 
 
 class PipelineWindow(ctk.CTkToplevel):
@@ -72,6 +74,20 @@ class PipelineWindow(ctk.CTkToplevel):
             command=self.refresh_dashboard,
         ).grid(row=0, column=4, padx=12, pady=12)
 
+        self.outcome_summary = ctk.CTkLabel(
+            header,
+            text="",
+            anchor="w",
+        )
+        self.outcome_summary.grid(
+            row=1,
+            column=0,
+            columnspan=5,
+            sticky="ew",
+            padx=12,
+            pady=(0, 10),
+        )
+
         self.total_frame = ctk.CTkFrame(self)
         self.total_frame.grid(row=1, column=0, sticky="ew", padx=12, pady=6)
         for column in range(len(TrackedOpportunity.STATUSES)):
@@ -87,6 +103,15 @@ class PipelineWindow(ctk.CTkToplevel):
         )
 
     def refresh_dashboard(self):
+        outcome_summary = self.master.outcome_service.summary()
+        self.outcome_summary.configure(
+            text=(
+                f"Outcomes recorded: {outcome_summary['recorded']}   "
+                f"Successful: {outcome_summary['successful']}   "
+                f"Success rate: {outcome_summary['success_rate']}%   "
+                f"Successful value: ${outcome_summary['estimated_value']:,.2f}"
+            )
+        )
         for widget in self.total_frame.winfo_children():
             widget.destroy()
         totals = self.service.stage_totals()
@@ -138,7 +163,7 @@ class PipelineWindow(ctk.CTkToplevel):
         ).grid(
             row=0,
             column=0,
-            columnspan=5,
+            columnspan=7,
             sticky="ew",
             padx=12,
             pady=10,
@@ -176,6 +201,20 @@ class PipelineWindow(ctk.CTkToplevel):
             command=lambda: self.export_report(record),
         ).grid(row=1, column=4, padx=(5, 12), pady=(0, 10))
 
+        ctk.CTkButton(
+            card,
+            text="Outcome",
+            width=85,
+            command=lambda: self.open_outcome(record),
+        ).grid(row=1, column=5, padx=(5, 12), pady=(0, 10))
+
+        ctk.CTkButton(
+            card,
+            text="Timeline",
+            width=85,
+            command=lambda: self.open_timeline(record),
+        ).grid(row=1, column=6, padx=(5, 12), pady=(0, 10))
+
     def open_checklist(self, record):
         workflow = self.master.workflow_service.get_or_create(record)
         ChecklistWindow(
@@ -190,6 +229,21 @@ class PipelineWindow(ctk.CTkToplevel):
 
     def open_contacts(self, record):
         ContactHistoryWindow(self, record, self.master.contact_service)
+
+    def open_outcome(self, record):
+        OutcomeWindow(
+            self,
+            record,
+            self.master.outcome_service,
+            on_saved=self.refresh_dashboard,
+        )
+
+    def open_timeline(self, record):
+        TimelineWindow(
+            self,
+            record,
+            self.master.timeline_service,
+        )
 
     def export_csv(self):
         path = filedialog.asksaveasfilename(

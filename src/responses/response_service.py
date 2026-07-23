@@ -32,8 +32,13 @@ class ResponseService:
         ),
     )
 
-    def __init__(self, store: ResponseStore | None = None) -> None:
+    def __init__(
+        self,
+        store: ResponseStore | None = None,
+        timeline_service=None,
+    ) -> None:
         self.store = store or ResponseStore()
+        self.timeline_service = timeline_service
         self.templates = self.store.load_templates()
         self.drafts = self.store.load_drafts()
         if not self.templates:
@@ -91,6 +96,11 @@ class ResponseService:
         draft.body = self._render(template.body, values)
         draft.touch()
         self.store.save_drafts(self.drafts)
+        self._record(
+            draft.tracking_id,
+            "Response template applied",
+            template.name,
+        )
         return draft
 
     def save_draft(
@@ -106,6 +116,11 @@ class ResponseService:
                 draft.body = str(body).strip()
                 draft.touch()
                 self.store.save_drafts(self.drafts)
+                self._record(
+                    tracking_id,
+                    "Response draft saved",
+                    draft.subject,
+                )
                 return draft
         raise KeyError(tracking_id)
 
@@ -115,3 +130,12 @@ class ResponseService:
         for name, value in values.items():
             rendered = rendered.replace("{" + name + "}", value)
         return rendered
+
+    def _record(self, tracking_id, title, details=""):
+        if self.timeline_service is not None:
+            self.timeline_service.record(
+                tracking_id,
+                "Draft",
+                title,
+                details,
+            )

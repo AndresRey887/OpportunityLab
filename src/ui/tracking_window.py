@@ -11,14 +11,16 @@ from src.tracking.tracked_opportunity import TrackedOpportunity
 from src.ui.checklist_window import ChecklistWindow
 from src.ui.contact_history_window import ContactHistoryWindow
 from src.ui.draft_window import DraftWindow
+from src.ui.outcome_window import OutcomeWindow
+from src.ui.timeline_window import TimelineWindow
 
 
 class TrackingWindow(ctk.CTkToplevel):
     def __init__(self, master=None):
         super().__init__(master)
         self.title("Tracked Opportunities")
-        self.geometry("1080x760")
-        self.minsize(900, 620)
+        self.geometry("1280x760")
+        self.minsize(1040, 620)
         self.transient(master)
 
         self.service = master.tracking_service
@@ -121,7 +123,7 @@ class TrackingWindow(ctk.CTkToplevel):
             justify="left",
             anchor="w",
             font=("Segoe UI", 14, "bold"),
-        ).grid(row=0, column=0, columnspan=7, sticky="ew", padx=12, pady=(10, 6))
+        ).grid(row=0, column=0, columnspan=9, sticky="ew", padx=12, pady=(10, 6))
 
         status_value = ctk.StringVar(value=record.status)
         ctk.CTkOptionMenu(
@@ -164,10 +166,24 @@ class TrackingWindow(ctk.CTkToplevel):
 
         ctk.CTkButton(
             card,
+            text="Outcome",
+            width=82,
+            command=lambda item=record: self.open_outcome(item),
+        ).grid(row=1, column=5, padx=5, pady=5)
+
+        ctk.CTkButton(
+            card,
+            text="Timeline",
+            width=82,
+            command=lambda item=record: self.open_timeline(item),
+        ).grid(row=1, column=6, padx=5, pady=5)
+
+        ctk.CTkButton(
+            card,
             text="Open",
             width=75,
             command=lambda url=record.url: self.open_url(url),
-        ).grid(row=1, column=5, padx=5, pady=5)
+        ).grid(row=1, column=7, padx=5, pady=5)
 
         ctk.CTkButton(
             card,
@@ -176,18 +192,18 @@ class TrackingWindow(ctk.CTkToplevel):
             fg_color="#A33A3A",
             hover_color="#7F2D2D",
             command=lambda item=record: self.remove_record(item),
-        ).grid(row=1, column=6, padx=(5, 12), pady=5)
+        ).grid(row=1, column=8, padx=(5, 12), pady=5)
 
         notes_entry = ctk.CTkEntry(card, placeholder_text="Notes")
         notes_entry.insert(0, record.notes)
-        notes_entry.grid(row=2, column=0, columnspan=6, sticky="ew", padx=12, pady=5)
+        notes_entry.grid(row=2, column=0, columnspan=8, sticky="ew", padx=12, pady=5)
 
         follow_up_entry = ctk.CTkEntry(
             card,
             placeholder_text="Follow-up date, for example 2026-08-15",
         )
         follow_up_entry.insert(0, record.follow_up_date)
-        follow_up_entry.grid(row=3, column=0, columnspan=6, sticky="ew", padx=12, pady=(5, 10))
+        follow_up_entry.grid(row=3, column=0, columnspan=8, sticky="ew", padx=12, pady=(5, 10))
 
         ctk.CTkButton(
             card,
@@ -198,7 +214,7 @@ class TrackingWindow(ctk.CTkToplevel):
                 notes.get(),
                 follow.get(),
             ),
-        ).grid(row=2, column=6, rowspan=2, padx=(5, 12), pady=(5, 10))
+        ).grid(row=2, column=8, rowspan=2, padx=(5, 12), pady=(5, 10))
 
     def open_checklist(self, record):
         workflow = self.master.workflow_service.get_or_create(record)
@@ -221,6 +237,20 @@ class TrackingWindow(ctk.CTkToplevel):
             self,
             record,
             self.master.contact_service,
+        )
+
+    def open_outcome(self, record):
+        OutcomeWindow(
+            self,
+            record,
+            self.master.outcome_service,
+        )
+
+    def open_timeline(self, record):
+        TimelineWindow(
+            self,
+            record,
+            self.master.timeline_service,
         )
 
     def update_status(self, tracking_id, status):
