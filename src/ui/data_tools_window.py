@@ -8,15 +8,18 @@ from tkinter import filedialog, messagebox
 import customtkinter as ctk
 
 from src.backups.backup_service import BackupError
+from src.ui.system_health_window import SystemHealthWindow
 
 
 class DataToolsWindow(ctk.CTkToplevel):
-    def __init__(self, master, service):
+    def __init__(self, master, service, health_service):
         super().__init__(master)
         self.service = service
+        self.health_service = health_service
+        self.system_health_window = None
         self.title("Data Backup and Restore")
-        self.geometry("560x330")
-        self.minsize(500, 300)
+        self.geometry("560x400")
+        self.minsize(500, 370)
         self.transient(master)
         self.build_ui()
 
@@ -57,6 +60,13 @@ class DataToolsWindow(ctk.CTkToplevel):
             command=self.restore_backup,
         ).grid(row=3, column=0, sticky="ew", padx=18, pady=8)
 
+        ctk.CTkButton(
+            self,
+            text="System Health",
+            height=42,
+            command=self.open_system_health,
+        ).grid(row=4, column=0, sticky="ew", padx=18, pady=8)
+
         self.message = ctk.CTkLabel(
             self,
             text="",
@@ -64,7 +74,20 @@ class DataToolsWindow(ctk.CTkToplevel):
             anchor="w",
             wraplength=500,
         )
-        self.message.grid(row=4, column=0, sticky="ew", padx=18, pady=(8, 18))
+        self.message.grid(row=5, column=0, sticky="ew", padx=18, pady=(8, 18))
+
+    def open_system_health(self):
+        if self.system_health_window is not None:
+            try:
+                if self.system_health_window.winfo_exists():
+                    self.system_health_window.focus()
+                    return
+            except Exception:
+                pass
+        self.system_health_window = SystemHealthWindow(
+            self,
+            self.health_service,
+        )
 
     def create_backup(self):
         path = filedialog.asksaveasfilename(

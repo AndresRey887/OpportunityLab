@@ -1,5 +1,6 @@
 from dataclasses import dataclass
 
+
 @dataclass(frozen=True)
 class VersionInfo:
     app_name: str
@@ -20,11 +21,12 @@ class VersionInfo:
             f"Build {self.build} | {self.codename} | {self.status}"
         )
 
+
 VERSION_INFO = VersionInfo(
     "OpportunityLab",
-    "0.23.0",
-    "Package-023A-08A",
-    9,
-    "Discovery",
+    "1.0.0",
+    "Package-100A-03",
+    5,
+    "Gold Rush",
     "Development",
 )

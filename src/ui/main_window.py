@@ -7,11 +7,13 @@ MainWindow delegates all AI work to AIController.
 
 import queue
 import webbrowser
+from tkinter import messagebox
 
 import customtkinter as ctk
 
 from src.ai.ai_controller import AIController
 from src.backups.backup_service import BackupService
+from src.health.system_health_service import SystemHealthService
 from src.contacts.contact_service import ContactService
 from src.clustering.duplicate_cluster_service import DuplicateClusterService
 from src.companies.company_intelligence_service import CompanyIntelligenceService
@@ -23,6 +25,7 @@ from src.feedback.recommendation_feedback_service import (
 from src.learning.search_memory_service import SearchMemoryService
 from src.outcomes.outcome_service import OutcomeService
 from src.core.app_logger import get_logger
+from src.core.crash_reporter import CrashReporter
 from src.core.search_service import SearchService
 from src.core.task_manager import BackgroundTaskManager
 from src.reminders.reminder_service import ReminderService
@@ -77,6 +80,7 @@ class MainWindow(ctk.CTk):
         self.minsize(1200, 700)
 
         logger.info("Application starting: %s", VERSION_INFO.full_label)
+        self.crash_reporter = CrashReporter()
 
         self.search_service = SearchService()
         self.search_history = SearchHistoryService()
@@ -149,6 +153,7 @@ class MainWindow(ctk.CTk):
             self.contact_service,
         )
         self.backup_service = BackupService()
+        self.system_health_service = SystemHealthService()
 
         self.scheduled_search_service = SearchService()
         self.search_scheduler = SearchScheduler()
@@ -184,6 +189,31 @@ class MainWindow(ctk.CTk):
         self.scheduled_search_monitor.start()
         self.after(1000, self.poll_scheduled_results)
         logger.info("Scheduled search monitor started")
+
+    def report_callback_exception(
+        self,
+        exception_type,
+        exception,
+        traceback_value,
+    ):
+        """Capture unexpected Tkinter callback errors without hiding them."""
+        logger.exception(
+            "Unexpected UI callback failure",
+            exc_info=(exception_type, exception, traceback_value),
+        )
+        try:
+            report_path = self.crash_reporter.capture(
+                exception_type,
+                exception,
+                traceback_value,
+            )
+            message = (
+                "OpportunityLab encountered an unexpected error.\n\n"
+                f"A diagnostic report was saved to:\n{report_path}"
+            )
+        except OSError:
+            message = "OpportunityLab encountered an unexpected error."
+        messagebox.showerror("OpportunityLab Error", message, parent=self)
 
     def queue_scheduled_results(self, results):
         self.scheduled_result_queue.put(list(results))
@@ -1415,6 +1445,7 @@ class MainWindow(ctk.CTk):
         self.data_tools_window = DataToolsWindow(
             self,
             self.backup_service,
+            self.system_health_service,
         )
 
     def track_selected_opportunity(self):
