@@ -12,6 +12,7 @@ from src.ui.checklist_window import ChecklistWindow
 from src.ui.contact_history_window import ContactHistoryWindow
 from src.ui.draft_window import DraftWindow
 from src.ui.duplicate_clusters_window import DuplicateClustersWindow
+from src.ui.decision_review_window import DecisionReviewWindow
 from src.ui.outcome_window import OutcomeWindow
 from src.ui.search_memory_window import SearchMemoryWindow
 from src.ui.timeline_window import TimelineWindow
@@ -24,6 +25,7 @@ class PipelineWindow(ctk.CTkToplevel):
         self.export_service = export_service
         self.clusters_window = None
         self.search_memory_window = None
+        self.decision_review_window = None
 
         self.title("Opportunity Pipeline")
         self.geometry("1120x780")
@@ -87,10 +89,17 @@ class PipelineWindow(ctk.CTkToplevel):
 
         ctk.CTkButton(
             header,
+            text="Review",
+            width=80,
+            command=self.open_decision_review,
+        ).grid(row=0, column=6, padx=6, pady=12)
+
+        ctk.CTkButton(
+            header,
             text="Refresh",
             width=90,
             command=self.refresh_dashboard,
-        ).grid(row=0, column=6, padx=12, pady=12)
+        ).grid(row=0, column=7, padx=12, pady=12)
 
         self.outcome_summary = ctk.CTkLabel(
             header,
@@ -100,7 +109,7 @@ class PipelineWindow(ctk.CTkToplevel):
         self.outcome_summary.grid(
             row=1,
             column=0,
-            columnspan=7,
+            columnspan=8,
             sticky="ew",
             padx=12,
             pady=(0, 10),
@@ -289,6 +298,21 @@ class PipelineWindow(ctk.CTkToplevel):
         self.search_memory_window = SearchMemoryWindow(
             self.master,
             self.master.search_memory_service,
+        )
+
+    def open_decision_review(self):
+        if self.decision_review_window is not None:
+            try:
+                if self.decision_review_window.winfo_exists():
+                    self.decision_review_window.refresh_review()
+                    self.decision_review_window.focus()
+                    return
+            except Exception:
+                pass
+        self.decision_review_window = DecisionReviewWindow(
+            self.master,
+            self.master.decision_review_service,
+            self.master.learning_export_service,
         )
 
     def export_csv(self):

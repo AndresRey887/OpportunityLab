@@ -6,8 +6,16 @@ import customtkinter as ctk
 
 
 class RecommendationWindow(ctk.CTkToplevel):
-    def __init__(self, master, opportunity, recommendation):
+    def __init__(
+        self,
+        master,
+        opportunity,
+        recommendation,
+        feedback_service,
+    ):
         super().__init__(master)
+        self.opportunity = opportunity
+        self.feedback_service = feedback_service
         self.title("Opportunity Recommendation")
         self.geometry("720x650")
         self.minsize(600, 520)
@@ -58,6 +66,48 @@ class RecommendationWindow(ctk.CTkToplevel):
             recommendation.cautions or ("No specific cautions identified.",),
         )
 
+        feedback = ctk.CTkFrame(self)
+        feedback.grid(row=4, column=0, sticky="ew", padx=15, pady=(0, 15))
+        feedback.grid_columnconfigure(0, weight=1)
+        self.feedback_note = ctk.CTkEntry(
+            feedback,
+            placeholder_text="Optional feedback note",
+        )
+        self.feedback_note.grid(
+            row=0,
+            column=0,
+            sticky="ew",
+            padx=8,
+            pady=8,
+        )
+        ctk.CTkButton(
+            feedback,
+            text="Helpful",
+            width=90,
+            command=lambda: self.save_feedback(True),
+        ).grid(row=0, column=1, padx=5, pady=8)
+        ctk.CTkButton(
+            feedback,
+            text="Not Helpful",
+            width=100,
+            fg_color="#A36A2D",
+            hover_color="#7F5223",
+            command=lambda: self.save_feedback(False),
+        ).grid(row=0, column=2, padx=5, pady=8)
+        self.feedback_message = ctk.CTkLabel(
+            feedback,
+            text="",
+            anchor="w",
+        )
+        self.feedback_message.grid(
+            row=1,
+            column=0,
+            columnspan=3,
+            sticky="ew",
+            padx=8,
+            pady=(0, 8),
+        )
+
     @staticmethod
     def _metric(parent, column, value, label):
         frame = ctk.CTkFrame(parent)
@@ -86,3 +136,18 @@ class RecommendationWindow(ctk.CTkToplevel):
                 anchor="w",
                 wraplength=620,
             ).pack(fill="x", padx=15, pady=4)
+
+    def save_feedback(self, helpful):
+        self.feedback_service.record(
+            self.opportunity,
+            helpful,
+            self.feedback_note.get(),
+        )
+        self.feedback_note.delete(0, "end")
+        self.feedback_message.configure(
+            text=(
+                "Helpful feedback saved."
+                if helpful
+                else "Not Helpful feedback saved."
+            )
+        )

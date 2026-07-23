@@ -15,6 +15,9 @@ from src.backups.backup_service import BackupService
 from src.contacts.contact_service import ContactService
 from src.clustering.duplicate_cluster_service import DuplicateClusterService
 from src.exports.export_service import ExportService
+from src.feedback.recommendation_feedback_service import (
+    RecommendationFeedbackService,
+)
 from src.learning.search_memory_service import SearchMemoryService
 from src.outcomes.outcome_service import OutcomeService
 from src.core.app_logger import get_logger
@@ -22,6 +25,8 @@ from src.core.search_service import SearchService
 from src.core.task_manager import BackgroundTaskManager
 from src.reminders.reminder_service import ReminderService
 from src.recommendations.recommendation_service import RecommendationService
+from src.review.decision_review_service import DecisionReviewService
+from src.review.learning_export_service import LearningExportService
 from src.pipeline.pipeline_service import PipelineService
 from src.responses.response_service import ResponseService
 from src.scheduling.scheduled_search_monitor import ScheduledSearchMonitor
@@ -88,9 +93,24 @@ class MainWindow(ctk.CTk):
             self.tracking_service,
             self.outcome_service,
         )
+        self.recommendation_feedback_service = RecommendationFeedbackService()
         self.recommendation_service = RecommendationService(
             self.search_memory_service,
             self.outcome_service,
+            self.recommendation_feedback_service,
+        )
+        self.decision_review_service = DecisionReviewService(
+            self.search_memory_service,
+            self.outcome_service,
+            self.recommendation_feedback_service,
+            self.duplicate_cluster_service,
+        )
+        self.learning_export_service = LearningExportService(
+            self.decision_review_service,
+            self.search_memory_service,
+            self.outcome_service,
+            self.recommendation_feedback_service,
+            self.duplicate_cluster_service,
         )
         self.pipeline_service = PipelineService(
             self.tracking_service,
@@ -1448,6 +1468,7 @@ class MainWindow(ctk.CTk):
             self,
             self.selected_opportunity,
             recommendation,
+            self.recommendation_feedback_service,
         )
 
     #

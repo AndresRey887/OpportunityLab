@@ -10,9 +10,15 @@ from src.recommendations.opportunity_recommendation import (
 
 
 class RecommendationService:
-    def __init__(self, search_memory_service, outcome_service) -> None:
+    def __init__(
+        self,
+        search_memory_service,
+        outcome_service,
+        feedback_service=None,
+    ) -> None:
         self.memory = search_memory_service
         self.outcome_service = outcome_service
+        self.feedback_service = feedback_service
 
     def evaluate(self, opportunity) -> OpportunityRecommendation:
         source_profile = self._source_profile(
@@ -50,7 +56,18 @@ class RecommendationService:
             match_score += min(keyword_profile.strength, 100) * 0.20
         if type_profile:
             match_score += min(type_profile.strength, 100) * 0.15
-        match_score = round(min(match_score, 100))
+        feedback = (
+            self.feedback_service.influence(opportunity)
+            if self.feedback_service is not None
+            else {
+                "matching": 0,
+                "helpful": 0,
+                "unhelpful": 0,
+                "score_adjustment": 0,
+            }
+        )
+        match_score += feedback["score_adjustment"]
+        match_score = round(max(0, min(match_score, 100)))
 
         reasons = [f"Current opportunity quality score is {current_score}/100."]
         if source_profile:
@@ -74,19 +91,25 @@ class RecommendationService:
                 f"{type_profile.label} is the strongest matching opportunity "
                 f"type from previous results."
             )
+        if feedback["helpful"] > feedback["unhelpful"]:
+            reasons.append(
+                f"{feedback['helpful']} helpful feedback response(s) support "
+                f"similar recommendations."
+            )
 
         decided_count = sum(
             outcome.result != "Undecided"
             for outcome in self.outcome_service.records
         )
         tracked_count = len(self.memory.tracking_service.records)
-        evidence_count = tracked_count + decided_count
+        evidence_count = tracked_count + decided_count + feedback["matching"]
         confidence = 15
         confidence += min(tracked_count * 7, 35)
         confidence += min(decided_count * 10, 30)
         confidence += 8 if source_profile else 0
         confidence += 4 if keyword_profile else 0
         confidence += 3 if type_profile else 0
+        confidence += min(feedback["matching"] * 3, 10)
         confidence = min(confidence, 95)
 
         cautions = []
@@ -112,6 +135,11 @@ class RecommendationService:
         if not source_profile and not keyword_profile:
             cautions.append(
                 "This source and wording are new to OpportunityLab."
+            )
+        if feedback["unhelpful"] > feedback["helpful"]:
+            cautions.append(
+                f"{feedback['unhelpful']} unhelpful feedback response(s) lower "
+                f"the score for similar recommendations."
             )
 
         if match_score >= 75:

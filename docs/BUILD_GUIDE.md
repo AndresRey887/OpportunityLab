@@ -1,6 +1,6 @@
 # OpportunityLab Build Guide
 
-## Install Package-022A-05
+## Install Package-022A-07
 
 Copy every folder from the package ZIP into the OpportunityLab project folder.
 Allow Windows to merge folders and replace existing files.
@@ -10,13 +10,13 @@ Allow Windows to merge folders and replace existing files.
 From `D:\OpportunityLab` with the virtual environment active:
 
 ```powershell
-python scripts/test_phase4_recommendations.py
+python scripts/test_phase4_decision_review.py
 ```
 
 Expected result:
 
 ```text
-Phase 4 recommendation test passed.
+Phase 4 decision review test passed.
 ```
 
 ## Run
@@ -25,5 +25,5 @@ Phase 4 recommendation test passed.
 python -m src.ui.main_window
 ```
 
-Select a search result and choose **Why This Opportunity?** to see its match
-score, confidence, reasons, and cautions.
+Open **Pipeline...** and choose **Review** to see accuracy, strong and weak
+patterns, evidence gaps, and recorded lessons.
