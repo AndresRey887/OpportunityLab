@@ -1,41 +1,39 @@
 # OpportunityLab Build Guide
 
-## Phase 2 — Complete
+## Phase 3
 
-Version: 0.20.0  
-Codename: Trailblazer  
-Final package: Package-020A-40
+Version: 0.21.0  
+Codename: Catalyst  
+Focus: Turn discovered opportunities into actions.
 
-## Completed Work
-
-- Package-020A-01 through Package-020A-12 — Discovery pipeline foundation.
-- Package-020A-13 through Package-020A-15 — Live discovery sources.
-- Package-020A-16 through Package-020A-22 — Filtering and search reporting.
-- Package-020A-23 through Package-020A-34 — Scheduled searches and notices.
-- Package-020A-35 through Package-020A-39 — Grouping and sorting.
-
-## Package-020A-40
+## Package-021A-01
 
 ### Goal
 
-Verify Phase 2 systems together and mark Version 0.20.0 complete.
+Add persistent opportunity tracking and its complete first UI workflow.
 
 ### New files
 
-- `scripts/test_phase2_completion.py`
+- `src/tracking/__init__.py`
+- `src/tracking/tracked_opportunity.py`
+- `src/tracking/tracking_store.py`
+- `src/tracking/tracking_service.py`
+- `src/ui/tracking_window.py`
+- `scripts/test_phase3_opportunity_tracking.py`
 
 ### Complete replacements
 
+- `src/ui/main_window.py`
 - `src/version.py`
 - `docs/AI_HANDOVER.md`
 - `docs/BUILD_GUIDE.md`
 
 ### Test command
 
-`python scripts\test_phase2_completion.py`
+`python scripts\test_phase3_opportunity_tracking.py`
 
 ### Expected result
 
-`OpportunityLab Phase 2 completion test passed.`
+`Phase 3 opportunity tracking test passed.`
 
 Stop after this test and report `passed` or paste the error.

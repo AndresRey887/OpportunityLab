@@ -18,11 +18,13 @@ from src.scheduling.scheduled_search_monitor import ScheduledSearchMonitor
 from src.scheduling.scheduled_search_runner import ScheduledSearchRunner
 from src.scheduling.search_scheduler import SearchScheduler
 from src.services.search_history_service import SearchHistoryService
+from src.tracking.tracking_service import TrackingService
 from src.ui.details_panel import DetailsPanel
 from src.ui.filter_window import FilterWindow
 from src.ui.related_search_panel import RelatedSearchPanel
 from src.ui.results_panel import ResultsPanel
 from src.ui.scheduled_search_window import ScheduledSearchWindow
+from src.ui.tracking_window import TrackingWindow
 from src.version import VERSION_INFO
 
 
@@ -46,6 +48,7 @@ class MainWindow(ctk.CTk):
 
         self.search_service = SearchService()
         self.search_history = SearchHistoryService()
+        self.tracking_service = TrackingService()
 
         self.scheduled_search_service = SearchService()
         self.search_scheduler = SearchScheduler()
@@ -67,6 +70,7 @@ class MainWindow(ctk.CTk):
 
         self.filter_window = None
         self.scheduled_search_window = None
+        self.tracking_window = None
         self.analysis_running = False
         self.related_search_running = False
         self.selected_opportunity = None
@@ -241,6 +245,20 @@ class MainWindow(ctk.CTk):
         self.schedule_button.grid(
             row=0,
             column=5,
+            padx=5
+        )
+
+        self.tracking_button = ctk.CTkButton(
+            search_row,
+            text="Tracked...",
+            width=105,
+            height=38,
+            command=self.open_tracking_window
+        )
+
+        self.tracking_button.grid(
+            row=0,
+            column=6,
             padx=(5, 0)
         )
 
@@ -621,6 +639,19 @@ class MainWindow(ctk.CTk):
         )
 
         self.open_website_button.pack(
+            fill="x",
+            padx=12,
+            pady=4
+        )
+
+        self.track_opportunity_button = ctk.CTkButton(
+            action_card,
+            text="Track Opportunity",
+            command=self.track_selected_opportunity,
+            state="disabled"
+        )
+
+        self.track_opportunity_button.pack(
             fill="x",
             padx=12,
             pady=4
@@ -1162,6 +1193,47 @@ class MainWindow(ctk.CTk):
 
         self.scheduled_search_window = ScheduledSearchWindow(self)
 
+    def open_tracking_window(self):
+
+        if self.tracking_window is not None:
+
+            try:
+                if self.tracking_window.winfo_exists():
+                    self.tracking_window.refresh_records()
+                    self.tracking_window.focus()
+                    return
+            except Exception:
+                pass
+
+        self.tracking_window = TrackingWindow(self)
+
+    def track_selected_opportunity(self):
+
+        if self.selected_opportunity is None:
+            return
+
+        record, created = self.tracking_service.track(
+            self.selected_opportunity
+        )
+
+        self.track_opportunity_button.configure(
+            text="Tracked"
+        )
+
+        self.status.configure(
+            text=(
+                "Opportunity added to tracking."
+                if created
+                else "Opportunity is already tracked."
+            )
+        )
+
+        if (
+            self.tracking_window is not None
+            and self.tracking_window.winfo_exists()
+        ):
+            self.tracking_window.refresh_records()
+
     #
     # Search
     #
@@ -1287,6 +1359,12 @@ class MainWindow(ctk.CTk):
 
         self.open_website_button.configure(
             state="normal"
+        )
+
+        tracked = self.tracking_service.is_tracked(opportunity.url)
+        self.track_opportunity_button.configure(
+            state="normal",
+            text="Tracked" if tracked else "Track Opportunity"
         )
 
         saved_analysis = getattr(
