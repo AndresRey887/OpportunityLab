@@ -43,8 +43,8 @@ def main() -> None:
     assert "scheduled_search_monitor.stop" in main_window
     assert "task_manager.shutdown(wait=False)" in main_window
     assert 'ShutdownAction("main window", self.destroy)' in main_window
-    assert VERSION_INFO.package == "Package-100B-04"
-    assert VERSION_INFO.build == 15
+    assert VERSION_INFO.package == "Package-110A-01"
+    assert VERSION_INFO.build == 1
     print("Phase 6 shutdown test passed.")
 
 

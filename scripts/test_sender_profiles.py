@@ -79,9 +79,9 @@ def main() -> None:
         encoding="utf-8"
     )
     assert "Manage Profiles" in draft_source
-    assert VERSION_INFO.version == "1.0.4"
-    assert VERSION_INFO.package == "Package-100B-04"
-    assert VERSION_INFO.build == 15
+    assert VERSION_INFO.version == "1.1.0"
+    assert VERSION_INFO.package == "Package-110A-01"
+    assert VERSION_INFO.build == 1
     print("Sender profiles test passed.")
 
 

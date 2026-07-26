@@ -90,8 +90,8 @@ def main() -> None:
     assert "SystemHealthService" in main_window
     assert "System Health" in data_tools
     assert "Run Checks" in health_window
-    assert VERSION_INFO.version == "1.0.4"
-    assert VERSION_INFO.package == "Package-100B-04"
+    assert VERSION_INFO.version == "1.1.0"
+    assert VERSION_INFO.package == "Package-110A-01"
     assert VERSION_INFO.codename == "Gold Rush"
 
     print("Phase 6 system health test passed.")

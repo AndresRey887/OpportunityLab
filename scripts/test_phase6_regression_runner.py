@@ -47,8 +47,8 @@ def main() -> None:
     ).read_text(encoding="utf-8")
     assert "RELEASE_CHECKS" in release_runner
     assert "test_phase6_system_health.py" in release_runner
-    assert VERSION_INFO.package == "Package-100B-04"
-    assert VERSION_INFO.build == 15
+    assert VERSION_INFO.package == "Package-110A-01"
+    assert VERSION_INFO.build == 1
     print("Phase 6 regression runner test passed.")
 
 

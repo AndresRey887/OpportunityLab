@@ -196,9 +196,15 @@ class ResultsPanel(ctk.CTkFrame):
             pady=7
         )
 
+        fit_type = opportunity.metadata.get("profile_fit_type", "")
+        source_text = str(
+            getattr(opportunity, "source", "Unknown Source")
+        )
+        if fit_type:
+            source_text = f"{source_text}  •  {fit_type}"
         source = ctk.CTkLabel(
             text_area,
-            text=str(getattr(opportunity, "source", "Unknown Source")),
+            text=source_text,
             anchor="w",
             text_color=("gray35", "gray70"),
             font=("Segoe UI", 11, "bold")

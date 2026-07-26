@@ -37,6 +37,7 @@ from src.research.research_evidence_service import ResearchEvidenceService
 from src.review.decision_review_service import DecisionReviewService
 from src.review.learning_export_service import LearningExportService
 from src.pipeline.pipeline_service import PipelineService
+from src.profiles.sender_profile_service import SenderProfileService
 from src.responses.response_service import ResponseService
 from src.scheduling.scheduled_search_monitor import ScheduledSearchMonitor
 from src.scheduling.scheduled_search_runner import ScheduledSearchRunner
@@ -89,7 +90,8 @@ class MainWindow(ctk.CTk):
         logger.info("Application starting: %s", VERSION_INFO.full_label)
         self.crash_reporter = CrashReporter()
 
-        self.search_service = SearchService()
+        self.sender_profile_service = SenderProfileService()
+        self.search_service = SearchService(profile_service=self.sender_profile_service)
         self.search_history = SearchHistoryService()
         self.timeline_service = TimelineService()
         self.tracking_service = TrackingService(
@@ -100,7 +102,8 @@ class MainWindow(ctk.CTk):
             timeline_service=self.timeline_service
         )
         self.response_service = ResponseService(
-            timeline_service=self.timeline_service
+            timeline_service=self.timeline_service,
+            profile_service=self.sender_profile_service,
         )
         self.contact_service = ContactService(
             timeline_service=self.timeline_service
@@ -162,7 +165,9 @@ class MainWindow(ctk.CTk):
         self.backup_service = BackupService()
         self.system_health_service = SystemHealthService()
 
-        self.scheduled_search_service = SearchService()
+        self.scheduled_search_service = SearchService(
+            profile_service=self.sender_profile_service
+        )
         self.search_scheduler = SearchScheduler()
         self.scheduled_result_queue = queue.Queue()
         self.scheduled_search_runner = ScheduledSearchRunner(

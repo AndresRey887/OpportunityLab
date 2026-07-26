@@ -1,4 +1,4 @@
-"""A personal or organisation identity used in response drafts."""
+"""A personal or organisation identity used across OpportunityLab."""
 
 from __future__ import annotations
 
@@ -18,7 +18,19 @@ class SenderProfile:
     charity_information: str = ""
     signature: str = ""
     tone: str = "Professional"
+    profile_type: str = "Personal"
+    mission: str = ""
+    beneficiaries: str = ""
+    service_area: str = ""
+    support_needs: str = ""
+    opportunity_types: str = ""
+    dgr_status: str = ""
     profile_id: str = field(default_factory=lambda: uuid4().hex)
+
+    @property
+    def is_nonprofit(self) -> bool:
+        value = self.profile_type.casefold().replace("-", "").replace(" ", "")
+        return value in {"nonprofit", "charity", "notforprofit"}
 
     def to_dict(self) -> dict[str, str]:
         return asdict(self)

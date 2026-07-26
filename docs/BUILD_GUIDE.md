@@ -1,5 +1,13 @@
 # OpportunityLab Build Guide
 
+## Package 110A-01 test
+
+```powershell
+python scripts/test_profile_aware_search.py
+```
+
+Expected: `Profile-aware search test passed.`
+
 ## Package 100B-04 test
 
 ```powershell

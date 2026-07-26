@@ -2,9 +2,9 @@
 
 ## Current build
 
-- Version: 1.0.4
-- Package: Package-100B-04
-- Build: 15
+- Version: 1.1.0
+- Package: Package-110A-01
+- Build: 1
 - Codename: Gold Rush
 - Status: Production
 - Phase: 6 — complete
@@ -84,3 +84,13 @@ profile tone. The generated subject and body remain editable and are saved.
 Adds persistent Normal, Large, and Extra Large interface sizes. The setting is
 available from Data Tools and is applied before the main interface is built on
 future startups. It scales text and controls throughout OpportunityLab.
+
+
+## Package 110A-01
+
+Adds profile-aware discovery and opportunity scoring. Personal profiles keep
+the existing search behaviour. Nonprofit profiles expand searches using their
+mission, beneficiaries, service area, support needs, and opportunity types.
+Results are rescored and labelled Open Opportunity, Funding Prospect,
+Relationship Lead, or Weak Lead. The labels are evidence-led and do not make
+tax-deductibility claims or imply that a company is accepting requests.

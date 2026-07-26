@@ -10,6 +10,7 @@ from src.rules.supplier_rule import SupplierRule
 from src.rules.manufacturer_rule import ManufacturerRule
 from src.rules.australian_rule import AustralianRule
 from src.core.app_logger import get_logger
+from src.rules.profile_opportunity_rule import ProfileOpportunityRule
 
 
 logger = get_logger("OpportunityEngine")
@@ -17,7 +18,7 @@ logger = get_logger("OpportunityEngine")
 
 class OpportunityEngine:
 
-    def __init__(self):
+    def __init__(self, profile_service=None):
 
         logger.info("Engine ready")
 
@@ -27,7 +28,8 @@ class OpportunityEngine:
             BusinessRule(),
             SupplierRule(),
             ManufacturerRule(),
-            AustralianRule()
+            AustralianRule(),
+            ProfileOpportunityRule(profile_service)
 
         ]
 

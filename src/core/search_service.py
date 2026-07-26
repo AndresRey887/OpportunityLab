@@ -17,6 +17,7 @@ from src.discovery.source_registry import SourceRegistry
 from src.engine.opportunity_engine import OpportunityEngine
 from src.filters.filter_engine import FilterEngine
 from src.models.opportunity import Opportunity
+from src.profiles.profile_search_context import ProfileSearchContextService
 
 
 class SearchService(Service):
@@ -26,6 +27,7 @@ class SearchService(Service):
         self,
         sources: Iterable[SearchSource] | None = None,
         registry: SourceRegistry | None = None,
+        profile_service=None,
     ) -> None:
         super().__init__("SearchService")
 
@@ -55,7 +57,11 @@ class SearchService(Service):
             )
 
         self.pipeline = DiscoveryPipeline(self.registry)
-        self.engine = OpportunityEngine()
+        self.profile_service = profile_service
+        self.profile_search_context = ProfileSearchContextService(
+            profile_service
+        )
+        self.engine = OpportunityEngine(profile_service)
         self.filter_engine = FilterEngine()
         self.statistics = self.filter_engine.statistics
         self.source_statistics: dict[
@@ -105,8 +111,9 @@ class SearchService(Service):
                     if name.casefold() in allowed_sources
                 ]
 
+        search_context = self.profile_search_context.build(query)
         discovery_run = self.pipeline.run(
-            query,
+            search_context.effective_query,
             source_names=selected_source_names,
         )
         self.last_discovery_run = discovery_run
@@ -117,6 +124,15 @@ class SearchService(Service):
         ]
         for opportunity in scored_opportunities:
             opportunity.metadata["search_query"] = query
+            opportunity.metadata["effective_search_query"] = (
+                search_context.effective_query
+            )
+            opportunity.metadata["search_profile"] = (
+                search_context.profile_name
+            )
+            opportunity.metadata["profile_search_expanded"] = (
+                search_context.expanded
+            )
         self.source_statistics = self.pipeline.statistics()
 
         filtered_opportunities = self.filter_engine.process(scored_opportunities)
