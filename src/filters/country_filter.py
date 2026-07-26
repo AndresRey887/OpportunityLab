@@ -1,30 +1,57 @@
-"""
-Country Filter
+"""Filter discovery results to opportunities with Australian evidence."""
 
-Package-005
-
-Currently accepts everything.
-
-Package-006 will implement Australia filtering.
-"""
+from __future__ import annotations
 
 from src.filters.filter import Filter
 
 
 class CountryFilter(Filter):
+    AUSTRALIAN_TERMS = {
+        "australia",
+        "australian",
+        "victoria",
+        "victorian",
+        "new south wales",
+        "queensland",
+        "south australia",
+        "western australia",
+        "tasmania",
+        "northern territory",
+        "australian capital territory",
+        "melbourne",
+        "sydney",
+        "brisbane",
+        "adelaide",
+        "perth",
+        "hobart",
+        "darwin",
+        "canberra",
+    }
 
-    def __init__(self):
-
-        super().__init__("Country Filter")
-
+    def __init__(self) -> None:
+        super().__init__("Outside Australia")
         self.country = "Australia"
+        self.enabled = False
 
-    def accepts(self, opportunity):
+    def accepts(self, opportunity) -> bool:
+        country = str(getattr(opportunity, "country", "") or "").casefold()
+        if country:
+            return country in {"australia", "au", "aus"}
 
-        #
-        # Package-005
-        #
-        # Filtering logic comes next package.
-        #
+        domain = str(getattr(opportunity, "domain", "") or "").casefold()
+        if domain == "au" or domain.endswith(".au"):
+            return True
 
-        return True
+        metadata = getattr(opportunity, "metadata", {}) or {}
+        metadata_country = str(metadata.get("country", "") or "").casefold()
+        if metadata_country:
+            return metadata_country in {"australia", "au", "aus"}
+
+        text = " ".join(
+            (
+                str(getattr(opportunity, "title", "") or ""),
+                str(getattr(opportunity, "snippet", "") or ""),
+                str(metadata.get("location", "") or ""),
+            )
+        ).casefold()
+        return any(term in text for term in self.AUSTRALIAN_TERMS)

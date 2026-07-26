@@ -2,9 +2,9 @@
 
 ## Current build
 
-- Version: 1.1.0
-- Package: Package-110A-01
-- Build: 1
+- Version: 1.1.1
+- Package: Package-110A-02
+- Build: 2
 - Codename: Gold Rush
 - Status: Production
 - Phase: 6 — complete
@@ -94,3 +94,9 @@ mission, beneficiaries, service area, support needs, and opportunity types.
 Results are rescored and labelled Open Opportunity, Funding Prospect,
 Relationship Lead, or Weak Lead. The labels are evidence-led and do not make
 tax-deductibility claims or imply that a company is accepting requests.
+
+## Package 110A-02
+
+Activates the persistent Australia Only filter. When enabled it adds Australia
+to discovery queries and only displays results with Australian country,
+location, text, or `.au` domain evidence.

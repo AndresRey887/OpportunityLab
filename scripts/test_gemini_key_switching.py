@@ -56,9 +56,9 @@ def main() -> None:
     assert "key_service.active_key" in provider_source
     assert "select_gemini_key" in controller_source
     assert "Gemini API Key" in data_tools
-    assert VERSION_INFO.version == "1.1.0"
-    assert VERSION_INFO.package == "Package-110A-01"
-    assert VERSION_INFO.build == 1
+    assert VERSION_INFO.version == "1.1.1"
+    assert VERSION_INFO.package == "Package-110A-02"
+    assert VERSION_INFO.build == 2
     print("Gemini key switching test passed.")
 
 

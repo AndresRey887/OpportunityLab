@@ -27,6 +27,7 @@ class FilterWindow(ctk.CTkToplevel):
         self.pending_keywords = []
         self.available_sources = []
         self.source_variables = {}
+        self.australia_only = False
 
         self.selected_domain = ctk.StringVar(value="")
         self.selected_keyword = ctk.StringVar(value="")
@@ -59,6 +60,7 @@ class FilterWindow(ctk.CTkToplevel):
         self.pending_keywords = (
             self.filter_engine.get_blocked_keywords()
         )
+        self.australia_only = self.filter_engine.is_australia_only()
 
         try:
             self.available_sources = (
@@ -141,9 +143,10 @@ class FilterWindow(ctk.CTkToplevel):
 
         self.au_only = ctk.CTkCheckBox(
             general,
-            text="Australia Only — coming soon",
-            state="disabled"
+            text="Australia Only"
         )
+        if self.australia_only:
+            self.au_only.select()
 
         self.au_only.pack(
             anchor="w",
@@ -697,11 +700,15 @@ class FilterWindow(ctk.CTkToplevel):
         self.filter_engine.set_blocked_keywords(
             self.pending_keywords
         )
+        self.filter_engine.set_australia_only(
+            bool(self.au_only.get())
+        )
 
         self.message.configure(
             text=(
                 f"Applied {len(self.pending_domains)} domains and "
                 f"{len(self.pending_keywords)} keywords. "
-                f"Sources: {len(selected_sources)}."
+                f"Sources: {len(selected_sources)}. "
+                f"Australia Only: {'On' if self.au_only.get() else 'Off'}."
             )
         )

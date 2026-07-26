@@ -50,9 +50,9 @@ def main() -> None:
         assert manifest["file_count"] == len(manifest["files"])
         assert all(len(entry["sha256"]) == 64 for entry in manifest["files"])
 
-    assert VERSION_INFO.version == "1.1.0"
-    assert VERSION_INFO.package == "Package-110A-01"
-    assert VERSION_INFO.build == 1
+    assert VERSION_INFO.version == "1.1.1"
+    assert VERSION_INFO.package == "Package-110A-02"
+    assert VERSION_INFO.build == 2
     assert VERSION_INFO.status == "Production"
     print("Phase 6 release manifest test passed.")
 

@@ -112,8 +112,13 @@ class SearchService(Service):
                 ]
 
         search_context = self.profile_search_context.build(query)
+        effective_query = search_context.effective_query
+        if self.filter_engine.is_australia_only():
+            query_text = effective_query.casefold()
+            if "australia" not in query_text and "australian" not in query_text:
+                effective_query = f"{effective_query} Australia"
         discovery_run = self.pipeline.run(
-            search_context.effective_query,
+            effective_query,
             source_names=selected_source_names,
         )
         self.last_discovery_run = discovery_run
@@ -125,7 +130,7 @@ class SearchService(Service):
         for opportunity in scored_opportunities:
             opportunity.metadata["search_query"] = query
             opportunity.metadata["effective_search_query"] = (
-                search_context.effective_query
+                effective_query
             )
             opportunity.metadata["search_profile"] = (
                 search_context.profile_name

@@ -1,5 +1,13 @@
 # OpportunityLab Build Guide
 
+## Package 110A-02 test
+
+```powershell
+python scripts/test_australia_only_filter.py
+```
+
+Expected: `Australia Only filter test passed.`
+
 ## Package 110A-01 test
 
 ```powershell

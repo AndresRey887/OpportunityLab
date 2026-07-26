@@ -56,6 +56,10 @@ class FilterEngine:
         self.source_filter.set_allowed_sources(
             settings.get("allowed_sources", [])
         )
+        self.set_australia_only(
+            bool(settings.get("australia_only", False)),
+            save=False,
+        )
 
     def _save_settings(self):
         self.settings_store.save(
@@ -63,6 +67,7 @@ class FilterEngine:
                 "blocked_domains": self.get_blocked_domains(),
                 "blocked_keywords": self.get_blocked_keywords(),
                 "allowed_sources": self.get_allowed_sources(),
+                "australia_only": self.is_australia_only(),
             }
         )
 
@@ -148,3 +153,11 @@ class FilterEngine:
     def clear_allowed_sources(self):
         self.source_filter.clear_allowed_sources()
         self._save_settings()
+
+    def is_australia_only(self):
+        return self.country_filter.enabled
+
+    def set_australia_only(self, enabled, *, save=True):
+        self.country_filter.enabled = bool(enabled)
+        if save:
+            self._save_settings()

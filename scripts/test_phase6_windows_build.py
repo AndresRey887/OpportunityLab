@@ -32,8 +32,8 @@ def main() -> None:
     assert "--clean" in build_script
     assert "customtkinter" in requirements
     assert "pyinstaller" in build_requirements.lower()
-    assert VERSION_INFO.package == "Package-110A-01"
-    assert VERSION_INFO.build == 1
+    assert VERSION_INFO.package == "Package-110A-02"
+    assert VERSION_INFO.build == 2
     print("Phase 6 Windows build configuration test passed.")
 
 

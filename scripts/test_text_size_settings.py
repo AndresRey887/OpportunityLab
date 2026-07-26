@@ -41,9 +41,9 @@ def main() -> None:
     assert "ctk.set_widget_scaling" in main_window
     assert "Text Size" in data_tools
     assert "set_widget_scaling" in display_window
-    assert VERSION_INFO.version == "1.1.0"
-    assert VERSION_INFO.package == "Package-110A-01"
-    assert VERSION_INFO.build == 1
+    assert VERSION_INFO.version == "1.1.1"
+    assert VERSION_INFO.package == "Package-110A-02"
+    assert VERSION_INFO.build == 2
     print("Text size settings test passed.")
 
 
