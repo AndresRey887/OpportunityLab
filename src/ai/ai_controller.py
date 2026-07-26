@@ -10,6 +10,7 @@ from typing import Any
 
 from src.ai.ai_task import AITask
 from src.ai.gemini_provider import GeminiProvider
+from src.ai.gemini_key_service import GeminiKeyService
 from src.ai.opportunity_analyzer import OpportunityAnalyzer
 from src.core.app_logger import get_logger
 
@@ -23,17 +24,36 @@ class AIController:
     def __init__(
         self,
         analyzer: OpportunityAnalyzer | None = None,
+        gemini_key_service: GeminiKeyService | None = None,
     ) -> None:
+        self.gemini_key_service = (
+            gemini_key_service
+            if gemini_key_service is not None
+            else GeminiKeyService()
+        )
         # Keep provider construction out of MainWindow. An analyzer may still
         # be injected by tests or future application bootstrap code.
         self.analyzer = (
             analyzer
             if analyzer is not None
             else OpportunityAnalyzer(
-                provider=GeminiProvider()
+                provider=GeminiProvider(
+                    key_service=self.gemini_key_service
+                )
             )
         )
         logger.info("Initialised")
+
+    def select_gemini_key(self, name: str) -> dict[str, object]:
+        self.gemini_key_service.select(name)
+        self.analyzer.set_provider(
+            GeminiProvider(key_service=self.gemini_key_service)
+        )
+        logger.info("Gemini API key selection changed: %s", name)
+        return self.get_gemini_key_status()
+
+    def get_gemini_key_status(self) -> dict[str, object]:
+        return self.gemini_key_service.status()
 
     # ------------------------------------------------------------------
     # Primary features used by the UI

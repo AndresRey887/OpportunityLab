@@ -60,8 +60,8 @@ def main() -> None:
         encoding="utf-8"
     )
     assert "Export Report" in ui_source
-    assert VERSION_INFO.package == "Package-100A-08"
-    assert VERSION_INFO.build == 10
+    assert VERSION_INFO.package == "Package-100B-04"
+    assert VERSION_INFO.build == 15
     print("Phase 6 release report test passed.")
 
 

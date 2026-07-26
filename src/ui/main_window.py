@@ -11,6 +11,7 @@ from tkinter import messagebox
 
 import customtkinter as ctk
 
+from src.accessibility.display_settings_service import DisplaySettingsService
 from src.ai.ai_controller import AIController
 from src.backups.backup_service import BackupService
 from src.health.system_health_service import SystemHealthService
@@ -72,7 +73,10 @@ class MainWindow(ctk.CTk):
 
     def __init__(self):
 
+        display_settings_service = DisplaySettingsService()
+        ctk.set_widget_scaling(display_settings_service.scale)
         super().__init__()
+        self.display_settings_service = display_settings_service
         self.startup_performance = PerformanceTracker("Application startup")
 
         ctk.set_appearance_mode("Dark")
@@ -1453,6 +1457,8 @@ class MainWindow(ctk.CTk):
             self,
             self.backup_service,
             self.system_health_service,
+            self.ai_controller,
+            self.display_settings_service,
         )
 
     def track_selected_opportunity(self):
@@ -1513,6 +1519,8 @@ class MainWindow(ctk.CTk):
             self,
             record,
             self.response_service,
+            self.ai_controller,
+            self.task_manager,
         )
         self.track_opportunity_button.configure(text="Tracked")
 

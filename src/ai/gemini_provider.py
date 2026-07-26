@@ -9,8 +9,9 @@ import json
 from google import genai
 from google.genai import types
 
-from config.secrets import GEMINI_API_KEY
 from src.ai.ai_provider import AIProvider
+from src.ai.gemini_key_service import GeminiKeyService
+from src.ai.gemini_response_parser import GeminiResponseParser
 from src.ai.opportunity_analysis import OpportunityAnalysis
 
 
@@ -19,15 +20,17 @@ class GeminiProvider(AIProvider):
     def __init__(
         self,
         api_key=None,
+        key_service=None,
         model="gemini-3.5-flash"
     ):
 
         super().__init__("Gemini")
 
+        self.key_service = (
+            key_service if key_service is not None else GeminiKeyService()
+        )
         self.api_key = (
-            api_key
-            if api_key is not None
-            else GEMINI_API_KEY
+            api_key if api_key is not None else self.key_service.active_key
         )
 
         self.api_key = str(self.api_key).strip()
@@ -66,7 +69,7 @@ class GeminiProvider(AIProvider):
             contents=prompt,
             config=types.GenerateContentConfig(
                 temperature=0.2,
-                max_output_tokens=1800,
+                max_output_tokens=4096,
                 response_mime_type="application/json",
                 response_schema={
                     "type": "object",
@@ -142,21 +145,25 @@ class GeminiProvider(AIProvider):
             )
         )
 
-        if not response.text:
-
+        try:
+            data = GeminiResponseParser.parse(response)
+        except (json.JSONDecodeError, ValueError, TypeError):
             return OpportunityAnalysis(
-                summary="Gemini returned an empty response.",
+                summary=(
+                    "Gemini returned an incomplete structured response."
+                ),
                 category="Analysis unavailable",
                 confidence=0,
                 opportunity_value=0,
+                warnings=[
+                    "The response ended before valid analysis data was ready."
+                ],
                 recommended_action=(
-                    "Try analysing the opportunity again."
+                    "Try analysing this opportunity again."
                 ),
                 provider=self.name,
                 model=self.model
             )
-
-        data = json.loads(response.text)
 
         return self._create_analysis(data)
 

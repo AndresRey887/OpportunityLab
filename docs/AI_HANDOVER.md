@@ -2,9 +2,9 @@
 
 ## Current build
 
-- Version: 1.0.0
-- Package: Package-100A-08
-- Build: 10
+- Version: 1.0.4
+- Package: Package-100B-04
+- Build: 15
 - Codename: Gold Rush
 - Status: Production
 - Phase: 6 — complete
@@ -53,3 +53,34 @@ excluding private application data.
 ## Next work
 
 Phase 6 production-readiness work is complete.
+
+## Package 100B-01
+
+Adds persistent manual selection between primary and alternate Gemini API
+keys. The selector is available from Data Tools. Key values remain only in
+gitignored `config/secrets.py`; the saved selection contains only the words
+Primary or Alternate. Legacy `GEMINI_API_KEY` remains supported as Primary.
+
+## Package 100B-02
+
+Adds persistent Personal and organisation sender profiles. Each profile can
+store the sender, role, organisation, email, website, organisation description,
+charity information, custom signature, and writing tone. Response templates
+append the active profile signature. Profiles are managed from Response Draft.
+
+Package 100B-02A prefers Gemini's parsed structured response, accepts fenced
+JSON, increases the output allowance to prevent truncation, and converts
+malformed responses into a safe retry message instead of a UI failure.
+
+## Package 100B-03
+
+Connects the existing local Ollama email-writing capability to Response Draft.
+Generate with Ollama runs in the background and uses the selected opportunity,
+active sender profile, organisation and charity details, custom signature, and
+profile tone. The generated subject and body remain editable and are saved.
+
+## Package 100B-04
+
+Adds persistent Normal, Large, and Extra Large interface sizes. The setting is
+available from Data Tools and is applied before the main interface is built on
+future startups. It scales text and controls throughout OpportunityLab.

@@ -5,14 +5,26 @@ from __future__ import annotations
 import webbrowser
 
 import customtkinter as ctk
+from src.responses.generated_email import GeneratedEmail
+from src.ui.sender_profile_window import SenderProfileWindow
 
 
 class DraftWindow(ctk.CTkToplevel):
-    def __init__(self, master, record, service):
+    def __init__(
+        self,
+        master,
+        record,
+        service,
+        ai_controller=None,
+        task_manager=None,
+    ):
         super().__init__(master)
         self.record = record
         self.service = service
+        self.ai_controller = ai_controller
+        self.task_manager = task_manager
         self.draft = service.get_or_create_draft(record)
+        self.profile_window = None
 
         self.title("Response Draft")
         self.geometry("780x720")
@@ -23,7 +35,7 @@ class DraftWindow(ctk.CTkToplevel):
 
     def build_ui(self):
         self.grid_columnconfigure(0, weight=1)
-        self.grid_rowconfigure(3, weight=1)
+        self.grid_rowconfigure(4, weight=1)
 
         ctk.CTkLabel(
             self,
@@ -33,8 +45,38 @@ class DraftWindow(ctk.CTkToplevel):
             wraplength=710,
         ).grid(row=0, column=0, sticky="ew", padx=15, pady=(15, 8))
 
+        profile_row = ctk.CTkFrame(self)
+        profile_row.grid(row=1, column=0, sticky="ew", padx=15, pady=5)
+        profile_row.grid_columnconfigure(0, weight=1)
+        self.profile_value = ctk.StringVar()
+        self.profile_menu = ctk.CTkOptionMenu(
+            profile_row,
+            variable=self.profile_value,
+            command=self.select_profile,
+        )
+        self.profile_menu.grid(row=0, column=0, sticky="ew", padx=8, pady=8)
+        ctk.CTkButton(
+            profile_row,
+            text="Manage Profiles",
+            width=135,
+            command=self.open_profiles,
+        ).grid(row=0, column=1, padx=8, pady=8)
+        self.generate_button = ctk.CTkButton(
+            profile_row,
+            text="Generate with Ollama",
+            width=150,
+            command=self.generate_with_ollama,
+            state=(
+                "normal"
+                if self.ai_controller is not None
+                and self.task_manager is not None
+                else "disabled"
+            ),
+        )
+        self.generate_button.grid(row=0, column=2, padx=8, pady=8)
+
         template_row = ctk.CTkFrame(self)
-        template_row.grid(row=1, column=0, sticky="ew", padx=15, pady=5)
+        template_row.grid(row=2, column=0, sticky="ew", padx=15, pady=5)
         template_row.grid_columnconfigure(0, weight=1)
 
         template_names = self.service.template_names()
@@ -59,13 +101,13 @@ class DraftWindow(ctk.CTkToplevel):
             self,
             placeholder_text="Subject",
         )
-        self.subject_entry.grid(row=2, column=0, sticky="ew", padx=15, pady=8)
+        self.subject_entry.grid(row=3, column=0, sticky="ew", padx=15, pady=8)
 
         self.body_text = ctk.CTkTextbox(self, wrap="word")
-        self.body_text.grid(row=3, column=0, sticky="nsew", padx=15, pady=8)
+        self.body_text.grid(row=4, column=0, sticky="nsew", padx=15, pady=8)
 
         action_row = ctk.CTkFrame(self)
-        action_row.grid(row=4, column=0, sticky="ew", padx=15, pady=(8, 5))
+        action_row.grid(row=5, column=0, sticky="ew", padx=15, pady=(8, 5))
         action_row.grid_columnconfigure(0, weight=1)
 
         self.message = ctk.CTkLabel(action_row, text="", anchor="w")
@@ -93,7 +135,7 @@ class DraftWindow(ctk.CTkToplevel):
         ).grid(row=0, column=3, padx=8, pady=8)
 
         save_template = ctk.CTkFrame(self)
-        save_template.grid(row=5, column=0, sticky="ew", padx=15, pady=(5, 15))
+        save_template.grid(row=6, column=0, sticky="ew", padx=15, pady=(5, 15))
         save_template.grid_columnconfigure(0, weight=1)
 
         self.template_name_entry = ctk.CTkEntry(
@@ -109,10 +151,71 @@ class DraftWindow(ctk.CTkToplevel):
         ).grid(row=0, column=1, padx=8, pady=8)
 
     def load_draft(self):
+        self.refresh_profiles()
         self.subject_entry.delete(0, "end")
         self.subject_entry.insert(0, self.draft.subject)
         self.body_text.delete("1.0", "end")
         self.body_text.insert("1.0", self.draft.body)
+
+    def refresh_profiles(self):
+        names = self.service.profile_service.names()
+        self.profile_menu.configure(values=names)
+        self.profile_value.set(self.service.profile_service.active_profile.name)
+
+    def select_profile(self, name):
+        self.service.profile_service.set_active_by_name(name)
+        self.message.configure(
+            text=f"{name} selected. Apply a template to use its signature."
+        )
+
+    def open_profiles(self):
+        if self.profile_window is not None:
+            try:
+                if self.profile_window.winfo_exists():
+                    self.profile_window.focus()
+                    return
+            except Exception:
+                pass
+        self.profile_window = SenderProfileWindow(
+            self,
+            self.service.profile_service,
+            on_saved=self.refresh_profiles,
+        )
+
+    def generate_with_ollama(self):
+        if self.ai_controller is None or self.task_manager is None:
+            return
+        profile_values = self.service.profile_service.draft_values()
+        tone = profile_values.get("profile_tone") or "Professional"
+        self.generate_button.configure(state="disabled")
+        self.message.configure(text="Ollama is drafting the email...")
+        self.task_manager.submit(
+            name="Draft email with Ollama",
+            target=self.ai_controller.draft_email,
+            args=(self.record,),
+            kwargs={
+                "tone": tone,
+                "profile_context": profile_values,
+            },
+            on_success=self.finish_ollama_draft,
+            on_error=self.fail_ollama_draft,
+            on_complete=lambda: self.generate_button.configure(state="normal"),
+        )
+
+    def finish_ollama_draft(self, text):
+        generated = GeneratedEmail.parse(
+            text,
+            fallback_subject=self.subject_entry.get(),
+        )
+        self.subject_entry.delete(0, "end")
+        self.subject_entry.insert(0, generated.subject)
+        self.body_text.delete("1.0", "end")
+        self.body_text.insert("1.0", generated.body)
+        self.save_draft()
+        self.message.configure(text="Ollama draft generated and saved.")
+
+    def fail_ollama_draft(self, error):
+        self.message.configure(text=f"Ollama draft failed: {error}")
 
     def apply_template(self):
         template = self.service.get_template_by_name(self.template_value.get())

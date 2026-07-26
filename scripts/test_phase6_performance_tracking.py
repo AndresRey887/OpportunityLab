@@ -48,8 +48,8 @@ def main() -> None:
     assert 'checkpoint("services")' in main_window
     assert 'checkpoint("interface")' in main_window
     assert 'checkpoint("ready")' in main_window
-    assert VERSION_INFO.package == "Package-100A-08"
-    assert VERSION_INFO.build == 10
+    assert VERSION_INFO.package == "Package-100B-04"
+    assert VERSION_INFO.build == 15
     print("Phase 6 performance tracking test passed.")
 
 

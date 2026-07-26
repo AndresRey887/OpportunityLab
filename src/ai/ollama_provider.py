@@ -189,12 +189,14 @@ Rules:
     def draft_email(
         self,
         context,
-        tone="professional and friendly"
+        tone="professional and friendly",
+        profile_context=None,
     ):
 
         opportunity_text = self._format_opportunity(
             context
         )
+        profile_text = self._format_profile_context(profile_context)
 
         prompt = f"""
 You are the local writing assistant inside OpportunityLab.
@@ -204,6 +206,9 @@ Draft a concise enquiry email about the opportunity below.
 Tone:
 {tone}
 
+Sender profile:
+{profile_text}
+
 Opportunity:
 {opportunity_text}
 
@@ -211,12 +216,16 @@ Requirements:
 
 - Do not invent the recipient's name.
 - Do not claim experience or qualifications not supplied.
+- Write from the supplied sender profile.
+- Use organisation details only when they are supplied and relevant.
+- Include the supplied signature details at the end.
 - Ask clearly about participation, eligibility and next steps.
-- Include a useful subject line.
+- Put a useful subject on the first line as "Subject: ...".
+- Return the email only, without commentary.
 - Keep the email under 250 words.
 """
 
-        return self._chat(prompt)
+        return self._remove_thinking(self._chat(prompt))
 
     def draft_application(
         self,
@@ -467,3 +476,25 @@ Return only the rewritten text.
             )
 
         return "\n".join(lines)
+
+    def _format_profile_context(self, profile_context):
+        if not isinstance(profile_context, dict):
+            return "No sender profile details supplied."
+        labels = (
+            ("sender_name", "Sender name"),
+            ("sender_role", "Role"),
+            ("organisation", "Organisation"),
+            ("sender_email", "Email"),
+            ("organisation_website", "Website"),
+            ("organisation_description", "Organisation description"),
+            ("charity_information", "Charity information"),
+            ("profile_signature", "Signature"),
+        )
+        lines = [
+            f"{label}: {str(profile_context.get(name, '')).strip()}"
+            for name, label in labels
+            if str(profile_context.get(name, "")).strip()
+        ]
+        return "\n".join(lines) if lines else (
+            "No sender profile details supplied."
+        )

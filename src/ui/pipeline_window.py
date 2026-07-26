@@ -296,7 +296,13 @@ class PipelineWindow(ctk.CTkToplevel):
         )
 
     def open_draft(self, record):
-        DraftWindow(self, record, self.master.response_service)
+        DraftWindow(
+            self,
+            record,
+            self.master.response_service,
+            self.master.ai_controller,
+            self.master.task_manager,
+        )
 
     def open_contacts(self, record):
         ContactHistoryWindow(self, record, self.master.contact_service)

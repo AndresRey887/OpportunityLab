@@ -60,6 +60,7 @@ class OpportunityAnalyzer:
             self.register_related_search_provider(
                 related_search_provider
             )
+            self.register_writing_provider(related_search_provider)
 
     def register_analysis_provider(
         self,
@@ -85,6 +86,23 @@ class OpportunityAnalyzer:
             provider=provider,
             supported_tasks={
                 AITask.RELATED_SEARCHES,
+            },
+            priority=priority,
+        )
+
+    def register_writing_provider(
+        self,
+        provider,
+        priority=50,
+    ):
+        """Register the local provider for drafting and rewriting tasks."""
+        return self.registry.register(
+            provider=provider,
+            supported_tasks={
+                AITask.DRAFT_EMAIL,
+                AITask.DRAFT_APPLICATION,
+                AITask.CREATE_CHECKLIST,
+                AITask.REWRITE_TEXT,
             },
             priority=priority,
         )

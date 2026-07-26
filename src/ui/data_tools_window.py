@@ -9,17 +9,30 @@ import customtkinter as ctk
 
 from src.backups.backup_service import BackupError
 from src.ui.system_health_window import SystemHealthWindow
+from src.ui.gemini_key_window import GeminiKeyWindow
+from src.ui.display_settings_window import DisplaySettingsWindow
 
 
 class DataToolsWindow(ctk.CTkToplevel):
-    def __init__(self, master, service, health_service):
+    def __init__(
+        self,
+        master,
+        service,
+        health_service,
+        ai_controller,
+        display_settings_service,
+    ):
         super().__init__(master)
         self.service = service
         self.health_service = health_service
+        self.ai_controller = ai_controller
+        self.display_settings_service = display_settings_service
         self.system_health_window = None
+        self.gemini_key_window = None
+        self.display_settings_window = None
         self.title("Data Backup and Restore")
-        self.geometry("560x400")
-        self.minsize(500, 370)
+        self.geometry("560x540")
+        self.minsize(500, 500)
         self.transient(master)
         self.build_ui()
 
@@ -67,6 +80,20 @@ class DataToolsWindow(ctk.CTkToplevel):
             command=self.open_system_health,
         ).grid(row=4, column=0, sticky="ew", padx=18, pady=8)
 
+        ctk.CTkButton(
+            self,
+            text="Gemini API Key",
+            height=42,
+            command=self.open_gemini_key,
+        ).grid(row=5, column=0, sticky="ew", padx=18, pady=8)
+
+        ctk.CTkButton(
+            self,
+            text="Text Size",
+            height=42,
+            command=self.open_display_settings,
+        ).grid(row=6, column=0, sticky="ew", padx=18, pady=8)
+
         self.message = ctk.CTkLabel(
             self,
             text="",
@@ -74,7 +101,33 @@ class DataToolsWindow(ctk.CTkToplevel):
             anchor="w",
             wraplength=500,
         )
-        self.message.grid(row=5, column=0, sticky="ew", padx=18, pady=(8, 18))
+        self.message.grid(row=7, column=0, sticky="ew", padx=18, pady=(8, 18))
+
+    def open_display_settings(self):
+        if self.display_settings_window is not None:
+            try:
+                if self.display_settings_window.winfo_exists():
+                    self.display_settings_window.focus()
+                    return
+            except Exception:
+                pass
+        self.display_settings_window = DisplaySettingsWindow(
+            self,
+            self.display_settings_service,
+        )
+
+    def open_gemini_key(self):
+        if self.gemini_key_window is not None:
+            try:
+                if self.gemini_key_window.winfo_exists():
+                    self.gemini_key_window.focus()
+                    return
+            except Exception:
+                pass
+        self.gemini_key_window = GeminiKeyWindow(
+            self,
+            self.ai_controller,
+        )
 
     def open_system_health(self):
         if self.system_health_window is not None:

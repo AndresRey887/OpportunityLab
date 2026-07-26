@@ -5,6 +5,7 @@ from __future__ import annotations
 from src.responses.opportunity_draft import OpportunityDraft
 from src.responses.response_store import ResponseStore
 from src.responses.response_template import ResponseTemplate
+from src.profiles.sender_profile_service import SenderProfileService
 
 
 class ResponseService:
@@ -36,9 +37,11 @@ class ResponseService:
         self,
         store: ResponseStore | None = None,
         timeline_service=None,
+        profile_service: SenderProfileService | None = None,
     ) -> None:
         self.store = store or ResponseStore()
         self.timeline_service = timeline_service
+        self.profile_service = profile_service or SenderProfileService()
         self.templates = self.store.load_templates()
         self.drafts = self.store.load_drafts()
         if not self.templates:
@@ -90,10 +93,14 @@ class ResponseService:
             "title": record.title,
             "url": record.url,
             "source": record.source or "OpportunityLab",
+            **self.profile_service.draft_values(),
         }
         draft.template_id = template.template_id
         draft.subject = self._render(template.subject, values)
         draft.body = self._render(template.body, values)
+        signature = values["profile_signature"]
+        if signature:
+            draft.body = f"{draft.body.rstrip()}\n{signature}"
         draft.touch()
         self.store.save_drafts(self.drafts)
         self._record(

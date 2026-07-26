@@ -230,6 +230,8 @@ class TrackingWindow(ctk.CTkToplevel):
             self,
             record,
             self.master.response_service,
+            self.master.ai_controller,
+            self.master.task_manager,
         )
 
     def open_contacts(self, record):
