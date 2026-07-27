@@ -13,7 +13,15 @@ class SenderProfileWindow(ctk.CTkToplevel):
         ("organisation", "Organisation"),
         ("email", "Email address"),
         ("website", "Website"),
+        ("address", "Address, for example Ballarat, Victoria"),
         ("organisation_description", "Organisation description"),
+        ("profile_type", "Profile type: Personal or Nonprofit"),
+        ("mission", "Nonprofit mission"),
+        ("beneficiaries", "Who the nonprofit supports"),
+        ("service_area", "Service area"),
+        ("support_needs", "Support needed"),
+        ("opportunity_types", "Opportunity types"),
+        ("dgr_status", "DGR status"),
         ("charity_information", "Charity information"),
         ("signature", "Custom signature (optional)"),
         ("tone", "Writing tone"),
@@ -70,8 +78,30 @@ class SenderProfileWindow(ctk.CTkToplevel):
         form.grid(row=2, column=0, sticky="nsew", padx=18, pady=8)
         form.grid_columnconfigure(0, weight=1)
         for row, (name, placeholder) in enumerate(self.FIELDS):
-            entry = ctk.CTkEntry(form, placeholder_text=placeholder, height=38)
-            entry.grid(row=row, column=0, sticky="ew", padx=8, pady=6)
+            ctk.CTkLabel(
+                form,
+                text=placeholder,
+                anchor="w",
+                font=("Segoe UI", 13, "bold"),
+            ).grid(
+                row=row * 2,
+                column=0,
+                sticky="ew",
+                padx=10,
+                pady=(8, 2),
+            )
+            entry = ctk.CTkEntry(
+                form,
+                placeholder_text=f"Enter {placeholder.lower()} here",
+                height=38,
+            )
+            entry.grid(
+                row=row * 2 + 1,
+                column=0,
+                sticky="ew",
+                padx=8,
+                pady=(0, 6),
+            )
             self.entries[name] = entry
 
         action_row = ctk.CTkFrame(self)

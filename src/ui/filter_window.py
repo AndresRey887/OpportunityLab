@@ -28,6 +28,7 @@ class FilterWindow(ctk.CTkToplevel):
         self.available_sources = []
         self.source_variables = {}
         self.australia_only = False
+        self.hide_weak_evidence = False
 
         self.selected_domain = ctk.StringVar(value="")
         self.selected_keyword = ctk.StringVar(value="")
@@ -61,6 +62,9 @@ class FilterWindow(ctk.CTkToplevel):
             self.filter_engine.get_blocked_keywords()
         )
         self.australia_only = self.filter_engine.is_australia_only()
+        self.hide_weak_evidence = (
+            self.filter_engine.is_hiding_weak_evidence()
+        )
 
         try:
             self.available_sources = (
@@ -149,6 +153,19 @@ class FilterWindow(ctk.CTkToplevel):
             self.au_only.select()
 
         self.au_only.pack(
+            anchor="w",
+            padx=20,
+            pady=4
+        )
+
+        self.hide_weak = ctk.CTkCheckBox(
+            general,
+            text="Hide Weak Evidence"
+        )
+        if self.hide_weak_evidence:
+            self.hide_weak.select()
+
+        self.hide_weak.pack(
             anchor="w",
             padx=20,
             pady=4
@@ -703,12 +720,17 @@ class FilterWindow(ctk.CTkToplevel):
         self.filter_engine.set_australia_only(
             bool(self.au_only.get())
         )
+        self.filter_engine.set_hide_weak_evidence(
+            bool(self.hide_weak.get())
+        )
 
         self.message.configure(
             text=(
                 f"Applied {len(self.pending_domains)} domains and "
                 f"{len(self.pending_keywords)} keywords. "
                 f"Sources: {len(selected_sources)}. "
-                f"Australia Only: {'On' if self.au_only.get() else 'Off'}."
+                f"Australia Only: {'On' if self.au_only.get() else 'Off'}. "
+                f"Hide Weak Evidence: "
+                f"{'On' if self.hide_weak.get() else 'Off'}."
             )
         )

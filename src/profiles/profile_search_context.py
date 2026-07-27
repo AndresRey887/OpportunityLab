@@ -37,6 +37,7 @@ class ProfileSearchContextService:
         context_terms = [
             self._clean(profile.mission),
             self._clean(profile.beneficiaries),
+            self._clean(profile.address),
             self._clean(profile.service_area),
             self._clean(profile.support_needs),
         ]

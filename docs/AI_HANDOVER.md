@@ -2,9 +2,9 @@
 
 ## Current build
 
-- Version: 1.1.4
-- Package: Package-110A-05
-- Build: 5
+- Version: 1.2.1
+- Package: Package-110A-07A
+- Build: 10
 - Codename: Gold Rush
 - Status: Production
 - Phase: 6 — complete
@@ -123,3 +123,31 @@ charity-support language, past-support reports, partnership contact paths,
 cash or in-kind support, and mission relevance receive separate scoring.
 Results are labelled Possible Supporter, Relevant Supporter, Support History,
 or Contactable Supporter. These labels never assume current availability.
+
+## Package 110A-06
+
+Adds a persistent Hide Weak Evidence option to Search Filters. Adds Quick,
+Standard, and Deep search depth to the main search bar, requesting approximately
+10, 20, or 30 results per enabled Serper-backed source. Standard is the default.
+
+Package 110A-06A changes Standard and Deep to genuine page-by-page retrieval.
+Later-page failures retain results already received instead of failing the
+entire source. Company Websites uses a shorter nonprofit-friendly query to
+reduce query failures.
+
+Package 110A-06B strengthens Australia Only with geographic eligibility
+checks. A foreign-targeted opportunity is rejected even when its title or
+Australian government domain also mentions Australia, unless the result
+explicitly says Australian organisations are eligible.
+
+## Package 110A-07
+
+Adds webpage evidence verification for the highest-ranked search results. The
+active nonprofit profile now has an address field. OpportunityLab reads
+eligible-location text from result pages, compares it with the profile address
+and service area, removes only clear location exclusions, and keeps unclear
+cases as Eligibility Unverified. Verified matches receive a small score bonus.
+Gemini receives the extracted webpage evidence and profile-location comparison.
+
+Package 110A-07A adds permanent visible labels above every sender-profile field
+and clearer entry placeholders, including the new address field.

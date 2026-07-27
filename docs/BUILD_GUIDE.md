@@ -1,5 +1,45 @@
 # OpportunityLab Build Guide
 
+## Package 110A-07A test
+
+```powershell
+python scripts/test_profile_field_labels.py
+```
+
+Expected: `Profile field labels test passed.`
+
+## Package 110A-07 test
+
+```powershell
+python scripts/test_page_eligibility_verification.py
+```
+
+Expected: `Page eligibility verification test passed.`
+
+## Package 110A-06B test
+
+```powershell
+python scripts/test_australian_geographic_eligibility.py
+```
+
+Expected: `Australian geographic eligibility test passed.`
+
+## Package 110A-06A test
+
+```powershell
+python scripts/test_deep_search_paging.py
+```
+
+Expected: `Deep search paging test passed.`
+
+## Package 110A-06 test
+
+```powershell
+python scripts/test_search_depth_and_evidence_filter.py
+```
+
+Expected: `Search depth and evidence filter test passed.`
+
 ## Package 110A-05 test
 
 ```powershell

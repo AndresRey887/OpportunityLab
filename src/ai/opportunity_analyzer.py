@@ -11,6 +11,7 @@ from src.ai.ai_task import AITask
 from src.ai.analysis_cache import AnalysisCache
 from src.ai.ollama_provider import OllamaProvider
 from src.ai.opportunity_analysis import OpportunityAnalysis
+import hashlib
 from src.ai.provider_registry import ProviderRegistry
 
 
@@ -250,8 +251,20 @@ class OpportunityAnalyzer:
             )
         ).strip().lower()
 
+        metadata = getattr(opportunity, "metadata", {}) or {}
+        evidence_key = "|".join(
+            (
+                str(metadata.get("profile_location", "")),
+                str(metadata.get("profile_eligibility_status", "")),
+                str(metadata.get("page_evidence_text", ""))[:4000],
+            )
+        )
+        evidence_hash = hashlib.sha256(
+            evidence_key.encode("utf-8")
+        ).hexdigest()[:16]
+
         if url:
-            return url
+            return f"{url}|page-evidence-v1|{evidence_hash}"
 
         return str(
             getattr(

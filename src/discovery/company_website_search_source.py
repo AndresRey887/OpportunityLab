@@ -21,8 +21,10 @@ class CompanyWebsiteSearchSource(SearchSource):
         self.client = client
 
     def search(self, query: str) -> list[dict[str, Any]]:
+        base_query = " ".join(query.strip().split())[:350]
         company_query = (
-            f'{query.strip()} (apply OR opportunity OR "product testing") '
+            f'{base_query} '
+            '(apply OR grant OR sponsorship OR partnership OR support) '
             "-site:reddit.com -site:youtube.com"
         ).strip()
         data = self.client.search(company_query)

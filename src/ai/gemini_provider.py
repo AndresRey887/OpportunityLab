@@ -172,6 +172,14 @@ class GeminiProvider(AIProvider):
         rule_breakdown = self._format_rule_breakdown(
             getattr(opportunity, "rule_results", [])
         )
+        metadata = getattr(opportunity, "metadata", {}) or {}
+        profile_location = metadata.get("profile_location", "")
+        eligibility_status = metadata.get(
+            "profile_eligibility_status",
+            "Unverified",
+        )
+        eligibility_reason = metadata.get("profile_eligibility_reason", "")
+        page_evidence = metadata.get("page_evidence_text", "")
 
         return f"""
 You are Opportunity Scout AI working exclusively inside OpportunityLab.
@@ -199,6 +207,9 @@ Act as a cautious professional opportunity researcher looking for:
 Important rules:
 
 - Base the analysis only on the information supplied below.
+- Compare the webpage eligibility evidence against the profile location.
+- If location eligibility is unclear, say so directly.
+- If the profile location is excluded, recommend ignoring the opportunity.
 - Never invent eligibility, prices, deadlines, locations or benefits.
 - Clearly identify missing or uncertain information.
 - Distinguish a real opportunity from advertising, news or general content.
@@ -238,6 +249,15 @@ Source:
 
 Search snippet:
 {getattr(opportunity, "snippet", "")}
+
+Active profile location:
+{profile_location or "Not provided"}
+
+OpportunityLab eligibility check:
+{eligibility_status}: {eligibility_reason}
+
+Extracted official webpage evidence:
+{page_evidence or "No readable webpage evidence was available."}
 
 OpportunityLab rule score:
 {getattr(opportunity, "score", 0)} out of 100

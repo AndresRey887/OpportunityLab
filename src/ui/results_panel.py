@@ -202,6 +202,10 @@ class ResultsPanel(ctk.CTkFrame):
             "supporter_prospect_type",
             "",
         )
+        eligibility_status = opportunity.metadata.get(
+            "profile_eligibility_status",
+            "",
+        )
         source_text = str(
             getattr(opportunity, "source", "Unknown Source")
         )
@@ -211,6 +215,8 @@ class ResultsPanel(ctk.CTkFrame):
             source_text = f"{source_text}  •  {evidence_tier}"
         if supporter_type:
             source_text = f"{source_text}  •  {supporter_type}"
+        if eligibility_status:
+            source_text = f"{source_text}  •  {eligibility_status}"
         source = ctk.CTkLabel(
             text_area,
             text=source_text,

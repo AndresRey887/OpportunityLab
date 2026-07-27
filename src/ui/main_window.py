@@ -353,8 +353,22 @@ class MainWindow(ctk.CTk):
 
         self.search_button.grid(
             row=0,
-            column=1,
+            column=2,
             padx=5
+        )
+
+        self.search_depth = ctk.StringVar(value="Standard")
+        self.search_depth_menu = ctk.CTkOptionMenu(
+            search_row,
+            values=["Quick", "Standard", "Deep"],
+            variable=self.search_depth,
+            width=115,
+            height=38,
+        )
+        self.search_depth_menu.grid(
+            row=0,
+            column=1,
+            padx=5,
         )
 
         self.recent_button = ctk.CTkButton(
@@ -367,7 +381,7 @@ class MainWindow(ctk.CTk):
 
         self.recent_button.grid(
             row=0,
-            column=2,
+            column=3,
             padx=5
         )
 
@@ -381,7 +395,7 @@ class MainWindow(ctk.CTk):
 
         self.related_button.grid(
             row=0,
-            column=3,
+            column=4,
             padx=5
         )
 
@@ -1603,10 +1617,16 @@ class MainWindow(ctk.CTk):
 
         self.search_button.configure(state="disabled")
 
+        result_count = {
+            "Quick": 10,
+            "Standard": 20,
+            "Deep": 30,
+        }.get(self.search_depth.get(), 20)
+
         self.task_manager.submit(
             name="Search opportunities",
             target=self.search_service.search,
-            args=(query,),
+            args=(query, None, result_count),
             on_success=self.finish_search,
             on_error=self.fail_search
         )

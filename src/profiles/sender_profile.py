@@ -14,6 +14,7 @@ class SenderProfile:
     organisation: str = ""
     email: str = ""
     website: str = ""
+    address: str = ""
     organisation_description: str = ""
     charity_information: str = ""
     signature: str = ""

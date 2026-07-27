@@ -5,6 +5,8 @@ from src.filters.domain_filter import DomainFilter
 from src.filters.filter_settings_store import FilterSettingsStore
 from src.filters.keyword_filter import KeywordFilter
 from src.filters.source_filter import SourceFilter
+from src.filters.weak_evidence_filter import WeakEvidenceFilter
+from src.filters.profile_eligibility_filter import ProfileEligibilityFilter
 
 
 class FilterStatistics:
@@ -24,6 +26,8 @@ class FilterEngine:
         self.domain_filter = DomainFilter()
         self.keyword_filter = KeywordFilter()
         self.source_filter = SourceFilter()
+        self.weak_evidence_filter = WeakEvidenceFilter()
+        self.profile_eligibility_filter = ProfileEligibilityFilter()
 
         for domain in ("ebay", "amazon", "temu"):
             self.domain_filter.add_domain(domain)
@@ -33,6 +37,8 @@ class FilterEngine:
 
         self.filters = [
             self.country_filter,
+            self.profile_eligibility_filter,
+            self.weak_evidence_filter,
             self.domain_filter,
             self.keyword_filter,
             self.source_filter,
@@ -60,6 +66,10 @@ class FilterEngine:
             bool(settings.get("australia_only", False)),
             save=False,
         )
+        self.set_hide_weak_evidence(
+            bool(settings.get("hide_weak_evidence", False)),
+            save=False,
+        )
 
     def _save_settings(self):
         self.settings_store.save(
@@ -68,6 +78,7 @@ class FilterEngine:
                 "blocked_keywords": self.get_blocked_keywords(),
                 "allowed_sources": self.get_allowed_sources(),
                 "australia_only": self.is_australia_only(),
+                "hide_weak_evidence": self.is_hiding_weak_evidence(),
             }
         )
 
@@ -159,5 +170,13 @@ class FilterEngine:
 
     def set_australia_only(self, enabled, *, save=True):
         self.country_filter.enabled = bool(enabled)
+        if save:
+            self._save_settings()
+
+    def is_hiding_weak_evidence(self):
+        return self.weak_evidence_filter.enabled
+
+    def set_hide_weak_evidence(self, enabled, *, save=True):
+        self.weak_evidence_filter.enabled = bool(enabled)
         if save:
             self._save_settings()

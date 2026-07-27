@@ -18,6 +18,7 @@ from src.engine.opportunity_engine import OpportunityEngine
 from src.filters.filter_engine import FilterEngine
 from src.models.opportunity import Opportunity
 from src.profiles.profile_search_context import ProfileSearchContextService
+from src.research.page_evidence_service import PageEvidenceService
 
 
 class SearchService(Service):
@@ -62,6 +63,7 @@ class SearchService(Service):
             profile_service
         )
         self.engine = OpportunityEngine(profile_service)
+        self.page_evidence_service = PageEvidenceService()
         self.filter_engine = FilterEngine()
         self.statistics = self.filter_engine.statistics
         self.source_statistics: dict[
@@ -96,9 +98,11 @@ class SearchService(Service):
         self,
         query: str,
         source_names: Iterable[str] | None = None,
+        result_count: int = 20,
     ) -> list[Opportunity]:
         """Run selected discovery sources, score unique results, and filter."""
 
+        self._set_result_count(result_count)
         selected_source_names = source_names
 
         if selected_source_names is None:
@@ -138,6 +142,17 @@ class SearchService(Service):
             opportunity.metadata["profile_search_expanded"] = (
                 search_context.expanded
             )
+        active_profile = (
+            self.profile_service.active_profile
+            if self.profile_service is not None
+            else None
+        )
+        if active_profile is not None and active_profile.is_nonprofit:
+            self.page_evidence_service.verify_all(
+                scored_opportunities,
+                active_profile,
+                limit=result_count,
+            )
         self.source_statistics = self.pipeline.statistics()
 
         filtered_opportunities = self.filter_engine.process(scored_opportunities)
@@ -150,6 +165,18 @@ class SearchService(Service):
             filter_reasons=dict(self.statistics.reasons),
         )
         return filtered_opportunities
+
+    def _set_result_count(self, result_count: int) -> None:
+        configured_clients = set()
+        for source in self.registry.all_sources():
+            client = getattr(source, "client", None)
+            client_id = id(client)
+            if client is None or client_id in configured_clients:
+                continue
+            setter = getattr(client, "set_result_count", None)
+            if callable(setter):
+                setter(result_count)
+                configured_clients.add(client_id)
 
     def start(self) -> None:
         super().start()

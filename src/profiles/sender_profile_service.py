@@ -110,6 +110,7 @@ class SenderProfileService:
             "organisation": profile.organisation,
             "sender_email": profile.email,
             "organisation_website": profile.website,
+            "organisation_address": profile.address,
             "organisation_description": profile.organisation_description,
             "charity_information": profile.charity_information,
             "profile_tone": profile.tone,
