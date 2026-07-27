@@ -48,8 +48,8 @@ def main() -> None:
     assert "GeminiResponseParser.parse(response)" in provider_source
     assert "max_output_tokens=4096" in provider_source
     assert "incomplete structured response" in provider_source
-    assert VERSION_INFO.package == "Package-110A-02"
-    assert VERSION_INFO.build == 2
+    assert VERSION_INFO.package == "Package-110A-04"
+    assert VERSION_INFO.build == 4
     print("Gemini response parsing test passed.")
 
 

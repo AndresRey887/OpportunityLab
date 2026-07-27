@@ -59,9 +59,9 @@ def main() -> None:
     assert 'effective_query = f"{effective_query} Australia"' in source
     assert 'text="Australia Only"' in window
     assert "coming soon" not in window.casefold().split("australia only", 1)[1][:40]
-    assert VERSION_INFO.version == "1.1.1"
-    assert VERSION_INFO.package == "Package-110A-02"
-    assert VERSION_INFO.build == 2
+    assert VERSION_INFO.version == "1.1.3"
+    assert VERSION_INFO.package == "Package-110A-04"
+    assert VERSION_INFO.build == 4
     print("Australia Only filter test passed.")
 
 

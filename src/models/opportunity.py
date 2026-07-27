@@ -53,12 +53,13 @@ class Opportunity:
 
         self.metadata = {}
 
-    def add_rule_result(self, rule_name, points):
+    def add_rule_result(self, rule_name, points, reason=""):
 
         self.rule_results.append(
             {
                 "rule": rule_name,
-                "points": points
+                "points": points,
+                "reason": reason,
             }
         )
 

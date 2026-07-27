@@ -55,7 +55,11 @@ class ProfileOpportunityRule:
             else None
         )
         if profile is None or not profile.is_nonprofit:
-            opportunity.add_rule_result("Nonprofit Profile Fit", 0)
+            opportunity.add_rule_result(
+                "Nonprofit Profile Fit",
+                0,
+                "No active nonprofit profile.",
+            )
             return 0
 
         text = f"{opportunity.title} {opportunity.snippet}".casefold()
@@ -75,7 +79,10 @@ class ProfileOpportunityRule:
             points -= 12
 
         profile_terms = self._profile_terms(profile)
-        matches = sum(term in text for term in profile_terms)
+        matched_profile_terms = sorted(
+            term for term in profile_terms if term in text
+        )
+        matches = len(matched_profile_terms)
         points += min(matches * 2, 10)
 
         location = str(profile.service_area or "").strip().casefold()
@@ -96,7 +103,30 @@ class ProfileOpportunityRule:
         points = max(-12, min(points, 35))
         opportunity.metadata["profile_fit_type"] = classification
         opportunity.metadata["profile_name"] = profile.name
-        opportunity.add_rule_result("Nonprofit Profile Fit", points)
+        reasons = []
+        if funding:
+            reasons.append("Funding or support language found.")
+        if relationship:
+            reasons.append("Charity relationship evidence found.")
+        if action:
+            reasons.append("An application or contact action was found.")
+        if matched_profile_terms:
+            shown_terms = ", ".join(matched_profile_terms[:5])
+            reasons.append(f"Profile terms matched: {shown_terms}.")
+        if location and location in text:
+            reasons.append(f"Service area matched: {profile.service_area}.")
+        if closed:
+            reasons.append("Warning: the result appears closed or expired.")
+        if not reasons:
+            reasons.append("No strong nonprofit profile evidence found.")
+
+        opportunity.metadata["profile_fit_reasons"] = list(reasons)
+        opportunity.metadata["profile_fit_points"] = points
+        opportunity.add_rule_result(
+            "Nonprofit Profile Fit",
+            points,
+            " ".join(reasons),
+        )
         return points
 
     def _profile_terms(self, profile) -> set[str]:

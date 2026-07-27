@@ -197,11 +197,14 @@ class ResultsPanel(ctk.CTkFrame):
         )
 
         fit_type = opportunity.metadata.get("profile_fit_type", "")
+        evidence_tier = opportunity.metadata.get("evidence_quality_tier", "")
         source_text = str(
             getattr(opportunity, "source", "Unknown Source")
         )
         if fit_type:
             source_text = f"{source_text}  •  {fit_type}"
+        if evidence_tier:
+            source_text = f"{source_text}  •  {evidence_tier}"
         source = ctk.CTkLabel(
             text_area,
             text=source_text,

@@ -1,5 +1,21 @@
 # OpportunityLab Build Guide
 
+## Package 110A-04 test
+
+```powershell
+python scripts/test_evidence_quality_scoring.py
+```
+
+Expected: `Evidence quality scoring test passed.`
+
+## Package 110A-03 test
+
+```powershell
+python scripts/test_result_score_explanations.py
+```
+
+Expected: `Result score explanations test passed.`
+
 ## Package 110A-02 test
 
 ```powershell

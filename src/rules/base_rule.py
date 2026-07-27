@@ -29,14 +29,16 @@ class BaseRule:
 
                 opportunity.add_rule_result(
                     self.name,
-                    self.points
+                    self.points,
+                    f'Matched “{keyword}”.',
                 )
 
                 return self.points
 
         opportunity.add_rule_result(
             self.name,
-            0
+            0,
+            "No matching signal found.",
         )
 
         return 0

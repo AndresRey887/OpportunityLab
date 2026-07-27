@@ -139,6 +139,32 @@ class DetailsPanel(ctk.CTkFrame):
         self.snippet.configure(state="disabled")
 
         #
+        # Match Explanation
+        #
+
+        ctk.CTkLabel(
+            content,
+            text="Why This Result Matched",
+            font=("Segoe UI", 16, "bold")
+        ).pack(
+            anchor="w",
+            padx=10,
+            pady=(15, 5)
+        )
+
+        self.match_explanation = ctk.CTkTextbox(
+            content,
+            height=150
+        )
+
+        self.match_explanation.pack(
+            fill="x",
+            padx=5
+        )
+
+        self.match_explanation.configure(state="disabled")
+
+        #
         # Rule Breakdown
         #
 
@@ -205,13 +231,49 @@ class DetailsPanel(ctk.CTkFrame):
             opportunity.snippet
         )
 
+        metadata = getattr(opportunity, "metadata", {}) or {}
+        classification = metadata.get("profile_fit_type", "")
+        profile_name = metadata.get("profile_name", "")
+        reasons = metadata.get("profile_fit_reasons", [])
+        evidence_tier = metadata.get("evidence_quality_tier", "")
+        evidence_reasons = metadata.get("evidence_quality_reasons", [])
+
+        explanation_lines = []
+        if classification:
+            explanation_lines.append(f"Classification: {classification}")
+        if profile_name:
+            explanation_lines.append(f"Profile: {profile_name}")
+        if evidence_tier:
+            explanation_lines.append(f"Evidence quality: {evidence_tier}")
+        if reasons:
+            explanation_lines.append("")
+            explanation_lines.extend(f"• {reason}" for reason in reasons)
+        if evidence_reasons:
+            explanation_lines.append("")
+            explanation_lines.append("Evidence checks:")
+            explanation_lines.extend(
+                f"• {reason}" for reason in evidence_reasons
+            )
+        if not explanation_lines:
+            explanation_lines.append(
+                "No nonprofit profile explanation is available for this result."
+            )
+
+        self._set_textbox_text(
+            self.match_explanation,
+            "\n".join(explanation_lines)
+        )
+
         rule_lines = []
 
         for rule in opportunity.rule_results:
 
-            rule_lines.append(
-                f"{rule['rule']:<25} +{rule['points']}"
-            )
+            points = int(rule.get("points", 0))
+            sign = "+" if points > 0 else ""
+            rule_lines.append(f"{rule['rule']}: {sign}{points}")
+            reason = str(rule.get("reason", "") or "").strip()
+            if reason:
+                rule_lines.append(f"  {reason}")
 
         if not rule_lines:
             rule_lines.append("No rule results available.")

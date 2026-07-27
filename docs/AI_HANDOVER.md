@@ -2,9 +2,9 @@
 
 ## Current build
 
-- Version: 1.1.1
-- Package: Package-110A-02
-- Build: 2
+- Version: 1.1.3
+- Package: Package-110A-04
+- Build: 4
 - Codename: Gold Rush
 - Status: Production
 - Phase: 6 — complete
@@ -100,3 +100,18 @@ tax-deductibility claims or imply that a company is accepting requests.
 Activates the persistent Australia Only filter. When enabled it adds Australia
 to discovery queries and only displays results with Australian country,
 location, text, or `.au` domain evidence.
+
+## Package 110A-03
+
+Adds evidence-based score explanations to Opportunity Details. Each scoring
+rule records the signal it matched. Nonprofit results show their classification,
+active profile, profile-term matches, service-area match, funding or relationship
+signals, available action signals, and closed-opportunity warnings.
+
+## Package 110A-04
+
+Adds a separate Evidence Quality score. Official opportunity pages, eligibility,
+funding amounts, closing dates, and clear application or contact actions receive
+positive weight. Low-value videos, general-information pages, missing actions,
+and closed opportunities receive penalties. Result cards and Opportunity
+Details display the evidence tier and supporting reasons.

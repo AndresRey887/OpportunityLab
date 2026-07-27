@@ -11,6 +11,7 @@ from src.rules.manufacturer_rule import ManufacturerRule
 from src.rules.australian_rule import AustralianRule
 from src.core.app_logger import get_logger
 from src.rules.profile_opportunity_rule import ProfileOpportunityRule
+from src.rules.evidence_quality_rule import EvidenceQualityRule
 
 
 logger = get_logger("OpportunityEngine")
@@ -29,7 +30,8 @@ class OpportunityEngine:
             SupplierRule(),
             ManufacturerRule(),
             AustralianRule(),
-            ProfileOpportunityRule(profile_service)
+            ProfileOpportunityRule(profile_service),
+            EvidenceQualityRule(),
 
         ]
 
@@ -41,6 +43,6 @@ class OpportunityEngine:
 
             total_score += rule.evaluate(opportunity)
 
-        opportunity.score = min(total_score, 100)
+        opportunity.score = max(0, min(total_score, 100))
 
         return opportunity
