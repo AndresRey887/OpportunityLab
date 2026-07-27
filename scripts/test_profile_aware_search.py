@@ -70,9 +70,9 @@ def main() -> None:
     )
     assert "profile_service=self.sender_profile_service" in main_source
     assert "profile_fit_type" in result_source
-    assert VERSION_INFO.version == "1.1.3"
-    assert VERSION_INFO.package == "Package-110A-04"
-    assert VERSION_INFO.build == 4
+    assert VERSION_INFO.version == "1.1.4"
+    assert VERSION_INFO.package == "Package-110A-05"
+    assert VERSION_INFO.build == 5
     print("Profile-aware search test passed.")
 
 

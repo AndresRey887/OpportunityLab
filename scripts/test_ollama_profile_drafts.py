@@ -82,9 +82,9 @@ def main() -> None:
     )
     assert "Generate with Ollama" in draft_ui
     assert "profile_context" in draft_ui
-    assert VERSION_INFO.version == "1.1.3"
-    assert VERSION_INFO.package == "Package-110A-04"
-    assert VERSION_INFO.build == 4
+    assert VERSION_INFO.version == "1.1.4"
+    assert VERSION_INFO.package == "Package-110A-05"
+    assert VERSION_INFO.build == 5
     print("Ollama profile draft test passed.")
 
 

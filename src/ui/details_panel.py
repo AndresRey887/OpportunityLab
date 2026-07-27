@@ -237,6 +237,8 @@ class DetailsPanel(ctk.CTkFrame):
         reasons = metadata.get("profile_fit_reasons", [])
         evidence_tier = metadata.get("evidence_quality_tier", "")
         evidence_reasons = metadata.get("evidence_quality_reasons", [])
+        supporter_type = metadata.get("supporter_prospect_type", "")
+        supporter_reasons = metadata.get("supporter_prospect_reasons", [])
 
         explanation_lines = []
         if classification:
@@ -245,6 +247,8 @@ class DetailsPanel(ctk.CTkFrame):
             explanation_lines.append(f"Profile: {profile_name}")
         if evidence_tier:
             explanation_lines.append(f"Evidence quality: {evidence_tier}")
+        if supporter_type:
+            explanation_lines.append(f"Supporter prospect: {supporter_type}")
         if reasons:
             explanation_lines.append("")
             explanation_lines.extend(f"• {reason}" for reason in reasons)
@@ -253,6 +257,12 @@ class DetailsPanel(ctk.CTkFrame):
             explanation_lines.append("Evidence checks:")
             explanation_lines.extend(
                 f"• {reason}" for reason in evidence_reasons
+            )
+        if supporter_reasons:
+            explanation_lines.append("")
+            explanation_lines.append("Supporter checks:")
+            explanation_lines.extend(
+                f"• {reason}" for reason in supporter_reasons
             )
         if not explanation_lines:
             explanation_lines.append(

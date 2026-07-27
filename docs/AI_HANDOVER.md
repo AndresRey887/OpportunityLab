@@ -2,9 +2,9 @@
 
 ## Current build
 
-- Version: 1.1.3
-- Package: Package-110A-04
-- Build: 4
+- Version: 1.1.4
+- Package: Package-110A-05
+- Build: 5
 - Codename: Gold Rush
 - Status: Production
 - Phase: 6 — complete
@@ -115,3 +115,11 @@ funding amounts, closing dates, and clear application or contact actions receive
 positive weight. Low-value videos, general-information pages, missing actions,
 and closed opportunities receive penalties. Result cards and Opportunity
 Details display the evidence tier and supporting reasons.
+
+## Package 110A-05
+
+Adds supporter and donor prospect discovery for nonprofit profiles. Public
+charity-support language, past-support reports, partnership contact paths,
+cash or in-kind support, and mission relevance receive separate scoring.
+Results are labelled Possible Supporter, Relevant Supporter, Support History,
+or Contactable Supporter. These labels never assume current availability.

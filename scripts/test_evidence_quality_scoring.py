@@ -51,9 +51,9 @@ def main() -> None:
     assert "Evidence quality:" in details
     assert "evidence_quality_tier" in results
 
-    assert VERSION_INFO.version == "1.1.3"
-    assert VERSION_INFO.package == "Package-110A-04"
-    assert VERSION_INFO.build == 4
+    assert VERSION_INFO.version == "1.1.4"
+    assert VERSION_INFO.package == "Package-110A-05"
+    assert VERSION_INFO.build == 5
     print("Evidence quality scoring test passed.")
 
 

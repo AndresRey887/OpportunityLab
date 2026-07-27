@@ -12,6 +12,7 @@ from src.rules.australian_rule import AustralianRule
 from src.core.app_logger import get_logger
 from src.rules.profile_opportunity_rule import ProfileOpportunityRule
 from src.rules.evidence_quality_rule import EvidenceQualityRule
+from src.rules.supporter_prospect_rule import SupporterProspectRule
 
 
 logger = get_logger("OpportunityEngine")
@@ -31,6 +32,7 @@ class OpportunityEngine:
             ManufacturerRule(),
             AustralianRule(),
             ProfileOpportunityRule(profile_service),
+            SupporterProspectRule(profile_service),
             EvidenceQualityRule(),
 
         ]

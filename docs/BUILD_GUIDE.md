@@ -1,5 +1,13 @@
 # OpportunityLab Build Guide
 
+## Package 110A-05 test
+
+```powershell
+python scripts/test_supporter_prospects.py
+```
+
+Expected: `Supporter prospect test passed.`
+
 ## Package 110A-04 test
 
 ```powershell

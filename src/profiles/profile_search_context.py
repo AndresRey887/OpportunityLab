@@ -18,7 +18,8 @@ class ProfileSearchContext:
 class ProfileSearchContextService:
     DEFAULT_NONPROFIT_TERMS = (
         'grant OR sponsorship OR "community partnership" '
-        'OR donation OR "in-kind support"'
+        'OR donation OR "in-kind support" OR "corporate giving" '
+        'OR "community investment" OR "charity partner"'
     )
 
     def __init__(self, profile_service=None) -> None:
